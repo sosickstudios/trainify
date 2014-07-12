@@ -1,0 +1,28 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: true
+  sudo: true
+
+  tasks:
+  - name: Copy the git crypt key
+    copy: src=files/conf/crypt.key dest={{ project_root }}/home/crypt.key
+
+  - name: Clone the Git crypt repository
+    git: repo=https://github.com/AGWA/git-crypt.git dest=/var/gitcrypt version=master
+
+  - name: Install latest OpenSSL DEV headers
+    apt: name=libssl-dev state=latest default_release=trusty update_cache=yes
+
+  - name: Build Git crypt
+    shell: make chdir=/var/gitcrypt
+
+  - name: Register Git crypt
+    shell: cp git-crypt /usr/local/bin/ chdir=/var/gitcrypt
+
+  - name: Install Git crypt key
+    shell: git-crypt init {{ project_root }}/home/crypt.key chdir={{ project_root }}/code
+
+  handlers:
+    - include: handlers.yml

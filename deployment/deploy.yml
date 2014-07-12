@@ -1,0 +1,42 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  sudo: true
+
+  tasks:
+  - name: Pull sources from the repository.
+    git: repo={{ project_repo }} dest={{ project_root }}/code/ version={{ branch }}
+
+  - name: Set NodeJS Environment.
+    shell: export NODE_ENV=production
+    sudo_user: root
+
+  - name: Install NodeJS dependencies
+    shell: npm install
+    args:
+      chdir: "{{ project_root }}/code/"
+
+  - name: Run gulp build
+    shell: npm run build
+    args:
+      chdir: "{{ project_root }}/code/"
+
+  - name: Restart PM2
+    shell: pm2 startOrRestart ecosystem.json --env production
+    args:
+      chdir: "{{ project_root }}/code/"
+
+  - name: Setup Node PM2 Init script
+    shell: pm2 startup ubuntu
+
+  - name: Save Node PM2 Init script
+    shell: pm2 save
+
+  - name: Reload nginx
+    service: name=nginx state=reloaded
+    sudo_user: root
+
+  handlers:
+    - include: handlers.yml

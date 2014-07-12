@@ -1,0 +1,66 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: true
+  sudo: true
+
+  tasks:
+  - name: Create the project directory.
+    file: state=directory path={{ project_root }}
+
+  - name: Create user.
+    user: home={{ project_root }}/home/ name={{ project_name }} state=present
+
+  - name: Update the project directory.
+    file: group={{ project_name }} owner={{ project_name }} mode=755 state=directory path={{ project_root }}
+
+  - name: Create the code directory.
+    file: group={{ project_name }} owner={{ project_name }} mode=755 state=directory path={{ project_root }}/code/
+
+  - name: Install required system packages.
+    apt: pkg={{ item }} state=installed update-cache=true force=yes
+    with_items: "{{ system_packages }}"
+
+  - name: Update APT repository for NGINX
+    apt_repository: repo='ppa:nginx/stable'
+
+  - name: Install latest NGINX
+    apt: name=nginx state=latest default_release=trusty update_cache=yes
+
+  - name: Update APT repository for NodeJS
+    apt_repository: repo='ppa:chris-lea/node.js'
+
+  - name: Install latest NodeJS
+    apt: name=nodejs state=latest default_release=trusty update_cache=yes
+
+  - name: Create the SSH directory.
+    file: state=directory path={{ project_root }}/home/.ssh/
+
+  - name: Upload SSH known hosts.
+    copy: src=known_hosts dest={{ project_root }}/home/.ssh/known_hosts mode=0600
+
+  - name: Create the SSL directory.
+    file: state=directory path={{ project_root }}/home/ssl/
+
+  - name: Upload SSL private key.
+    copy: src=files/ssl/{{ project_name }}.pem dest={{ project_root }}/home/ssl/{{ project_name }}.pem
+
+  - name: Upload SSL public key.
+    copy: src=files/ssl/{{ project_name }}.key dest={{ project_root }}/home/ssl/{{ project_name }}.key
+
+  - name: Change permissions.
+    shell: chown -R {{ project_name }}:{{ project_name }} {{ project_root }}
+
+  - name: Install PM2
+    shell: npm install pm2@latest -g
+
+- include: deploy.yml
+- include: gitcrypt.yml
+- include: postgresql.yml
+- include: nginx.yml
+- include: redis.yml
+- include: deploy.yml
+
+  handlers:
+    - include: handlers.yml

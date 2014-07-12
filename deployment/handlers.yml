@@ -1,0 +1,19 @@
+---
+- name: restart nginx
+  service: name=nginx state=restarted
+  sudo_user: root
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+  sudo_user: root
+
+- name: restart redis
+  service: name=redis-server state=restarted
+  sudo_user: root
+
+- name: restart elasticsearch
+  service: name=elasticsearch state=restarted
+  sudo_user: root
+
+- name: restart logstash
+  service: name=logstash state=restarted enabled=yes

@@ -1,0 +1,17 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  sudo: true
+
+  tasks:
+  - name: Update nginx primary config file.
+    copy: src=files/conf/nginx-primary.conf dest=/etc/nginx/nginx.conf
+
+  - name: Install nginx configuration file.
+    copy: src=files/conf/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}
+    notify: restart nginx
+
+  handlers:
+    - include: handlers.yml

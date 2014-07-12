@@ -1,0 +1,13 @@
+- hosts: all
+  vars_files:
+    - vars.yml
+  roles:
+   - role: elasticsearch
+
+  tasks:
+  - name: Install ElasticSearch configuration file.
+    copy: src=files/conf/elasticsearch.conf dest=/etc/elasticsearch/elasticsearch.yml
+    notify: restart elasticsearch
+
+  handlers:
+    - include: handlers.yml

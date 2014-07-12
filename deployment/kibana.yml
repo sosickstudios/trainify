@@ -1,0 +1,6 @@
+- hosts: all
+  vars_files:
+    - vars.yml
+  tasks:
+  - name: Pull Kibana from the repository.
+    git: repo=https://github.com/elasticsearch/kibana.git dest={{ project_root }}/kibana/ version={{ branch }}

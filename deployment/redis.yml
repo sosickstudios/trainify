@@ -1,0 +1,16 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: true
+  roles:
+      - ansible-redis
+  sudo: true
+
+  tasks:
+  - name: Install Redis configuration file.
+    copy: src=files/conf/redis.conf dest=/etc/redis/redis.conf
+    notify: restart redis
+
+  handlers:
+    - include: handlers.yml

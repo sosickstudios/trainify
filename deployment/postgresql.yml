@@ -1,0 +1,29 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  sudo: true
+  sudo_user: root
+
+  tasks:
+  - name: ensure postgres is installed.
+    apt: pkg={{ item }} state=installed update-cache=true force=yes
+    with_items: "{{ postgres_packages }}"
+
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  sudo: true
+  sudo_user: postgres
+
+  tasks:
+  - name: ensure database is created.
+    postgresql_db: name={{ project_name }}
+
+  - name: ensure user has access to database.
+    postgresql_user: db={{ project_name }} name={{ postgres_user }} password={{ postgres_password }} priv=ALL
+
+  - name: ensure user does not have unnecessary privilege.
+    postgresql_user: name={{ postgres_user }} role_attr_flags=SUPERUSER,NOCREATEDB

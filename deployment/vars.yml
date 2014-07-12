@@ -1,0 +1,16 @@
+---
+project_name: trainify
+project_root: /var/projects/trainify
+project_repo: https://github.com/sosickstudios/trainify.git
+postgres_user: sosickstudios
+postgres_password: b)ncpmHrgZGibtJ(uR
+branch: master
+ansible_os_family: Debian
+system_packages:
+  - build-essential
+  - perl
+  - git
+postgres_packages:
+  - postgresql
+  - libpq-dev
+  - python-psycopg2
