@@ -148,6 +148,7 @@ gulp.task('serve', function () {
 
 // Build Production Files, the Default Task
 gulp.task('default', ['clean'], function (cb) {
+  var runSequence = require('run-sequence');
   runSequence('styles', ['jshint', 'html', 'images', 'styles', 'copy'], cb);
 });
 
