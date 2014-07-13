@@ -13,11 +13,5 @@ module.exports = {
       .pause(1000)
       .assert.containsText('#main', 'The Night Watch')
       .end();
-  },
-
-  'step three': function(browser){
-    browser
-      .assert.containsText('div', 'blehIDontExist')
-      .end();
   }
 };
