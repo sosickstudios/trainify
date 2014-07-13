@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "pretest": "node node_modules/chromedriver/install",
     "test": "nightwatch",
     "test-serv": "mocha --require test/support/env --check-leaks",
     "start": "pm2 startOrRestart ecosystem.json --env production",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "browser-sync": "^1.2.1",
+    "chromedriver": "^2.10.0-1",
     "del": "^0.1.1",
     "gulp": "^3.8.6",
     "gulp-autoprefixer": "0.0.8",
@@ -58,6 +60,7 @@
     "gulp-uglify": "^0.3.1",
     "gulp-uncss": "^0.4.5",
     "gulp-useref": "^0.5.0",
+    "istanbul": "^0.3.0",
     "jshint-stylish": "^0.4.0",
     "mocha": "^1.20.1",
     "nightwatch": "^0.5.6",
@@ -67,7 +70,6 @@
     "require-dir": "0.1.0",
     "run-sequence": "^0.3.6",
     "should": "^4.0.4",
-    "istanbul": "^0.3.0",
     "sinon": "^1.10.2"
   }
 }
