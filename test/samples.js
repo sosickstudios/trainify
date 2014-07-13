@@ -13,4 +13,9 @@ describe('It works', function(){
     spy.called.should.be.false;
   });
 
+  it('should have a User model', function(){
+    var user = require('./../backend/models/user.js');
+    user.should.exist;
+  });
+
 });

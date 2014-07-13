@@ -139,7 +139,8 @@ footer .social {
   background: #cfdd28;
   height: 80px;
 
-  img {
+  .footer-logo {
+    float: left;
     width: 140px;
     padding: 18px 0 0 22px;
   }
@@ -193,7 +194,7 @@ footer .sitewide {
 footer .external {
   display: inline-block;
   float: right;
-  padding: 3px 15px;
+  padding: 20px 15px 0 0;
 
   img {
     width: 49px;

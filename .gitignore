@@ -6,3 +6,4 @@ npm-debug.log
 *.css
 test/e2e/logs/*
 test/e2e/selenium*
+coverage/
