@@ -14,8 +14,10 @@ app.get('/', function(res, res, next){
   res.render('index');
 });
 
-// Normalize the path to get to the sibling app directory.
-app.use(express.static(path.normalize(__dirname + '/../app')));
+if (process.env.NODE_ENV !== 'production'){
+  // Normalize the path to get to the sibling app directory.
+  app.use(express.static(path.normalize(__dirname + '/../app')));
+}
 
 // Use Handlebars to server our views.
 app.set('view engine', 'hbs');
