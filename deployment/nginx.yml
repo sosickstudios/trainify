@@ -6,6 +6,12 @@
   sudo: true
 
   tasks:
+  - name: Upload SSL private key.
+    copy: src=files/ssl/{{ project_name }}.crt dest={{ project_root }}/home/ssl/{{ project_name }}.crt
+
+  - name: Upload SSL public key.
+    copy: src=files/ssl/{{ project_name }}.key dest={{ project_root }}/home/ssl/{{ project_name }}.key
+
   - name: Update nginx primary config file.
     copy: src=files/conf/nginx-primary.conf dest=/etc/nginx/nginx.conf
 

@@ -1,12 +1,5 @@
-/*
- * Web Starter Kit
- *
- * Multi-screen layout styles for your page. Brought to you by the
- * Web Starter Kit team.
- *
- */
-
 @import 'h5bp';
+@import 'fonts';
 
 html,
 body {
@@ -18,9 +11,9 @@ body {
 
 body {
   position: relative;
-  font-family: 'Roboto Condensed', 'Helvetica', 'Arial', sans-serif;
-  font-weight: 300;
-  background-color: #FFFFFF;
+  font-family: 'robotolight', 'Helvetica', 'Arial', sans-serif;
+  font-size: 16px;
+  background-color: #fcfcfc;
   box-sizing: border-box;
   min-height: 100%;
 }
@@ -31,13 +24,86 @@ body.open {
 
 .app-bar {
   display: block;
-  width: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #4285f4;
+  right: 0;
   overflow: hidden;
   z-index: 1;
+  background: #fff;
+}
+
+.app-bar::before {
+  content: '';
+  height: 0.4em;
+  display: block;
+  background-image: linear-gradient(90deg,
+    #31c5f1 0, #31c5f1 17%,
+    #cfdd28 17%, #cfdd28 34%,
+    #c2b59b 34%, #c2b59b 51%,
+    #9fcc46 51%, #9fcc46 67%,
+    #f68421 67%, #f68421 84%,
+    #fdd53c 84%, #fdd53c 100%);
+  width: 100%;
+}
+
+.app-toolbar {
+  background: #f5f5f5;
+  height: 2.5em;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.logo-container {
+  border-bottom: 2px solid #fff;
+
+  button.app-bar-all-courses {
+    float: right;
+    position: absolute;
+    display: block;
+    top: 63px;
+    font-size: 0.9em;
+    right: 15px;
+    width: auto;
+    color: #da138e;
+    border: 1px solid #da138e;
+    white-space: nowrap;
+    padding: 10px 20px;
+
+    &:hover {
+      background: #da138e;
+      color: #fcfcfc;
+    }
+  }
+
+  h1 {
+    padding: 0;
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 100%;
+      display: block;
+      height: 1px;
+      background: rgba(#edddbe, 0.5);
+      position: absolute;
+    }
+  }
+
+  &::after {
+    content: '';
+    width: 100%;
+    display: block;
+    height: 1px;
+    bottom: 0;
+    background: #c2b59b;
+  }
+}
+
+.app-toolbar::after {
+  content: '';
+  height: 1px;
+  width: 100%;
+  display: block;
 }
 
 .app-bar-container {
@@ -45,12 +111,79 @@ body.open {
   display: -ms-flexbox;
   display: flex;
   width: 100%;
-  height: 60px;
+  height: 40px;
   position: relative;
   -webkit-flex-direction: row;
       -ms-flex-direction: row;
           flex-direction: row;
   margin: 0 auto;
+  background: #f5f5f5;
+}
+
+footer .social {
+  background: #cfdd28;
+  height: 80px;
+
+  img {
+    width: 140px;
+    padding: 18px 0 0 22px;
+  }
+}
+
+footer .links {
+  background: #928f8a;
+  min-height: 150px;
+  color: #fcfcfc;
+  font-size: 0.75em;
+  padding: 15px 15px 15px 22px;
+  line-height: 1.5em;
+}
+
+footer .links a {
+  color: #fcfcfc;
+  text-decoration: none;
+  display: block;
+}
+
+footer .legal {
+  float: left;
+}
+
+footer .sitewide {
+  font-family: "foco",sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  float: right;
+
+  ul {
+    margin: 0 10px;
+    padding: 0;
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  li {
+    list-style-type: none;
+    font-size: 0.75em;
+    line-height: 1.6em;
+  }
+
+  li.title {
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #f7ffa1;
+  }
+}
+
+footer .external {
+  display: inline-block;
+  float: right;
+  padding: 3px 15px;
+
+  img {
+    width: 49px;
+    height: 39px;
+  }
 }
 
 .app-bar.open,
@@ -65,7 +198,7 @@ body.open {
           flex: 1;
   font-size: 2em;
   line-height: 60px;
-  margin: 0 16px;
+  margin: 0;
   padding: 0;
   color: #fefefe;
   float: none;
@@ -80,6 +213,12 @@ body.open {
   font-weight: normal;
 }
 
+.app-bar .logo img {
+  width: 4.5em;
+  height: 2.3em;
+  padding: 0.1em 0 0 0.7em;
+}
+
 .app-bar-actions {
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -88,11 +227,39 @@ body.open {
       -ms-flex-direction: row;
           flex-direction: row;
   z-index: 2;
+
+  a {
+    text-decoration: none;
+    position: relative;
+    top: 0.4em;
+    right: 1em;
+    margin: 0 0.3em;
+    font-size: 0.8em;
+    font-family: robotolight;
+  }
+
+  span {
+    position: relative;
+    margin: 0.2rem;
+    top: 0.15em;
+  }
+}
+
+.app-bar-cart {
+  color: #9fcc46;
+}
+
+.app-bar-user {
+  color: #4285f4;
+}
+
+.app-bar-actions a img {
+  width: 2em;
+  margin-top: 0.2em;
 }
 
 .app-bar button {
   width: 60px;
-  height: 60px;
   background-image: none;
   background-color: transparent;
   border: none;
@@ -149,7 +316,7 @@ button.menu img {
   bottom: 0;
   width: 250px;
   height: 100%;
-  background-color: #3367D6;
+  background-color: #da138e;
   color: #fefefe;
   -webkit-transform: translate(-250px, 0);
           transform: translate(-250px, 0);
@@ -175,7 +342,7 @@ button.menu img {
 
 .navdrawer-container h4 {
   background-color: white;
-  color: #3367D6;
+  color: #000;
 }
 
 .navdrawer-container ul {
@@ -220,14 +387,45 @@ button.menu img {
 main {
   margin: 0 auto;
   /* Height of the header */
-  padding: 60px 16px 16px 16px;
+  padding: 115px 25px 32px 25px;
   min-height: 100%;
+
+  a,
+  a:visited {
+    color: #da138e;
+  }
+
+  a:hover {
+    color: #31c5f1
+  }
+}
+
+@media all and (max-width: 459px) {
+  footer .legal {
+    float: none;
+  }
+
+  footer .sitewide {
+    float: none;
+    padding: 15px 0 0 0;
+
+    ul {
+      margin: 0;
+    }
+
+    .footer-solutions {
+      margin-right: 15px;
+    }
+  }
 }
 
 /** Larger Screens - desktops and tablets **/
 @media all and (min-width: 990px) {
-  .app-bar {
+  .app-bar,
+  footer {
     position: relative;
+    max-width: 864px;
+    margin: 0 auto;
   }
 
   .app-bar.open,
@@ -237,20 +435,7 @@ main {
   }
 
   .app-bar-container {
-    display: block;
-    height: 130px;
     max-width: 864px;
-    padding: 0 16px;
-    box-sizing: border-box;
-    background-color: #4285f4;
-  }
-
-  .app-bar .logo {
-    float: left;
-    margin: 0;
-    padding: 0;
-    line-height: 130px;
-    font-size: 46px;
   }
 
   .app-bar-actions {
@@ -275,15 +460,7 @@ main {
   }
 
   .navdrawer-container {
-    position: relative;
-    width: 100%;
-    height: auto;
-    margin-top: 130px;
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    -webkit-transition: none;
-            transition: none;
-    overflow-y: auto;
+    display: none;
   }
 
   .navdrawer-container h4 {
@@ -309,6 +486,8 @@ main {
     max-width: 864px;
     padding-top: 0;
     min-height: initial;
+    padding-left: 90px;
+    padding-right: 90px;
   }
 
   body {

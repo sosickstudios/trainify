@@ -24,26 +24,28 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
 
-    <!-- Google Fonts -->
-    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,700'>
+    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto:300,400'>
+    <script type="text/javascript" src="//use.typekit.net/jbg6mff.js"></script>
+<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   </head>
   <body>
     <header class="app-bar promote-layer">
       <div class="app-bar-container">
         <button class="menu"><img src="images/hamburger.svg" alt="Menu"></button>
-        <h1 class="logo">Web Starter Kit</h1>
+        <h1 class="logo"></h1>
         <section class="app-bar-actions">
-        <!-- Put App Bar Buttons Here -->
+          <a href="#" class="app-bar-cart"><img src="images/cart.svg" /><span>$0</span></a>
+          <a href="#" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" /><span>Login or Signup</span></a>
         </section>
       </div>
+      <div class="logo-container"><h1 class="logo"><img src="images/logo.svg" alt="Trainify" /></h1><button class="app-bar-all-courses">All Courses</button></div>
     </header>
 
     <nav class="navdrawer-container promote-layer">
       <h4>Navigation</h4>
       <ul>
-        <li><a href="#hello">Hello</a></li>
-        <li><a href="#get-started">Get Started</a></li>
-        <li><a href="styleguide/index.html">Style Guide</a></li>
+        <li><a href="#hello">Store</a></li>
+        <li><a href="#get-started">My Courses</a></li>
       </ul>
     </nav>
 
@@ -54,6 +56,38 @@
       <h2 id="get-started">Get Started.</h2>
       <p>Read how to <a href="http://developers.google.com/web/starter-kit">Get Started</a> or check out the <a href="styleguide/index.html">Style Guide</a>.</p>
     </main>
+
+    <footer>
+      <div class="social">
+        <img src="images/footer-logo.svg" />
+        <div class="external">
+          <img src="images/facebook.svg" />
+          <img src="images/twitter.svg" />
+        </div>
+      </div>
+      <div class="links">
+        <div class="legal">
+          &copy; 2014
+          <a href="#">Terms &amp; Conditions</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+        <div class="sitewide">
+          <ul class="footer-solutions">
+            <li class="title">Solutions</li>
+            <li><a href="#">How we’re different</a></li>
+            <li><a href="#">Add a course</a></li>
+            <li><a href="#">Get in touch</a></li>
+          </ul>
+          <ul>
+            <li class="title">Categories</li>
+            <li><a href="#">Project Management</a></li>
+            <li><a href="#">Agile</a></li>
+            <li><a href="#">Accounting</a></li>
+            <li><a href="#">Finance</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
 
     <!-- build:js scripts/main.min.js -->
     <script src="scripts/main.js"></script>
