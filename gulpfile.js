@@ -83,24 +83,24 @@ gulp.task('sass', function(){
 
 // Compile Any Other Sass Files You Added (app/styles)
 gulp.task('styles:scss', function () {
-  return gulp.src(['app/styles/**/*.scss', '!app/styles/components/components.scss'])
-    .pipe($.sass())
-    .on('error', console.error.bind(console))
-    .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
-    .pipe($.uncss({
-      html: [
-        'app/index.html',
-        //'app/styleguide/index.html'
-      ],
-      // CSS Selectors for UnCSS to ignore
-      ignore: [
-        '.navdrawer-container.open',
-        /.app-bar.open/
-      ]
-    }))
-    .pipe($.csso())
-    .pipe(gulp.dest('app/styles'))
-    .pipe($.size({title: 'styles:scss'}));
+  // return gulp.src(['app/styles/**/*.scss', '!app/styles/components/components.scss'])
+  //   .pipe($.sass())
+  //   .on('error', console.error.bind(console))
+  //   .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+  //   .pipe($.uncss({
+  //     html: [
+  //       'app/index.html',
+  //       //'app/styleguide/index.html'
+  //     ],
+  //     // CSS Selectors for UnCSS to ignore
+  //     ignore: [
+  //       '.navdrawer-container.open',
+  //       /.app-bar.open/
+  //     ]
+  //   }))
+  //   .pipe($.csso())
+  //   .pipe(gulp.dest('app/styles'))
+  //   .pipe($.size({title: 'styles:scss'}));
 });
 
 // Output Final CSS Styles
