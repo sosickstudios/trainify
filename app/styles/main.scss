@@ -22,6 +22,15 @@ body.open {
   overflow: hidden;
 }
 
+h1, h2 {
+  margin: 0.5em 0 0 0;
+}
+
+p {
+  margin: 0;
+  line-height: 1.5em;
+}
+
 p a {
   margin: -6px;
   padding: 6px;
