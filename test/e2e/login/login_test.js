@@ -6,12 +6,18 @@ module.exports = {
       .setValue('input[type=text]', 'nightwatch')
       .waitForElementVisible('button[name=btnG]', 1000)
   },
-  
+
   'step two' : function (browser) {
     browser
       .click('button[name=btnG]')
       .pause(1000)
       .assert.containsText('#main', 'The Night Watch')
+      .end();
+  },
+
+  'step three': function(browser){
+    browser
+      .assert.containsText('div', 'blehIDontExist')
       .end();
   }
 };
