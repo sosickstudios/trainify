@@ -61,5 +61,8 @@
     "run-sequence": "^0.3.6",
     "should": "^4.0.4",
     "sinon": "^1.10.2"
+  }, 
+  "scripts": {
+    "test": "nightwatch"
   }
 }

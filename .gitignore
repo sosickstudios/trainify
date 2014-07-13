@@ -4,4 +4,4 @@ node_modules/
 dist/
 npm-debug.log
 *.css
-test/logs/*
+test/e2e/logs/*
