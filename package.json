@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./test/e2e/nightwatch.js",
+    "test": "nightwatch",
     "test-serv": "mocha --require test/support/env --check-leaks",
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
