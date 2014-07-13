@@ -7,7 +7,7 @@ var path = require('path');
 var redis = config.Redis;
 
 app.get('/api/ping', function(req, res){
-  res.send(Date.now());
+  res.send('Date is ' + Date.now());
 });
 
 app.get('/', function(res, res, next){
