@@ -128,7 +128,7 @@ gulp.task('serve', function () {
 gulp.task('default', ['clean'], function (cb) {
   var runSequence = require('run-sequence');
   // runSequence('styles', ['jshint', 'html', 'images', 'styles', 'copy'], cb);
-  runSequence('styles', ['images', 'sass'], cb);
+  runSequence(['images', 'sass'], cb);
 });
 
 // Run PageSpeed Insights
