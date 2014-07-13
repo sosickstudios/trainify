@@ -48,13 +48,6 @@ gulp.task('images', function () {
     .pipe($.size({title: 'images'}));
 });
 
-// Copy All Files At The Root Level (app)
-gulp.task('copy', function() {
-  return gulp.src(['app/*', '!app/*.html'])
-    .pipe(gulp.dest('dist'))
-    .pipe($.size({title: 'copy'}));
-});
-
 gulp.task('sass-dev', function(){
   gulp.src('app/styles/main.scss')
     .pipe($.sass({sourceComments: 'map', sourceMap: 'sass'}))
@@ -84,9 +77,6 @@ gulp.task('sass', function(){
     .pipe($.size({title: 'sass'}));
 });
 
-// Output Final CSS Styles
-gulp.task('styles', ['styles:scss']);
-
 // Scan Your HTML For Assets & Optimize Them
 gulp.task('html', function () {
   return gulp.src('app/**/*.html')
@@ -109,9 +99,6 @@ gulp.task('html', function () {
     .pipe(gulp.dest('dist'))
     .pipe($.size({title: 'html'}));
 });
-
-// Clean Output Directory
-gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
 // Watch Files For Changes & Reload
 gulp.task('serve', function () {
