@@ -3,13 +3,14 @@ var fs        = require('fs')
   , Sequelize = require('sequelize')
   , lodash    = require('lodash')
   , path      = require('path')
+  , config    = require('config').db
   , db        = {};
 
-var sequelize = new Sequelize('sosick', 'sosickstudios', 'b)ncpmHrgZGibtJ(uR', {
+var sequelize = new Sequelize(config.name, config.user, config.password, {
   dialect:  'postgres',
   protocol: 'postgres',
-  port:     5432,
-  host:     '69.164.203.35'
+  port:     config.port,
+  host:     config.host
 });
 
 //var sequelize = new Sequelize('postgres://69.164.203.35:5432/trainify?username=sosickstudios');
