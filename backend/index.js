@@ -11,7 +11,9 @@ app.get('/api/ping', function(req, res){
 });
 
 app.get('/', function(res, res, next){
-  res.render('index');
+  res.render('index', {
+    isDevelopment: process.env.NODE_ENV !== 'production'
+  });
 });
 
 if (process.env.NODE_ENV !== 'production'){

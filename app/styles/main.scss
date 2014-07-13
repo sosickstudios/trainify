@@ -22,6 +22,12 @@ body.open {
   overflow: hidden;
 }
 
+p a {
+  margin: -6px;
+  padding: 6px;
+  position: relative;
+}
+
 .app-bar {
   display: block;
   position: fixed;
