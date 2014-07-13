@@ -1,22 +1,3 @@
-/**
- *
- *  Web Starter Kit
- *  Copyright 2014 Google Inc. All rights reserved.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License
- *
- */
-
 'use strict';
 
 // Include Gulp & Tools We'll Use
@@ -74,33 +55,33 @@ gulp.task('copy', function() {
     .pipe($.size({title: 'copy'}));
 });
 
-gulp.task('sass', function(){
+gulp.task('sass-dev', function(){
   gulp.src('app/styles/main.scss')
     .pipe($.sass({sourceComments: 'map', sourceMap: 'sass'}))
     .pipe(gulp.dest('app/styles'))
+    .pipe($.size({title: 'sass'}))
     .pipe(browserSync.reload({stream: true}));
 });
 
-// Compile Any Other Sass Files You Added (app/styles)
-gulp.task('styles:scss', function () {
-  // return gulp.src(['app/styles/**/*.scss', '!app/styles/components/components.scss'])
-  //   .pipe($.sass())
-  //   .on('error', console.error.bind(console))
-  //   .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
-  //   .pipe($.uncss({
-  //     html: [
-  //       'app/index.html',
-  //       //'app/styleguide/index.html'
-  //     ],
-  //     // CSS Selectors for UnCSS to ignore
-  //     ignore: [
-  //       '.navdrawer-container.open',
-  //       /.app-bar.open/
-  //     ]
-  //   }))
-  //   .pipe($.csso())
-  //   .pipe(gulp.dest('app/styles'))
-  //   .pipe($.size({title: 'styles:scss'}));
+gulp.task('sass', function(){
+  gulp.src('app/styles/main.scss')
+    .pipe($.sass())
+    .on('error', console.error.bind(console))
+    .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+      .pipe($.uncss({
+        html: [
+          'views/index.hbs',
+          //'app/styleguide/index.html'
+        ],
+        // CSS Selectors for UnCSS to ignore
+        ignore: [
+          '.navdrawer-container.open',
+          /.app-bar.open/
+        ]
+      }))
+      .pipe($.csso())
+    .pipe(gulp.dest('app/styles'))
+    .pipe($.size({title: 'sass'}));
 });
 
 // Output Final CSS Styles
@@ -140,7 +121,7 @@ gulp.task('serve', function () {
 
   gulp.watch(['app/**/*.html'], reload);
   gulp.watch(['views/**/*.hbs'], reload);
-  gulp.watch(['app/styles/**/*.scss'], ['sass']);
+  gulp.watch(['app/styles/**/*.scss'], ['sass-dev']);
   gulp.watch(['{.tmp,app}/styles/**/*.css'], reload);
   gulp.watch(['app/scripts/**/*.js'], ['jshint']);
   gulp.watch(['app/images/**/*'], reload);
