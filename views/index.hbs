@@ -7,23 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Trainify</title>
 
-    <link rel="stylesheet" href="styles/main.css">
-
-    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto:300,400'>
-    <script type="text/javascript" src="//use.typekit.net/jbg6mff.js"></script>
-<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <style>
+    button,html{color:#222}body,html{width:100%;height:100%;margin:0;padding:0}body{line-height:1.4;position:relative;font-family:robotolight,Helvetica,Arial,sans-serif;font-size:16px;box-sizing:border-box;min-height:100%;background-color:#fcfcfc}.app-bar{display:block;position:fixed;top:0;left:0;right:0;overflow:hidden;z-index:1;background:#fff}.promote-layer{-webkit-backface-visibility:hidden}.app-bar,.navdrawer-container,main{-webkit-transition:-webkit-transform .3s ease-out;transition:-webkit-transform .3s ease-out}.app-bar-container{display:flex;width:100%;height:40px;position:relative;flex-direction:row;margin:0 auto;background:#f5f5f5}.app-bar button{width:60px;border:none;padding:0;transition:background-color .2s ease-out;-webkit-transition:background-color .2s ease-out;-webkit-tap-highlight-color:transparent;background-image:none;background-color:transparent}img{vertical-align:middle}.app-bar button img{width:60px;height:60px}button.menu img{height:24px;width:24px}h1,h2{margin:.5em 0 0}.app-bar .logo{flex:1 1 0;font-size:2em;margin:0;padding:0;color:#fefefe;float:none;max-width:none;font-weight:300;line-height:60px}.app-bar-actions{display:flex;flex-direction:row;z-index:2}a{color:#00e}.app-bar-cart{color:#9fcc46}a:visited{color:#551a8b}.app-bar-actions a{text-decoration:none;position:relative;top:.4em;right:1em;margin:0 .3em;font-size:.8em;font-family:robotolight}.app-bar-actions a img{width:2em;margin-top:.2em}.app-bar-actions span{position:relative;margin:.2rem;top:.15em}.app-bar-user{color:#4285f4}.logo-container{border-bottom-width:2px;border-bottom-style:solid;border-bottom-color:#fff}.logo-container h1{padding:0;position:relative}.app-bar .logo img{width:4.5em;height:2.3em;padding:.1em 0 0 .7em}.logo-container button.app-bar-all-courses{float:right;position:absolute;display:block;top:63px;font-size:.9em;right:15px;width:auto;color:#da138e;border:1px solid #da138e;white-space:nowrap;padding:10px 20px}.navdrawer-container{z-index:1;position:fixed;top:0;bottom:0;width:250px;height:100%;color:#fefefe;-webkit-transform:translate(-250px,0);overflow-y:auto;background-color:#da138e}.navdrawer-container h4,.navdrawer-container ul li a{height:auto;padding:17px 20px;line-height:1.4}.navdrawer-container h4{color:#000;background-color:#fff}p,ul{font-size:19px}.navdrawer-container ul{padding:0;margin:0;list-style-type:none}.navdrawer-container ul li{border-bottom-style:solid;border-width:1px;border-color:#fff;padding:0}.navdrawer-container ul li a{display:block;text-decoration:none;color:#fff;transition:background-color .2s ease-out;-webkit-transition:background-color .2s ease-out;white-space:nowrap}main{margin:0 auto;padding:115px 25px 32px;min-height:100%}p{margin:0;line-height:1.5em}p a{margin:-6px;padding:6px;position:relative}main a,main a:visited{color:#da138e}
+    </style>
   </head>
   <body>
     <header class="app-bar promote-layer">
       <div class="app-bar-container">
-        <button class="menu"><img src="images/hamburger.svg" alt="Menu"></button>
+        <button class="menu"><img src="images/hamburger.svg" width="24" height="24" alt="Menu"></button>
         <h1 class="logo"></h1>
         <section class="app-bar-actions">
-          <a href="#" class="app-bar-cart"><img src="images/cart.svg" /><span>$0</span></a>
-          <a href="#" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" /><span>Login or Signup</span></a>
+          <a href="#" class="app-bar-cart"><img src="images/cart.svg" width="26" height="26" /><span>$0</span></a>
+          <a href="#" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
         </section>
       </div>
-      <div class="logo-container"><h1 class="logo"><img src="images/logo.svg" alt="Trainify" /></h1><button class="app-bar-all-courses">All Courses</button></div>
+      <div class="logo-container"><h1 class="logo"><img src="images/logo.svg" alt="Trainify" width="166" height="77" /></h1><button class="app-bar-all-courses">All Courses</button></div>
     </header>
 
     <nav class="navdrawer-container promote-layer">
@@ -44,10 +42,10 @@
 
     <footer>
       <div class="social">
-        <img src="images/footer-logo.svg" />
+        <img src="images/footer-logo.svg" width="162" height="80" />
         <div class="external">
-          <img src="images/facebook.svg" />
-          <img src="images/twitter.svg" />
+          <img src="images/facebook.svg" width="71" height="57" />
+          <img src="images/twitter.svg" width="71" height="57" />
         </div>
       </div>
       <div class="links">
@@ -75,6 +73,10 @@
     </footer>
 
     <script async src="scripts/main.js"></script>
+    <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto:300,400'>
+    <script type="text/javascript" src="//use.typekit.net/jbg6mff.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <link rel="stylesheet" href="styles/main.css">
 
     {{#if isDevelopment}}
     <script async src="//localhost:3000/browser-sync-client.1.2.1.js"></script>
