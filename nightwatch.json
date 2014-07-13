@@ -79,6 +79,28 @@
       "selenium" : {
         "start_process" : false
       }
+    },
+
+    "saucelabsie" : {
+      "selenium_host" : "ondemand.saucelabs.com",
+      "selenium_port" : 80,
+      "username" : "sosickstudios",
+      "access_key" : "be8a17ec-6e5e-4f02-bbe4-a9bfba87f96c",
+      "use_ssl" : false,
+      "silent" : true,
+      "output" : true,
+      "screenshots" : {
+        "enabled" : false,
+        "path" : ""
+      },
+      "desiredCapabilities": {
+        "name" : "trainify",
+        "browserName": "internet explorer",
+        "version": "10"
+      },
+      "selenium" : {
+        "start_process" : false
+      }
     }
   }
 }

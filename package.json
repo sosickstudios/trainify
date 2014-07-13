@@ -11,7 +11,7 @@
     "deploy": "ansible-playbook deployment/deploy.yml -i deployment/hosts",
     "build": "gulp",
     "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --require test/support/env",
-    "test-travis": "nightwatch --env saucelabschrome,saucelabsfirefox && istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec"
+    "test-travis": "nightwatch --env saucelabschrome,saucelabsfirefox,saucelabsie && istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require test/support/env --reporter spec"
   },
   "repository": {
     "type": "git",
