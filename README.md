@@ -5,6 +5,6 @@ trainify
 
 [![Dependency Status](https://david-dm.org/sosickstudios/trainify.png)](https://david-dm.org/sosickstudios/trainify)
 
-[![Coverage Status](https://img.shields.io/coveralls/sosickstudios/trainify.svg)](https://coveralls.io/r/sosickstudios/trainify)
+[![Coverage Status](https://img.shields.io/coveralls/sosickstudios/trainify.svg)](https://coveralls.io/r/sosickstudios/trainify?branch=master)
 
 Trainify.io
