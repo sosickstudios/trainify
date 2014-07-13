@@ -4,7 +4,8 @@
   "custom_commands_path" : "",
   "custom_assertions_path" : "",
   "globals_path" : "",
-  
+  "live_output": false,
+
   "selenium" : {
     "start_process" : true,
     "server_path" : "node_modules/selenium-server-standalone-jar/jar/selenium-server-standalone-2.40.0.jar",
@@ -13,16 +14,18 @@
     "port" : 4444,
     "cli_args" : {
       "webdriver.chrome.driver" : "node_modules/chromedriver/lib/chromedriver/chromedriver",
+      "webdriver.firefox.profile" : "",
       "webdriver.ie.driver" : ""
-    }  
+    }
   },
-  
+
   "test_settings" : {
     "default" : {
       "launch_url" : "http://localhost",
       "selenium_port"  : 4444,
-      "selenium_host"  : "localhost",
+      "selenium_host"  : "127.0.0.1",
       "silent": true,
+      "disable_colors": false,
       "screenshots" : {
         "enabled" : false,
         "path" : ""
@@ -33,7 +36,29 @@
         "acceptSslCerts": true
       }
     },
-    
+
+    "saucelabs" : {
+      "selenium_host" : "ondemand.saucelabs.com",
+      "selenium_port" : 80,
+      "username" : "sosickstudios",
+      "access_key" : "be8a17ec-6e5e-4f02-bbe4-a9bfba87f96c",
+      "use_ssl" : false,
+      "silent" : true,
+      "output" : true,
+      "screenshots" : {
+        "enabled" : false,
+        "path" : ""
+      },
+      "desiredCapabilities": {
+        "name" : "trainify",
+        "browserName": "chrome",
+        "version": "35"
+      },
+      "selenium" : {
+        "start_process" : false
+      }
+    },
+
     "chrome" : {
       "desiredCapabilities": {
         "browserName": "chrome",
