@@ -10,7 +10,9 @@ module.exports = {
   },
 
   server: {
-    port: 6158
+    port: 6158,
+    session: 'NKQvtqom}MKLM>,Y+fpuMp.Fvgf(dV/Pb',
+    pass: 'R{ZFBAh$=q/YYYTh@Vekc%PDLibv]yaYjzh'
   },
 
   db: {

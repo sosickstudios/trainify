@@ -3,4 +3,6 @@ node_js:
   - "0.10"
 matrix:
   fast_finish: true
-script: "npm run-script test-travis"
+script:
+  - "npm run test-server"
+  - "npm run-script test-travis"
