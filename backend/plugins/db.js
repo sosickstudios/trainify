@@ -1,10 +1,11 @@
-var fs        = require('fs')
-  , path      = require('path')
-  , Sequelize = require('sequelize')
-  , lodash    = require('lodash')
-  , path      = require('path')
-  , config    = require('config').db
-  , db        = {};
+var fs        = require('fs');
+var path      = require('path');
+var Sequelize = require('sequelize');
+var lodash    = require('lodash');
+var path      = require('path');
+var config    = require('config').db;
+
+var db        = {};
 
 var sequelize = new Sequelize(config.name, config.user, config.password, {
   dialect:  'postgres',
@@ -12,13 +13,9 @@ var sequelize = new Sequelize(config.name, config.user, config.password, {
   port:     config.port,
   host:     config.host,
   logging:  false,
-  pool:     { maxConnections: 5, maxIdleTime: 30 },
-  define:   {
-    underscored: true
-  }
+  pool:     { maxConnections: 5, maxIdleTime: 30 }
 });
 
-//var sequelize = new Sequelize('postgres://69.164.203.35:5432/trainify?username=sosickstudios');
 var modelsPath = path.normalize(__dirname + '/../models');
 
 fs

@@ -13,7 +13,7 @@ describe('user model', function(){
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
       db.user.create({}, { transaction: t }).success(function(user){
-        user.id.should.be.greaterThan(1);
+        user.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
       });
