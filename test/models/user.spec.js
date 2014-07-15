@@ -5,6 +5,18 @@ var db = require('./../../backend/plugins/db');
 
 describe('user model', function(){
 
+  before(function(done){
+    if (process.env.NODE_ENV !== 'testing'){
+      return done();
+    }
+
+    db.sequelize
+      .sync({force: true})
+      .complete(function(){
+        done();
+      });
+  });
+
   it('should have a model', function(){
     var user = db.user.build();
     user.should.exist;
