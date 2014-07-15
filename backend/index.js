@@ -71,6 +71,7 @@ app.use(function(req, res, next){
   return next();
 });
 
+global.app = app;
 global.plugins = require('require-dir')('plugins');
 
 var httpServer;

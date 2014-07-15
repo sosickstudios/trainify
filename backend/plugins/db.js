@@ -10,7 +10,12 @@ var sequelize = new Sequelize(config.name, config.user, config.password, {
   dialect:  'postgres',
   protocol: 'postgres',
   port:     config.port,
-  host:     config.host
+  host:     config.host,
+  logging:  false,
+  pool:     { maxConnections: 5, maxIdleTime: 30 },
+  define:   {
+    underscored: true
+  }
 });
 
 //var sequelize = new Sequelize('postgres://69.164.203.35:5432/trainify?username=sosickstudios');
