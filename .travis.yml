@@ -4,5 +4,8 @@ node_js:
 matrix:
   fast_finish: true
 script:
-  - "npm run test-server"
   - "npm run-script test-travis"
+addons:
+  postgresql: "9.3"
+before_script:
+  - psql -c 'create database sosick;' -U sosickstudios
