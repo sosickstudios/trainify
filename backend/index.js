@@ -77,7 +77,7 @@ global.plugins = require('require-dir')('plugins');
 var httpServer;
 
 global.plugins.db.sequelize
-  .sync()
+  .sync({force: process.env.NODE_ENV === 'testing'})
   .complete(function(err){
     if (err) throw err[0];
 
