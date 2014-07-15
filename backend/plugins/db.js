@@ -28,6 +28,25 @@ fs
     db[model.name] = model
   });
 
+// Associations for models to allow includes
+db.answer.belongsTo(db.question, { as: 'content' });
+
+db.category.hasOne(db.category, { as: 'parent', foreignKey: 'parentId'});
+
+db.company.hasMany(db.training);
+
+db.exercise.hasMany(db.answer);
+
+db.question.hasOne(db.training);
+
+db.training.hasMany(db.access);
+db.training.hasMany(db.exercise);
+db.training.hasOne(db.category);
+
+db.user.hasMany(db.access);
+db.user.hasMany(db.company, { as: 'administrators', foreignKey: 'adminId' }); //Company model needs to have administrators
+db.user.hasMany(db.exercise, { as: 'exercises' });
+
 Object.keys(db).forEach(function(modelName) {
   if ('associate' in db[modelName]) {
     db[modelName].associate(db);

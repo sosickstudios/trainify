@@ -85,7 +85,7 @@ global.plugins.db.sequelize
 
     console.log('Listening on port %d', config.server.port);
   });
-
+  
 // Allow graceful shutdown.
 process.on('SIGTERM', function(){
   console.log('Received kill signal, shutting down gracefully.');
