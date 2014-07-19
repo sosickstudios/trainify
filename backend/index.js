@@ -4,42 +4,49 @@ var config = require('config');
 var hbs = require('hbs');
 var path = require('path');
 var session = require('express-session');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 
 // Store the session configuration information so we
 // can modify it if in a secure environment.
 var sessionConfig = {
   secret: config.server.session,
   saveUninitialized: true,
-  resave: true,
-  cookie: {}
+  resave: true
 };
 
 if (process.env.NODE_ENV === 'production'){
   // If in production, only use secure cookies.
   app.set('trust proxy', 1);
-  sessionConfig.cookie.secure = true;
-
-  // Use redis for the session.
-  var RedisStore = require('connect-redis')(session);
-
-  sessionConfig.store = new RedisStore({
-    host: config.redis.host,
-    port: config.redis.port,
-    pass: config.redis.pass
-  });
+  app.enable('trust proxy');
+  sessionConfig.cookie = {secure: true};
+  sessionConfig.proxy = true;
+  sessionConfig.key = 'session.sid';
 }
+
+// Use redis for the session.
+var RedisStore = require('connect-redis')(session);
+
+sessionConfig.store = new RedisStore({
+  host: config.redis.host,
+  port: config.redis.port,
+  pass: config.redis.pass
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 // If on production, force the cookie to be HTTPS only.
 app.use(session(sessionConfig));
 
-app.get('/api/ping', function(req, res){
-  res.send('Date is ' + Date.now());
+app.use(function(req, res, next){
+  res.locals.isDevelopment = process.env.NODE_ENV !== 'production';
+  next();
 });
 
-app.get('/', function(res, res, next){
-  res.render('index', {
-    isDevelopment: process.env.NODE_ENV !== 'production'
-  });
+app.get('/api/ping', function(req, res){
+  res.send('Date is ' + Date.now());
 });
 
 if (process.env.NODE_ENV !== 'production'){
@@ -53,6 +60,9 @@ app.set('view engine', 'hbs');
 // Make req.locals available to our templates, this is useful as we can
 // then bind to things like the current user or course.
 hbs.localsAsTemplateData(app);
+
+// Ensure all of the partial views and make them available to all full views.
+require('hbs').registerPartials('./views/partials');
 
 // Store this so we know if an attempt to close down gracefully
 // is happening.
@@ -72,7 +82,16 @@ app.use(function(req, res, next){
 });
 
 global.app = app;
+global.models = require('require-dir')('models');
 global.plugins = require('require-dir')('plugins');
+global.controllers = require('require-dir')('controllers');
+
+app.get('/', function(req, res, next){
+  console.log('User is ', + req.user);
+  res.render('index', {
+    isDevelopment: process.env.NODE_ENV !== 'production'
+  });
+});
 
 var httpServer;
 
@@ -81,7 +100,12 @@ global.plugins.db.sequelize
   .complete(function(err){
     if (err) throw err[0];
 
-    httpServer = app.listen(config.server.port, 'localhost');
+    // If on DEV then we dont want to limit requests to localhost, in order to allow
+    // us to test mobile devices. In production, we only accept requests from localhost, which
+    // works since all requests get reverse proxied through NGINX.
+    var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
+
+    httpServer = app.listen(config.server.port, host);
 
     console.log('Listening on port %d', config.server.port);
   });

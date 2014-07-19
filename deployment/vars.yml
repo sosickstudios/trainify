@@ -4,7 +4,7 @@ project_root: /var/projects/trainify
 project_repo: https://github.com/sosickstudios/trainify.git
 postgres_user: sosickstudios
 postgres_password: b)ncpmHrgZGibtJ(uR
-branch: master
+branch: pg-test
 ansible_os_family: Debian
 system_packages:
   - build-essential

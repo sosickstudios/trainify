@@ -68,17 +68,17 @@ gulp.task('sass', function(){
     .pipe($.sass())
     .on('error', console.error.bind(console))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
-      .pipe($.uncss({
-        html: [
-          'views/index.hbs',
-          //'app/styleguide/index.html'
-        ],
-        // CSS Selectors for UnCSS to ignore
-        ignore: [
-          '.navdrawer-container.open',
-          /.app-bar.open/
-        ]
-      }))
+      // .pipe($.uncss({
+      //   html: [
+      //     'views/index.hbs',
+      //     //'app/styleguide/index.html'
+      //   ],
+      //   // CSS Selectors for UnCSS to ignore
+      //   ignore: [
+      //     '.navdrawer-container.open',
+      //     /.app-bar.open/
+      //   ]
+      // }))
       .pipe($.csso())
     .pipe(gulp.dest('app/styles'))
     .pipe($.size({title: 'sass'}));
