@@ -84,10 +84,6 @@ app.get('/', function(req, res, next){
   });
 });
 
-// app.get('/login', function(req, res, next){
-//   res.render('')
-// });
-
 var httpServer;
 
 global.plugins.db.sequelize
