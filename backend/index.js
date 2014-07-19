@@ -4,42 +4,41 @@ var config = require('config');
 var hbs = require('hbs');
 var path = require('path');
 var session = require('express-session');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 
 // Store the session configuration information so we
 // can modify it if in a secure environment.
 var sessionConfig = {
   secret: config.server.session,
   saveUninitialized: true,
-  resave: true,
-  cookie: {}
+  resave: true
 };
 
 if (process.env.NODE_ENV === 'production'){
   // If in production, only use secure cookies.
   app.set('trust proxy', 1);
   sessionConfig.cookie.secure = true;
-
-  // Use redis for the session.
-  var RedisStore = require('connect-redis')(session);
-
-  sessionConfig.store = new RedisStore({
-    host: config.redis.host,
-    port: config.redis.port,
-    pass: config.redis.pass
-  });
 }
+
+// Use redis for the session.
+var RedisStore = require('connect-redis')(session);
+
+sessionConfig.store = new RedisStore({
+  host: config.redis.host,
+  port: config.redis.port,
+  pass: config.redis.pass
+});
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 // If on production, force the cookie to be HTTPS only.
 app.use(session(sessionConfig));
 
 app.get('/api/ping', function(req, res){
   res.send('Date is ' + Date.now());
-});
-
-app.get('/', function(res, res, next){
-  res.render('index', {
-    isDevelopment: process.env.NODE_ENV !== 'production'
-  });
 });
 
 if (process.env.NODE_ENV !== 'production'){
@@ -53,6 +52,9 @@ app.set('view engine', 'hbs');
 // Make req.locals available to our templates, this is useful as we can
 // then bind to things like the current user or course.
 hbs.localsAsTemplateData(app);
+
+// Ensure all of the partial views and make them available to all full views.
+require('hbs').registerPartials('./views/partials');
 
 // Store this so we know if an attempt to close down gracefully
 // is happening.
@@ -73,6 +75,18 @@ app.use(function(req, res, next){
 
 global.app = app;
 global.plugins = require('require-dir')('plugins');
+global.controllers = require('require-dir')('controllers');
+
+app.get('/', function(req, res, next){
+  console.log('User is ', + req.user);
+  res.render('index', {
+    isDevelopment: process.env.NODE_ENV !== 'production'
+  });
+});
+
+// app.get('/login', function(req, res, next){
+//   res.render('')
+// });
 
 var httpServer;
 
