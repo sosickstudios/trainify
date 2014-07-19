@@ -18,7 +18,7 @@ var sessionConfig = {
 if (process.env.NODE_ENV === 'production'){
   // If in production, only use secure cookies.
   app.set('trust proxy', 1);
-  sessionConfig.cookie.secure = true;
+  sessionConfig.cookie = {secure = true};
 }
 
 // Use redis for the session.
