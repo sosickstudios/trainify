@@ -354,6 +354,14 @@ footer .external {
 .app-bar-user,
 .app-bar-user:visited {
   color: #4285f4;
+  vertical-align: top;
+}
+
+.app-bar-user > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12em;
+  display: inline-block;
 }
 
 .app-bar-actions a img {
