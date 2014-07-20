@@ -169,9 +169,9 @@ main.signup {
 
     input[type="email"] {
       border: 1px solid #da138e;
-      line-height: 2em;
+      line-height: 2.2em;
       padding: 0.3em 0.5em;
-      width: 25em;
+      width: 20em;
       font-size: 0.8em;
       color: #000;
       outline: none;
@@ -200,15 +200,17 @@ main.signup {
       background: transparent;
       position: absolute;
       outline: none;
-      top: 0.8em;
-      right: 0.8em;
+      top: 0.2em;
+      line-height: 3.4em;
+      right: 0em;
       border: none;
       background-repeat: no-repeat;
       margin: 0;
       padding: 0;
-      width: 1.8em;
-      height: 1.8em;
+      width: 3.2em;
       background-image: url(/images/submit-btn.svg);
+      background-size: 2.2em;
+      background-position: center;
     }
 
     input:-webkit-autofill {
