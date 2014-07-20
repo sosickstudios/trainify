@@ -18,7 +18,11 @@
         <h1 class="logo"></h1>
         <section class="app-bar-actions">
           <a href="#" class="app-bar-cart"><img src="images/cart.svg" width="26" height="26" /><span>$0</span></a>
-          <a href="/signup" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
+          {{#if user}}
+            <a href="/logout" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>{{user.email}}</span></a>
+          {{else}}
+            <a href="/signup" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
+          {{/if}}
         </section>
       </div>
       <div class="logo-container"><h1 class="logo"><a href="/"><img src="images/logo.svg" alt="Trainify" width="166" height="77" /></a></h1><button class="app-bar-all-courses">All Courses</button></div>

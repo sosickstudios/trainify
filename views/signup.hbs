@@ -1,11 +1,16 @@
 {{> header }}
 
 <main class="signup">
-  <h1>Ready to join or coming back? <br />Great! Just enter your email address.</h1>
+  <h2>Ready to join or coming back? <br />Great! Just enter your email address.</h2>
 
   <form action="signup" method="POST">
-    <input type="email" placeholder="e-mail" name="user">
-    <input type="submit" />
+    <label>
+      <span>e-mail address</span>
+      <div>
+        <input type="email" name="email" required autofocus autocorrect="off" autocapitalize="off">
+        <input type="submit" value="" />
+      </div>
+    </label>
   </form>
 </main>
 

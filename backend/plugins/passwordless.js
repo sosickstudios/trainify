@@ -16,7 +16,8 @@ passwordless.addDelivery(
     function(tokenToSend, uidToSend, recipient, callback) {
         console.log('Send %d to %s', tokenToSend, recipient);
 
-        var link = 'https://trainify.io/login?token=' + tokenToSend + '&uid=' + encodeURIComponent(uidToSend);
+        var host = process.env.NODE_ENV === 'production' ? 'https://trainify.io' : 'http://localhost:6158';
+        var link = host + '/login?token=' + tokenToSend + '&uid=' + encodeURIComponent(uidToSend);
         var message = '<b>You are signed up! Now <a href="' + link + '">Sign in</a>.</b>';
 
         console.log(message);
@@ -60,6 +61,8 @@ app.use(function(req, res, next){
       global.plugins.db.user.find(req.user)
           .then(function(user){
             res.locals.user = user;
+            var gravatar = require('gravatar');
+            console.log(gravatar.url(user.email, {}, true));
             next();
           });
     } else {

@@ -44,7 +44,8 @@
     "body-parser": "^1.4.3",
     "mandrill-api": "^1.0.40",
     "redis": "^0.11.0",
-    "hiredis": "^0.1.17"
+    "hiredis": "^0.1.17",
+    "gravatar": "^1.0.6"
   },
   "devDependencies": {
     "browser-sync": "1.2.1",

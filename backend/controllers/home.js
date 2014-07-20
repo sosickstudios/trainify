@@ -2,13 +2,9 @@ var passwordless = require('passwordless');
 
 var app = global.app;
 
-function getSignup(req, res, next){
-  res.render('signup', {});
-}
-
-app.route('/signup')
-    .get(getSignup);
-    //.post(postSignup);
+app.get('/signup', function(req, res){
+    res.render('signup');
+});
 
 // Use this special syntax to specify a flow of requests.
 app.post('/signup',
@@ -32,7 +28,7 @@ app.post('/signup',
             console.log(err);
             callback(null, null);
           });
-    }),
+    }, {userField: 'email'}),
   function(req, res) {
       res.render('sent');
 });

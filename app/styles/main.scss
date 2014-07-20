@@ -136,17 +136,85 @@ p a {
 }
 
 main.signup {
-  h1 {
+  text-align: center;
+  margin-top: 2em;
+
+  h1,
+  h2 {
     font-family: 'robotolight';
     font-size: 1.4em;
     line-height: 1.3em;
     text-align: center;
+  }
+
+  h2 {
+    color: #949494;
+  }
+
+  h1 {
+    color: #9fcc46;
+  }
+
+  p {
+    max-width: 20em;
+    margin: 0 auto;
     color: #949494;
   }
 
   form {
-    width: 20em;
-    margin: 0 auto;
+    margin: 2em auto 0 auto;
+    position: relative;
+    display: inline-block;
+    text-align: left;
+
+    input[type="email"] {
+      border: 1px solid #da138e;
+      line-height: 2em;
+      padding: 0.3em 0.5em;
+      width: 25em;
+      font-size: 0.8em;
+      color: #000;
+      outline: none;
+    }
+
+    div {
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin: 0 auto;
+      text-align: center;
+
+      span {
+        position: absolute;
+        color: #da138e;
+        text-transform: uppercase;
+        font-size: 0.7em;
+        top: -1.2em;
+        left: 0;
+      }
+    }
+
+    input[type="submit"] {
+      background: transparent;
+      position: absolute;
+      outline: none;
+      top: 0.8em;
+      right: 0.8em;
+      border: none;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 0;
+      width: 1.8em;
+      height: 1.8em;
+      background-image: url(/images/submit-btn.svg);
+    }
+
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px white inset;
+        color: #000 !important;
+    }
   }
 }
 
@@ -281,7 +349,8 @@ footer .external {
   color: #9fcc46;
 }
 
-.app-bar-user {
+.app-bar-user,
+.app-bar-user:visited {
   color: #4285f4;
 }
 
@@ -342,6 +411,7 @@ button.menu img {
 }
 
 .navdrawer-container {
+  visibility: hidden;
   z-index: 1;
   position: fixed;
   top: 0;
@@ -356,6 +426,7 @@ button.menu img {
 }
 
 .navdrawer-container.open {
+  visibility: visible;
   -webkit-transform: translate(0, 0);
           transform: translate(0, 0);
 }
@@ -420,7 +491,7 @@ main {
   margin: 0 auto;
   /* Height of the header */
   padding: 115px 25px 32px 25px;
-  min-height: 100%;
+  min-height: 50%;
 
   a,
   a:visited {
@@ -452,7 +523,7 @@ main {
 }
 
 /** Larger Screens - desktops and tablets **/
-@media all and (min-width: 990px) {
+@media all and (min-width: 1100px) {
   .app-bar,
   footer {
     position: relative;

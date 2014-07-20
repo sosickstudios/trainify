@@ -37,6 +37,11 @@ app.use(cookieParser());
 // If on production, force the cookie to be HTTPS only.
 app.use(session(sessionConfig));
 
+app.use(function(req, res, next){
+  res.locals.isDevelopment = process.env.NODE_ENV !== 'production';
+  next();
+});
+
 app.get('/api/ping', function(req, res){
   res.send('Date is ' + Date.now());
 });
