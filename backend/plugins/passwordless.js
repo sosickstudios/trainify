@@ -1,9 +1,13 @@
 var passwordless = require('passwordless');
 var config = require('config');
+var fs = require('fs');
+var path = require('path');
 var RedisStore = require('passwordless-redisstore');
 
 var mandrill = require('mandrill-api/mandrill');
 var mandrill_client = new mandrill.Mandrill(config.mandrill);
+
+var deliveryTemplate = fs.readFileSync(path.resolve(__dirname + '/../emails/login.html'), 'utf-8');
 
 // Ensure we use a database to back up our tokens.
 passwordless.init(new RedisStore(config.port, config.host, {redisstore: {
@@ -18,9 +22,10 @@ passwordless.addDelivery(
 
         var host = process.env.NODE_ENV === 'production' ? 'https://trainify.io' : 'http://localhost:6158';
         var link = host + '/login?token=' + tokenToSend + '&uid=' + encodeURIComponent(uidToSend);
-        var message = '<b>You are signed up! Now <a href="' + link + '">Sign in</a>.</b>';
 
-        console.log(message);
+        var message = deliveryTemplate
+          .replace(/{{login}}/g, link)
+          .replace(/{{email}}/g, encodeURIComponent(recipient));
 
         var msg = {
           html: message,
