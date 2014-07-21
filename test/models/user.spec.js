@@ -4,6 +4,10 @@ var should = require('should');
 var db = require('./../../backend/plugins/db');
 
 describe('user model', function(){
+  var baseUser = {
+    email: 'test@gmail.com',
+    name: 'Test User' // TODO: Remove this once marked not-null
+  };
 
   before(function(done){
     if (process.env.NODE_ENV !== 'testing'){
@@ -24,7 +28,7 @@ describe('user model', function(){
 
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
-      db.user.create({}, { transaction: t }).success(function(user){
+      db.user.create(baseUser, { transaction: t }).success(function(user){
         user.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
@@ -34,7 +38,7 @@ describe('user model', function(){
 
   it('should default isAdmin and isMasterAdmin to false', function(done){
     db.sequelize.transaction(function(t){
-      db.user.create({}, { transaction: t }).success(function(user){
+      db.user.create(baseUser, { transaction: t }).success(function(user){
         user.isAdmin.should.equal(false);
         user.isMasterAdmin.should.equal(false);
 

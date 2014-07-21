@@ -12,7 +12,7 @@ var sequelize = new Sequelize(config.name, config.user, config.password, {
   protocol: 'postgres',
   port:     config.port,
   host:     config.host,
-  logging:  console.log,
+  logging:  false,
   pool:     { maxConnections: 5, maxIdleTime: 30 }
 });
 

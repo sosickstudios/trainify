@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nightwatch",
-    "test-serv": "mocha --require testenv --check-leaks",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha",
+    "test-e2e": "nightwatch",
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
     "deploy": "ansible-playbook deployment/deploy.yml -i deployment/hosts",
@@ -13,7 +13,7 @@
     "test-server": "node ./backend",
     "coveralls": "coveralls",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --require testenv",
-    "test-travis": "nightwatch --env saucelabschrome,saucelabsfirefox,saucelabsie && istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require testenv --reporter spec"
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require testenv --reporter spec"
   },
   "repository": {
     "type": "git",
