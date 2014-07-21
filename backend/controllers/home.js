@@ -11,14 +11,11 @@ app.post('/signup',
   passwordless.requestToken(
     // Simply accept every user
     function(user, delivery, callback) {
-      console.log('signup for %s', user);
-
       global.plugins.db.user.find({ where: {email: user}})
           .then(function(dbUser){
             if (!dbUser){
               global.plugins.db.user.create({email: user, name: 'Sample'})
                   .then(function(dbUser){
-                    console.log('Got user with id of %s', dbUser.id);
                     callback(null, dbUser.id);
                   });
             } else {

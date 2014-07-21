@@ -18,8 +18,6 @@ passwordless.init(new RedisStore(config.port, config.host, {redisstore: {
 
 passwordless.addDelivery(
     function(tokenToSend, uidToSend, recipient, callback) {
-        console.log('Send %d to %s', tokenToSend, recipient);
-
         var host = process.env.NODE_ENV === 'production' ? 'https://trainify.io' : 'http://localhost:6158';
         var link = host + '/login?token=' + tokenToSend + '&uid=' + encodeURIComponent(uidToSend);
 
