@@ -82,6 +82,7 @@ app.use(function(req, res, next){
 });
 
 global.app = app;
+global.models = require('require-dir')('models');
 global.plugins = require('require-dir')('plugins');
 global.controllers = require('require-dir')('controllers');
 

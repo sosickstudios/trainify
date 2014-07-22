@@ -1,20 +1,21 @@
 var passwordless = require('passwordless');
-
 var app = global.app;
+var User = require('./../models/user');
 
-app.get('/signup', function(req, res){
+exports.get = {
+  signup: function(req, res){
     res.render('signup');
-});
+  }
+};
 
-// Use this special syntax to specify a flow of requests.
-app.post('/signup',
-  passwordless.requestToken(
+exports.post = {
+  signup: passwordless.requestToken(
     // Simply accept every user
-    function(user, delivery, callback) {
-      global.plugins.db.user.find({ where: {email: user}})
+    function(email, delivery, callback) {
+      User.find({ where: {email: email}})
           .then(function(dbUser){
             if (!dbUser){
-              global.plugins.db.user.create({email: user, name: 'Sample'})
+              User.create({email: email})
                   .then(function(dbUser){
                     callback(null, dbUser.id);
                   });
@@ -22,10 +23,13 @@ app.post('/signup',
               callback(null, dbUser.id);
             }
           }, function (err){
-            console.log(err);
             callback(null, null);
           });
-    }, {userField: 'email'}),
-  function(req, res) {
-      res.render('sent');
-});
+  }, {userField: 'email'}) // signup
+};
+
+app.route('/signup')
+  .get(exports.get.signup)
+  .post(exports.post.signup, function(req, res){
+    res.render('sent');
+  });

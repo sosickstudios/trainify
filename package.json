@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --require testenv",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha",
     "test-e2e": "nightwatch",
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
@@ -12,8 +12,8 @@
     "build": "gulp",
     "test-server": "node ./backend",
     "coveralls": "coveralls",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --require testenv",
-    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require testenv --reporter spec"
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,8 @@
     "mandrill-api": "^1.0.40",
     "redis": "^0.11.0",
     "hiredis": "^0.1.17",
-    "gravatar": "^1.0.6"
+    "gravatar": "^1.0.6",
+    "bluebird": "^2.2.2"
   },
   "devDependencies": {
     "browser-sync": "1.2.1",
@@ -84,6 +85,7 @@
     "sinon": "1.10.2",
     "selenium-server-standalone-jar": "2.40.0",
     "supertest": "^0.13.0",
-    "remap": "0.0.2"
+    "remap": "0.0.2",
+    "rewire": "^2.1.0"
   }
 }
