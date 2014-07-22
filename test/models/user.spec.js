@@ -9,12 +9,6 @@ describe('user model', function(){
     name: 'Test User' // TODO: Remove this once marked not-null
   };
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
-  });
-
   it('should have a model', function(){
     var user = db.user.build();
     user.should.exist;

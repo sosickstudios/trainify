@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- --require testenv",
     "test-e2e": "nightwatch",
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
