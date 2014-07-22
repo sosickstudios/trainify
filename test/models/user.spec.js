@@ -13,12 +13,6 @@ describe('user model', function(){
     if (process.env.NODE_ENV !== 'testing'){
       return done();
     }
-
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
   });
 
   it('should have a model', function(){

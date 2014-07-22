@@ -4,16 +4,13 @@ module.exports = {
     port: 6379
   },
 
-  mongo: {
-    host: 'localhost',
-    port: 2700
-  },
-
   server: {
     port: 6158,
-    session: 'NKQvtqom}MKLM>,Y+fpuMp.Fvgf(dV/Pb',
+    session: 'SomeTHINGRand0m',
     pass: 'R{ZFBAh$=q/YYYTh@Vekc%PDLibv]yaYjzh'
   },
+
+  mandrill: 'QhbawI-EVGiLprizwN3i0A',
 
   db: {
     port: 5432,

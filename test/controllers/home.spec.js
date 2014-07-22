@@ -10,7 +10,7 @@ var hbs = require('hbs');
 describe('home controller', function(){
   var app, header, footer;
 
-  before(function(){
+  before(function(done){
     var fs = require('fs');
     var path = require('path');
     var partialsPath = path.resolve('./views/partials/');
@@ -37,6 +37,14 @@ describe('home controller', function(){
 
     global.plugins = require('require-dir')('../../backend/plugins');
     global.controllers = require('require-dir')('../../backend/controllers');
+
+    var db = require('./../../backend/plugins/db');
+
+    db.sequelize
+      .sync({force: true})
+      .complete(function(){
+        done();
+      });
   });
 
   describe('/signup', function(){
