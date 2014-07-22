@@ -1,11 +1,11 @@
-module.exports = function(sequelize, DataTypes) {
-  var User = sequelize.define('user', {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
-    email: DataTypes.STRING,
-    name: DataTypes.STRING,
-    isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false },
-    isMasterAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
+module.exports = function(sequelize, DataTypes){
+  var user = sequelize.define('user', {
+    id:             { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true},
+    email:          { type: DataTypes.STRING, allowNull: false },
+    isAdmin:        { type: DataTypes.BOOLEAN, defaultValue: false },
+    isMasterAdmin:  { type: DataTypes.BOOLEAN, defaultValue: false }, 
+    isUnsubscribed: { type: DataTypes.BOOLEAN, defaultValue: false}
   });
 
-  return User
+  return user;
 };
