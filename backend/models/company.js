@@ -1,5 +1,7 @@
-module.exports = function(sequelize, DataTypes){
-  var company = sequelize.define('company', {
+
+module.exports = function (sequelize, DataTypes){
+
+  var Company = sequelize.define('company', {
     id:         { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     bio:        { type: DataTypes.TEXT },
 
@@ -14,5 +16,6 @@ module.exports = function(sequelize, DataTypes){
     name:       { type: DataTypes.STRING }
   });
 
-  return company;
+  return Company;
 };
+

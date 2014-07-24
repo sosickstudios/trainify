@@ -1,7 +1,7 @@
 var fs        = require('fs');
 var path      = require('path');
 var Sequelize = require('sequelize');
-var lodash    = require('lodash');
+var _         = require('lodash');
 var path      = require('path');
 var config    = require('config').db;
 
@@ -12,7 +12,7 @@ var sequelize = new Sequelize(config.name, config.user, config.password, {
   protocol: 'postgres',
   port:     config.port,
   host:     config.host,
-  logging:  console.log,
+  logging:  false,
   pool:     { maxConnections: 5, maxIdleTime: 30 }
 });
 
@@ -34,6 +34,7 @@ db.answer.belongsTo(db.question, { as: 'content' });
 db.category.hasOne(db.category, { as: 'parent', foreignKey: 'parentId'});
 
 db.company.hasMany(db.training);
+db.company.hasMany(db.user, { as: 'administrator', foreignKey: 'adminId'});
 
 db.exercise.hasMany(db.answer);
 
@@ -44,7 +45,6 @@ db.training.hasMany(db.exercise);
 db.training.hasOne(db.category);
 
 db.user.hasMany(db.access);
-db.user.hasMany(db.company, { as: 'administrators', foreignKey: 'adminId' }); //Company model needs to have administrators
 db.user.hasMany(db.exercise, { as: 'exercises' });
 
 Object.keys(db).forEach(function(modelName) {
@@ -53,7 +53,7 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
-module.exports = lodash.extend({
+module.exports = global.db = _.extend({
   sequelize: sequelize,
   Sequelize: Sequelize
 }, db);

@@ -1,26 +1,27 @@
 var _ = require('lodash');
 
-module.exports = function(sequelize, DataTypes){
-  //Different Types of Exercises
-  var TYPE = {
-    PREP: 'Exam Prep',
-    PRACTICE: 'Practice'
-  };
+module.exports = function (sequelize, DataTypes){
 
-  var exercise = sequelize.define('exercise', {
-    id:         { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+	// Different Types of Exercises
+	var TYPE = {
+	  PREP: 'Exam Prep',
+	  PRACTICE: 'Practice'
+	};
 
-    //Progress of the exercise
-    completed:  { type: DataTypes.DATE, defaultValue: null },
-    index:      { type: DataTypes.INTEGER, defaultValue: 0 },
-    score:      { type: DataTypes.INTEGER, defaultValue: 0 },
+	var Exercise = sequelize.define('exercise', {
+	  id:         { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
 
-    path:       { type: DataTypes.STRING },
-    type:       { type: DataTypes.ENUM, values: _.values(TYPE), default: TYPE.practice }
-  });
+	  //Progress of the DataTypes
+	  completed:  { type: DataTypes.DATE, defaultValue: null },
+	  index:      { type: DataTypes.INTEGER, defaultValue: 0 },
+	  score:      { type: DataTypes.INTEGER, defaultValue: 0 },
 
-  //Assign the Type Object to our model
-  exercise.TYPE = TYPE;
+	  path:       { type: DataTypes.STRING },
+	  type:       { type: DataTypes.ENUM, values: _.values(TYPE), default: TYPE.practice }
+	});
 
-  return exercise;
+	// Assign the Type Object to our model
+	Exercise.TYPE = TYPE;
+
+	return Exercise;
 };

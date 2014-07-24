@@ -2,6 +2,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
 var db = require('./../../backend/plugins/db');
+var Question = db.question;
 
 describe('question model', function(){
 
@@ -18,13 +19,13 @@ describe('question model', function(){
   });
 
   it('should have a model', function(){
-    var question = db.question.build();
+    var question = Question.build();
     question.should.exist;
   });
 
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
-      db.question.create({}, { transaction: t }).success(function(question){
+      Question.create({}, { transaction: t }).success(function(question){
         question.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
@@ -42,7 +43,7 @@ describe('question model', function(){
     };
 
     db.sequelize.transaction(function(t){
-      db.question.create(baseQuestion, { transaction: t }).success(function(question){
+      Question.create(baseQuestion, { transaction: t }).success(function(question){
         question.should.have.properties(baseQuestion);
 
         t.rollback().success(function(){done()});
@@ -52,12 +53,12 @@ describe('question model', function(){
 
   it('should check type enum', function (done){
     var baseQuestion = {
-      type: db.question.TYPE.BOOLEAN
+      type: Question.TYPE.BOOLEAN
     };
 
     db.sequelize.transaction(function(t){
-      db.question.create(baseQuestion, { transaction: t }).success(function(question){
-        question.type.should.equal(db.question.TYPE.BOOLEAN);
+      Question.create(baseQuestion, { transaction: t }).success(function(question){
+        question.type.should.equal(Question.TYPE.BOOLEAN);
 
         t.rollback().success(function(){done()});
       });

@@ -2,6 +2,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
 var db = require('./../../backend/plugins/db');
+var Category = db.category;
 
 describe('category model', function(){
 
@@ -18,13 +19,13 @@ describe('category model', function(){
   });
 
   it('should have a model', function(){
-    var category = db.category.build();
+    var category = Category.build();
     category.should.exist;
   });
 
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
-      db.category.create({}, { transaction: t }).success(function(category){
+      Category.create({}, { transaction: t }).success(function(category){
         category.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
@@ -42,7 +43,7 @@ describe('category model', function(){
     };
 
     db.sequelize.transaction(function(t){
-      db.category.create(baseCategory, { transaction: t }).success(function(category){
+      Category.create(baseCategory, { transaction: t }).success(function(category){
         category.should.have.properties(baseCategory);
 
         t.rollback().success(function(){done()});

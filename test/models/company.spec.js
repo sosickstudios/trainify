@@ -2,6 +2,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
 var db = require('./../../backend/plugins/db');
+var Company = db.company;
 
 describe('company model', function(){
 
@@ -18,13 +19,13 @@ describe('company model', function(){
   });
 
   it('should have a model', function(){
-    var company = db.company.build();
+    var company = Company.build();
     company.should.exist;
   });
 
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
-      db.company.create({}, { transaction: t }).success(function(company){
+      Company.create({}, { transaction: t }).success(function(company){
         company.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
@@ -41,12 +42,11 @@ describe('company model', function(){
       street: 'Fake Street',
       zip: 'Fake Zip',
       logo: 'Fake Logo',
-      name: 'Fake Name', 
-      adminId: 5
+      name: 'Fake Name'
     };
 
     db.sequelize.transaction(function(t){
-      db.company.create(baseCompany, { transaction: t }).success(function(company){
+      Company.create(baseCompany, { transaction: t }).success(function(company){
         company.should.have.properties(baseCompany);
 
         t.rollback().success(function(){done()});

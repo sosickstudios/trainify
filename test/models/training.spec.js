@@ -2,6 +2,7 @@ var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
 var db = require('./../../backend/plugins/db');
+var Training = db.training;
 
 describe('training model', function(){
 
@@ -18,13 +19,13 @@ describe('training model', function(){
   });
 
   it('should have a model', function(){
-    var training = db.training.build();
+    var training = Training.build();
     training.should.exist;
   });
 
   it('should create a unique id', function(done){
     db.sequelize.transaction(function(t){
-      db.training.create({}, { transaction: t }).success(function(training){
+      Training.create({}, { transaction: t }).success(function(training){
         training.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
@@ -42,7 +43,7 @@ describe('training model', function(){
     };
 
     db.sequelize.transaction(function(t){
-      db.training.create(baseTraining, { transaction: t }).success(function(training){
+      Training.create(baseTraining, { transaction: t }).success(function(training){
         training.should.have.properties(baseTraining);
 
         t.rollback().success(function(){done()});
