@@ -82,9 +82,9 @@ app.use(function(req, res, next){
 });
 
 global.app = app;
-global.models = require('require-dir')('models');
 global.plugins = require('require-dir')('plugins');
 global.controllers = require('require-dir')('controllers');
+
 
 app.get('/', function(req, res, next){
   console.log('User is ', + req.user);
@@ -95,7 +95,7 @@ app.get('/', function(req, res, next){
 
 var httpServer;
 
-global.plugins.db.sequelize
+global.plugins.sequelize
   .sync()
   .complete(function(err){
     if (err) throw err[0];
@@ -109,7 +109,7 @@ global.plugins.db.sequelize
 
     console.log('Listening on port %d', config.server.port);
   });
-
+  
 // Allow graceful shutdown.
 process.on('SIGTERM', function(){
   console.log('Received kill signal, shutting down gracefully.');

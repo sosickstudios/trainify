@@ -2,12 +2,12 @@ var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
 var db = require('./../../backend/plugins/db');
-var User = require('./../../backend/models/user');
+var User = db.user;
 
 describe('user model', function(){
+
   var baseUser = {
-    email: 'test@gmail.com',
-    name: 'Test User' // TODO: Remove this once marked not-null
+    email: 'test@gmail.com'
   };
 
   it('should have a model', function(){
@@ -25,31 +25,26 @@ describe('user model', function(){
     });
   });
 
-  it('should default isAdmin and isMasterAdmin to false', function(done){
+  it('should default isAdmin, isUnsubscribed and isMasterAdmin to false', function(done){
     db.sequelize.transaction(function(t){
       User.create(baseUser, { transaction: t }).success(function(user){
         user.isAdmin.should.equal(false);
         user.isMasterAdmin.should.equal(false);
+        user.isUnsubscribed.should.equal(false);
 
         t.rollback().success(function(){done()});
       });
     });
   });
 
-  it('should save the name & email', function(done){
-    var presets = {
-      name: 'Test user',
-      email: 'test@trainify.io'
-    };
-
+  it('should save the email', function(done){
     db.sequelize.transaction(function(t){
-      User.create(presets, { transaction: t }).success(function(user){
-        user.name.should.equal(presets.name);
-        user.email.should.equal(presets.email);
+
+      User.create(baseUser, { transaction: t }).success(function(user){
+        user.email.should.equal(baseUser.email);
 
         t.rollback().success(function(){done()});
       });
     });
   }); // should save the name & email
-
 });
