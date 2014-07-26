@@ -6,18 +6,6 @@ var Training = db.training;
 
 describe('training model', function(){
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
-
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
-  });
-
   it('should have a model', function(){
     var training = Training.build();
     training.should.exist;

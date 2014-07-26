@@ -1,0 +1,22 @@
+{{>header}}
+
+<div>
+  {{training.description}}
+
+</div>
+
+<!-- Starburst -->
+<div id="starburst">
+  <div id="sequence"></div>
+  <div id="chart">
+    <div id="explanation" style="visibility: hidden;">
+      <span id="percentage"></span><br/>
+      of visits begin with this sequence of pages
+      <button id="practiceButton">Practice <span id="buttonText"></span></button>
+    </div>
+  </div>
+</div>
+
+<!-- <script type="text/javascript" src="scripts/dash.js"></script> -->
+<script type="text/javascript" src="scripts/d3.min.js"></script>
+<script type="text/javascript" src="scripts/starburst.js"></script>

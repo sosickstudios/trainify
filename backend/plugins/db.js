@@ -38,7 +38,7 @@ db.company.hasMany(db.user, { as: 'administrator', foreignKey: 'adminId'});
 
 db.exercise.hasMany(db.answer);
 
-db.question.hasOne(db.training);
+db.question.belongsTo(db.training);
 
 db.training.hasMany(db.access);
 db.training.hasMany(db.exercise);

@@ -6,18 +6,6 @@ var Company = db.company;
 
 describe('company model', function(){
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
-
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
-  });
-
   it('should have a model', function(){
     var company = Company.build();
     company.should.exist;

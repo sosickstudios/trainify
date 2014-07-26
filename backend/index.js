@@ -1,11 +1,11 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 var config = require('config');
+var cookieParser = require('cookie-parser');
 var hbs = require('hbs');
 var path = require('path');
 var session = require('express-session');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
 
 // Store the session configuration information so we
 // can modify it if in a secure environment.
@@ -45,10 +45,6 @@ app.use(function(req, res, next){
   next();
 });
 
-app.get('/api/ping', function(req, res){
-  res.send('Date is ' + Date.now());
-});
-
 if (process.env.NODE_ENV !== 'production'){
   // Normalize the path to get to the sibling app directory.
   app.use(express.static(path.normalize(__dirname + '/../app')));
@@ -83,19 +79,13 @@ app.use(function(req, res, next){
 
 global.app = app;
 global.plugins = require('require-dir')('plugins');
+global.db = global.plugins.db;
 global.controllers = require('require-dir')('controllers');
-
-
-app.get('/', function(req, res, next){
-  console.log('User is ', + req.user);
-  res.render('index', {
-    isDevelopment: process.env.NODE_ENV !== 'production'
-  });
-});
+global.routes = require('./routes');
 
 var httpServer;
 
-global.plugins.sequelize
+global.plugins.db.sequelize
   .sync()
   .complete(function(err){
     if (err) throw err[0];

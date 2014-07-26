@@ -1,6 +1,6 @@
 var passwordless = require('passwordless');
 var app = global.app;
-var User = require('./../models/user');
+var User = global.db.user;
 
 exports.get = {
   signup: function(req, res){

@@ -599,8 +599,8 @@ main {
     max-width: 864px;
     padding-top: 0;
     min-height: initial;
-    padding-left: 90px;
-    padding-right: 90px;
+    padding-left: 90px !important;
+    padding-right: 90px !important;
   }
 
   body {
@@ -611,4 +611,50 @@ main {
     position: relative;
     margin-top: 0;
   }
+}
+
+//Starburst
+#starburst {
+  width: 750px;
+  height: 1000px;
+  margin-left: 650px !important;
+  padding-left: 90px !important;
+  padding-right: 90px;
+}
+
+#sequence {
+  width: 600px;
+  height: 70px;
+}
+
+#legend {
+  padding: 10px 0 0 3px;
+}
+
+#sequence text, #legend text {
+  font-weight: 600;
+  fill: #fff;
+}
+
+#chart {
+  position: relative;
+}
+
+#chart path {
+  stroke: #fff;
+}
+
+#explanation {
+  font-size: 12px;
+  position: absolute;
+  top: 90px;
+  left: 165px;
+  width: 140px;
+  text-align: center;
+  color: #666;
+  z-index: 1;
+}
+
+#percentage {
+  font-size: 2.5em;
 }
