@@ -9,6 +9,7 @@
 		w: 75, h: 30, s: 5, t: 10
 	};
 
+	// TODO Remove mock data
 	var mockTraining = {
 		description: 'This is the description of the training course',
 		category: {
@@ -110,7 +111,7 @@
 
 		d3.select('#practiceButton')
 			.on('click', function () {
-				console.log('here');
+				console.log('here'); //TODO add call for practice exam.
 			});
 
 		d3.select('#explanation')

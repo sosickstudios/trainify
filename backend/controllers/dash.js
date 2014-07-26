@@ -9,6 +9,7 @@
 var app = global.app;
 
 var mockTraining = {
+	name: 'Project Management Professional',
 	description: 'This is the description of the training course',
 	category: {
 		name: 'ROOT Category', 

@@ -613,13 +613,20 @@ main {
   }
 }
 
+.dash-courseinfo {
+  width: 40% !important;
+  margin-left: 290px;
+  margin-top: 50px;
+}
+
 //Starburst
 #starburst {
-  width: 750px;
-  height: 1000px;
+  width: 50%;
+  height: 400;
   margin-left: 650px !important;
   padding-left: 90px !important;
   padding-right: 90px;
+  margin-top: -150px;
 }
 
 #sequence {
