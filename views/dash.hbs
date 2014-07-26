@@ -1,31 +1,33 @@
 {{>header}}
 
-<!-- All information relating to the course. -->
-<div class="dash-courseinfo">
-  <div class="course">
-  	<span class="name">{{training.name}}</span><span class="remaining"><br/>
-  	<p name="description">{{training.description}}</p>
-  </div>
-  <div class="actions">
-  	<button>Generate Simulated Exam</button>
-  </div>
-  <div class="provider">
-  	<span class="name">{{training.company.name}}</span><br/>
-  	<p name="bio">{{training.company.bio}}</p>
-  </div>
-</div>
+<div>
+	<!-- All information relating to the course. -->
+	<div class="dash-courseinfo">
+	  <div class="course">
+	  	<span class="name">{{training.name}}</span><span class="remaining"></span><br/>
+	  	<p class="description">{{training.description}}</p>
+	  </div>
+	  <div class="actions">
+	  	<button class="generate-exam">Generate Simulated Exam</button>
+	  </div>
+	  <div class="provider">
+	  	<span class="name">Provided By {{training.company.name}}</span><br/>
+	  	<p class="bio">{{training.company.bio}}</p>
+	  </div>
+	</div>
 
-<!-- Starburst -->
-<div id="starburst">
-  <div id="sequence"></div>
-  <div id="chart">
-    <div id="explanation" style="visibility: hidden;">
-      <span id="percentage"></span><br/>
-      of questions answered correctly.
-      <br/>
-      <button id="practiceButton">Practice <span id="buttonText"></span></button>
-    </div>
-  </div>
+	<!-- Starburst -->
+	<div id="starburst">
+	  <div id="sequence"></div>
+	  <div id="chart">
+	    <div id="explanation" style="visibility: hidden;">
+	      <span id="percentage"></span><br/>
+	      of questions answered correctly.
+	      <br/>
+	      <button id="practiceButton">Practice <span id="buttonText"></span></button>
+	    </div>
+	  </div>
+	</div>
 </div>
 
 <!-- <script type="text/javascript" src="scripts/dash.js"></script> -->

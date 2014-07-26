@@ -614,9 +614,54 @@ main {
 }
 
 .dash-courseinfo {
-  width: 40% !important;
+  width: 30% !important;
   margin-left: 290px;
   margin-top: 50px;
+
+  .course {
+    .name {
+      color: #da138e;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #676767;
+    }
+  }
+
+  .actions {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-left: 10px;
+
+    .generate-exam {
+
+      display: block;
+      font-size: 0.9em;
+      width: auto;
+      color: #da138e;
+      border: 1px solid #da138e;
+      white-space: nowrap;
+      padding: 10px 20px;
+      background: #FFF;
+
+      &:hover {
+        background: #da138e;
+        color: #fcfcfc;
+      }
+      }
+  }
+
+  .provider {
+    .name {
+      color: #585858;
+    }
+
+    .bio {
+      font-size: 14px;
+      color: #444444;
+    }
+  }
 }
 
 //Starburst
@@ -626,7 +671,7 @@ main {
   margin-left: 650px !important;
   padding-left: 90px !important;
   padding-right: 90px;
-  margin-top: -150px;
+  margin-top: -350px;
 }
 
 #sequence {
