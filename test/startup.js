@@ -2,34 +2,41 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var hbs = require('hbs');
+var cookieParser = require('cookie-parser');
+var _ = require('lodash');
 
 before(function(done){
-  var fs = require('fs');
-  var path = require('path');
-  var partialsPath = path.resolve('./views/partials/');
-  header = fs.readFileSync(partialsPath + '/header.hbs', 'utf-8');
-  footer = fs.readFileSync(partialsPath + '/footer.hbs', 'utf-8');
+  // For testing we always start with an empty DB, so force syncronize
+  // so that we can ensure all of the tables are created.
+  if (process.env.NODE_ENV === 'testing'){
+    var sequelize = require('../backend/plugins/db');
+    var handler = function(){ done(); };
 
-  hbs.registerPartial('header', header);
-  hbs.registerPartial('footer', footer);
+    sequelize.sync({force: true}).then(handler, done);
+    return;
+  }
 
-  var db = require('./../backend/plugins/db');
-
-  db.sequelize
-    .sync({force: true})
-    .complete(function(){
-      done();
-    });
+  done();
 });
 
 beforeEach(function(){
-  app = global.app = express();
+  var app = global.app = express();
   app.set('view engine', 'hbs');
 
   hbs.localsAsTemplateData(app);
 
+  var fs = require('fs');
+  var path = require('path');
+  var partialsPath = path.resolve('./views/partials/');
+  var header = fs.readFileSync(partialsPath + '/header.hbs', 'utf-8');
+  var footer = fs.readFileSync(partialsPath + '/footer.hbs', 'utf-8');
+
+  hbs.registerPartial('header', header);
+  hbs.registerPartial('footer', footer);
+
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
+  app.use(cookieParser());
 
   app.use(session({
     secret: 'unittest',
@@ -37,6 +44,11 @@ beforeEach(function(){
     resave: false
   }));
 
-  global.plugins = require('require-dir')('../backend/plugins');
-  global.models = require('require-dir')('../backend/models');
+  app.use(function(req, res, next){
+    res.locals.user = {email: 'testuser@trainify.io'}
+    next();
+  });
+
+  require('../backend/plugins/passwordless')(app);
+  require('../backend/plugins/db');
 });

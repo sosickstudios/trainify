@@ -1,8 +1,8 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var User = db.user;
+var sequelize = require('./../../backend/plugins/db');
+var User = require('./../../backend/models/user');
 
 describe('user model', function(){
 
@@ -16,7 +16,7 @@ describe('user model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       User.create(baseUser, { transaction: t }).success(function(user){
         user.id.should.be.greaterThan(0);
 
@@ -26,7 +26,7 @@ describe('user model', function(){
   });
 
   it('should default isAdmin, isUnsubscribed and isMasterAdmin to false', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       User.create(baseUser, { transaction: t }).success(function(user){
         user.isAdmin.should.equal(false);
         user.isMasterAdmin.should.equal(false);
@@ -38,7 +38,7 @@ describe('user model', function(){
   });
 
   it('should save the email', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
 
       User.create(baseUser, { transaction: t }).success(function(user){
         user.email.should.equal(baseUser.email);

@@ -1,22 +1,10 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var Exercise = db.exercise;
+var sequelize = require('./../../backend/plugins/db');
+var Exercise = require('./../../backend/models/exercise');
 
 describe('exercise model', function(){
-
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
-
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
-  });
 
   it('should have a model', function(){
     var exercise = Exercise.build();
@@ -24,7 +12,7 @@ describe('exercise model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Exercise.create({}, { transaction: t }).success(function(exercise){
         exercise.id.should.be.greaterThan(0);
 
@@ -43,7 +31,7 @@ describe('exercise model', function(){
       userId: 6
     };
 
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Exercise.create(baseExercise, { transaction: t }).success(function(exercise){
         exercise.should.have.properties(baseExercise);
 
@@ -54,10 +42,10 @@ describe('exercise model', function(){
 
   it('should save all fields for the model', function(done){
     var baseExercise = {
-      type: Exercise.TYPE.PREP, 
+      type: Exercise.TYPE.PREP,
     };
 
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Exercise.create(baseExercise, { transaction: t }).success(function(exercise){
         exercise.should.have.properties(baseExercise);
 

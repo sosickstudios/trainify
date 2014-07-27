@@ -6,6 +6,7 @@ var path = require('path');
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var _ = require('lodash');
 
 // Store the session configuration information so we
 // can modify it if in a secure environment.
@@ -81,35 +82,20 @@ app.use(function(req, res, next){
   return next();
 });
 
-global.app = app;
-global.plugins = require('require-dir')('plugins');
-global.controllers = require('require-dir')('controllers');
+var db = require('./plugins/db');
 
+require('./plugins/passwordless')(app);
+require('./routes')(app);
 
-app.get('/', function(req, res, next){
-  console.log('User is ', + req.user);
-  res.render('index', {
-    isDevelopment: process.env.NODE_ENV !== 'production'
-  });
-});
+// If on DEV then we dont want to limit requests to localhost, in order to allow
+// us to test mobile devices. In production, we only accept requests from localhost, which
+// works since all requests get reverse proxied through NGINX.
+var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
 
-var httpServer;
+var httpServer = app.listen(config.server.port, host);
 
-global.plugins.sequelize
-  .sync()
-  .complete(function(err){
-    if (err) throw err[0];
+console.log('Listening on port %d', config.server.port);
 
-    // If on DEV then we dont want to limit requests to localhost, in order to allow
-    // us to test mobile devices. In production, we only accept requests from localhost, which
-    // works since all requests get reverse proxied through NGINX.
-    var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
-
-    httpServer = app.listen(config.server.port, host);
-
-    console.log('Listening on port %d', config.server.port);
-  });
-  
 // Allow graceful shutdown.
 process.on('SIGTERM', function(){
   console.log('Received kill signal, shutting down gracefully.');

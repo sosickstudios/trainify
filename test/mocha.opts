@@ -4,3 +4,7 @@
 --reporter spec
 --ui bdd
 --recursive
+--bail
+--timeout 8000
+--check-leaks
+--globals app

@@ -1,8 +1,8 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var Access = db.access;
+var sequelize = require('./../../backend/plugins/db');
+var Access = require('./../../backend/models/access');
 
 describe('access model', function(){
 
@@ -12,9 +12,9 @@ describe('access model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Access.create({}, { transaction: t }).success(function(access){
-        access.id.should.be.greaterThan(1);
+        access.id.should.be.greaterThan(0);
 
         t.rollback().success(function(){done()});
       });
@@ -22,7 +22,7 @@ describe('access model', function(){
   });
 
   it('should default start date to today', function(done){
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Access.create({}, { transaction: t }).success(function(access){
         var today = (new Date()).getDate();
         access.start.getDate().should.equal(today);
@@ -38,7 +38,7 @@ describe('access model', function(){
       end: today
     };
 
-    db.sequelize.transaction(function(t){
+    sequelize.transaction(function(t){
       Access.create(presets, { transaction: t }).success(function(access){
         access.start.getDate().should.equal(today.getDate());
         access.end.toString().should.equal(presets.end.toString());

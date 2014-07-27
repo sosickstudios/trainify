@@ -5,8 +5,6 @@ var _         = require('lodash');
 var path      = require('path');
 var config    = require('config').db;
 
-var db        = {};
-
 var sequelize = new Sequelize(config.name, config.user, config.password, {
   dialect:  'postgres',
   protocol: 'postgres',
@@ -16,44 +14,31 @@ var sequelize = new Sequelize(config.name, config.user, config.password, {
   pool:     { maxConnections: 5, maxIdleTime: 30 }
 });
 
-var modelsPath = path.normalize(__dirname + '/../models');
+module.exports = sequelize;
 
-fs
-  .readdirSync(modelsPath)
-  .filter(function(file) {
-    return (file.indexOf('.') !== 0) && (file !== 'index.js')
-  })
-  .forEach(function(file) {
-    var model = sequelize.import(path.join(modelsPath, file))
-    db[model.name] = model
-  });
+var models = require('require-dir')('../models');
 
 // Associations for models to allow includes
-db.answer.belongsTo(db.question, { as: 'content' });
+models.answer.belongsTo(models.question, { as: 'content' });
 
-db.category.hasOne(db.category, { as: 'parent', foreignKey: 'parentId'});
+models.category.hasOne(models.category, { as: 'parent', foreignKey: 'parentId'});
 
-db.company.hasMany(db.training);
-db.company.hasMany(db.user, { as: 'administrator', foreignKey: 'adminId'});
+models.company.hasMany(models.training);
+models.company.hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
 
-db.exercise.hasMany(db.answer);
+models.exercise.hasMany(models.answer);
 
-db.question.hasOne(db.training);
+models.question.hasOne(models.training);
 
-db.training.hasMany(db.access);
-db.training.hasMany(db.exercise);
-db.training.hasOne(db.category);
+models.training.hasMany(models.access);
+models.training.hasMany(models.exercise);
+models.training.hasOne(models.category);
 
-db.user.hasMany(db.access);
-db.user.hasMany(db.exercise, { as: 'exercises' });
+models.user.hasMany(models.access);
+models.user.hasMany(models.exercise, { as: 'exercises' });
 
-Object.keys(db).forEach(function(modelName) {
-  if ('associate' in db[modelName]) {
+Object.keys(models).forEach(function(modelName) {
+  if ('associate' in models[modelName]) {
     db[modelName].associate(db);
   }
 });
-
-module.exports = global.db = _.extend({
-  sequelize: sequelize,
-  Sequelize: Sequelize
-}, db);

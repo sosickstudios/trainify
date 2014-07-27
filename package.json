@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover node_modules/mocha/bin/_mocha",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec",
     "test-e2e": "nightwatch",
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
@@ -17,14 +17,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dariusriggins/nginx.git"
+    "url": "https://github.com/sosickstudios/trainify.git"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Sosick Studios",
   "bugs": {
-    "url": "https://github.com/dariusriggins/nginx/issues"
+    "url": "https://github.com/sosickstudios/trainify/issues"
   },
-  "homepage": "https://github.com/dariusriggins/nginx",
+  "homepage": "https://github.com/sosickstudios/trainify",
   "engines": {
     "node": "0.10.x"
   },
@@ -45,12 +44,10 @@
     "mandrill-api": "^1.0.40",
     "redis": "^0.11.0",
     "hiredis": "^0.1.17",
-    "gravatar": "^1.0.6",
     "bluebird": "^2.2.2"
   },
   "devDependencies": {
     "browser-sync": "1.2.1",
-    "chromedriver": "2.10.0-1",
     "del": "0.1.1",
     "gulp": "3.8.6",
     "gulp-autoprefixer": "0.0.8",
@@ -75,17 +72,12 @@
     "istanbul": "0.3.0",
     "jshint-stylish": "0.4.0",
     "mocha": "1.20.1",
-    "nightwatch": "0.5.6",
     "nodemon": "1.2.1",
-    "opn": "0.1.2",
     "psi": "0.1.1",
     "require-dir": "0.1.0",
-    "run-sequence": "0.3.6",
     "should": "4.0.4",
     "sinon": "1.10.2",
-    "selenium-server-standalone-jar": "2.40.0",
     "supertest": "^0.13.0",
-    "remap": "0.0.2",
     "rewire": "^2.1.0"
   }
 }
