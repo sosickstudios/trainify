@@ -1,21 +1,21 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var Category = db.category;
+var sequelize = require('./../../backend/plugins/db');
+var Category = require('./../../backend/models/category');
 
-describe('category model', function(){
+describe.only('category model', function(){
+  var transaction;
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
 
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
   });
 
   it('should have a model', function(){
@@ -24,12 +24,9 @@ describe('category model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
-      Category.create({}, { transaction: t }).success(function(category){
-        category.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Category.create({}, { transaction: transaction }).success(function(category){
+      category.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -42,12 +39,9 @@ describe('category model', function(){
       weight: 20
     };
 
-    db.sequelize.transaction(function(t){
-      Category.create(baseCategory, { transaction: t }).success(function(category){
-        category.should.have.properties(baseCategory);
-
-        t.rollback().success(function(){done()});
-      });
+    Category.create(baseCategory, { transaction: transaction }).success(function(category){
+      category.should.have.properties(baseCategory);
+      done();
     });
   });
 });

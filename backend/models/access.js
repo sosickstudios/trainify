@@ -1,14 +1,8 @@
+var Sequelize = require('sequelize');
+var sequelize = require('../plugins/db');
 
-module.exports = function (sequelize, DataTypes){
-
-	var Access = sequelize.define('access', {
-		id: 	{ type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-		end: 	{ type: DataTypes.DATE, defaultValue: null },
-		start: 	{ type: DataTypes.DATE, defaultValue: DataTypes.NOW	}
-	});
-
-	return Access;
-};
-
-
-
+module.exports = sequelize.define('access', {
+	id: 	{ type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+	end: 	{ type: Sequelize.DATE, defaultValue: null },
+	start: 	{ type: Sequelize.DATE, defaultValue: Sequelize.NOW	}
+});

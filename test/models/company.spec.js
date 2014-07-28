@@ -1,21 +1,21 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var Company = db.company;
+var sequelize = require('./../../backend/plugins/db');
+var Company = require('./../../backend/models/company');
 
 describe('company model', function(){
+  var transaction;
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
 
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
   });
 
   it('should have a model', function(){
@@ -24,12 +24,9 @@ describe('company model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
-      Company.create({}, { transaction: t }).success(function(company){
-        company.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Company.create({}, { transaction: transaction }).success(function(company){
+      company.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -45,12 +42,9 @@ describe('company model', function(){
       name: 'Fake Name'
     };
 
-    db.sequelize.transaction(function(t){
-      Company.create(baseCompany, { transaction: t }).success(function(company){
-        company.should.have.properties(baseCompany);
-
-        t.rollback().success(function(){done()});
-      });
+    Company.create(baseCompany, { transaction: transaction }).success(function(company){
+      company.should.have.properties(baseCompany);
+      done();
     });
   });
 });

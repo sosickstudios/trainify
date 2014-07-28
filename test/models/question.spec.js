@@ -1,21 +1,21 @@
 var assert = require('assert');
 var sinon = require('sinon');
 var should = require('should');
-var db = require('./../../backend/plugins/db');
-var Question = db.question;
+var sequelize = require('./../../backend/plugins/db');
+var Question = require('./../../backend/models/question');
 
 describe('question model', function(){
+  var transaction;
 
-  before(function(done){
-    if (process.env.NODE_ENV !== 'testing'){
-      return done();
-    }
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
 
-    db.sequelize
-      .sync({force: true})
-      .complete(function(){
-        done();
-      });
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
   });
 
   it('should have a model', function(){
@@ -24,12 +24,9 @@ describe('question model', function(){
   });
 
   it('should create a unique id', function(done){
-    db.sequelize.transaction(function(t){
-      Question.create({}, { transaction: t }).success(function(question){
-        question.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create({}, { transaction: transaction }).success(function(question){
+      question.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -39,15 +36,12 @@ describe('question model', function(){
       explanation: 'This is a fake explanation',
       figure: 'This is the figure url',
       path: 'Fake Path',
-      text: 'This is the question text', 
+      text: 'This is the question text',
     };
 
-    db.sequelize.transaction(function(t){
-      Question.create(baseQuestion, { transaction: t }).success(function(question){
-        question.should.have.properties(baseQuestion);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create(baseQuestion, { transaction: transaction }).success(function(question){
+      question.should.have.properties(baseQuestion);
+      done();
     });
   });
 
@@ -56,12 +50,9 @@ describe('question model', function(){
       type: Question.TYPE.BOOLEAN
     };
 
-    db.sequelize.transaction(function(t){
-      Question.create(baseQuestion, { transaction: t }).success(function(question){
-        question.type.should.equal(Question.TYPE.BOOLEAN);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create(baseQuestion, { transaction: transaction }).success(function(question){
+      question.type.should.equal(Question.TYPE.BOOLEAN);
+      done();
     });
   });
 });

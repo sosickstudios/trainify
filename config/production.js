@@ -4,10 +4,7 @@ module.exports = {
     port: 6379
   },
 
-  mongo: {
-    host: 'localhost',
-    port: 2700
-  },
+  mandrill: 'QhbawI-EVGiLprizwN3i0A',
 
   server: {
     port: 6158

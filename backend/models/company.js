@@ -1,21 +1,17 @@
+var Sequelize = require('sequelize');
+var sequelize = require('../plugins/db');
 
-module.exports = function (sequelize, DataTypes){
+module.exports = sequelize.define('company', {
+  id:         { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+  bio:        { type: Sequelize.TEXT },
 
-  var Company = sequelize.define('company', {
-    id:         { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    bio:        { type: DataTypes.TEXT },
+  //Location Fields
+  city:       { type: Sequelize.STRING },
+  province:   { type: Sequelize.STRING },
+  state:      { type: Sequelize.STRING },
+  street:     { type: Sequelize.STRING },
+  zip:        { type: Sequelize.STRING },
 
-    //Location Fields
-    city:       { type: DataTypes.STRING },
-    province:   { type: DataTypes.STRING },
-    state:      { type: DataTypes.STRING },
-    street:     { type: DataTypes.STRING },
-    zip:        { type: DataTypes.STRING },
-
-    logo:       { type: DataTypes.STRING },
-    name:       { type: DataTypes.STRING }
-  });
-
-  return Company;
-};
-
+  logo:       { type: Sequelize.STRING },
+  name:       { type: Sequelize.STRING }
+});
