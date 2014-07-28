@@ -5,6 +5,18 @@ var sequelize = require('./../../backend/plugins/db');
 var Training = require('./../../backend/models/training');
 
 describe('training model', function(){
+  var transaction;
+
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
+
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
+  });
 
   it('should have a model', function(){
     var training = Training.build();
@@ -12,30 +24,23 @@ describe('training model', function(){
   });
 
   it('should create a unique id', function(done){
-    sequelize.transaction(function(t){
-      Training.create({}, { transaction: t }).success(function(training){
-        training.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Training.create({}, { transaction: transaction }).success(function(training){
+      training.id.should.be.greaterThan(0);
+      done();
     });
   });
 
   it('should save all fields for the model', function(done){
     var baseTraining = {
-      // answer: { correct: 'This is the correct answer', incorrect: [ 'One Incorrect', 'Two Incorrect']},
       description: 'This is a description',
       examTotal: 20,
       logo: 'Fake Logo URL',
       questionId: 6
     };
 
-    sequelize.transaction(function(t){
-      Training.create(baseTraining, { transaction: t }).success(function(training){
-        training.should.have.properties(baseTraining);
-
-        t.rollback().success(function(){done()});
-      });
+    Training.create(baseTraining, { transaction: transaction }).success(function(training){
+      training.should.have.properties(baseTraining);
+      done();
     });
   });
 });

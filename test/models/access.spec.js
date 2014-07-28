@@ -5,6 +5,18 @@ var sequelize = require('./../../backend/plugins/db');
 var Access = require('./../../backend/models/access');
 
 describe('access model', function(){
+  var transaction;
+
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
+
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
+  });
 
   it('should have a model', function(){
     var access = Access.build();
@@ -12,23 +24,17 @@ describe('access model', function(){
   });
 
   it('should create a unique id', function(done){
-    sequelize.transaction(function(t){
-      Access.create({}, { transaction: t }).success(function(access){
-        access.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Access.create({}, { transaction: transaction }).success(function(access){
+      access.id.should.be.greaterThan(0);
+      done();
     });
   });
 
   it('should default start date to today', function(done){
-    sequelize.transaction(function(t){
-      Access.create({}, { transaction: t }).success(function(access){
-        var today = (new Date()).getDate();
-        access.start.getDate().should.equal(today);
-
-        t.rollback().success(function(){done()});
-      });
+    Access.create({}, { transaction: transaction }).success(function(access){
+      var today = (new Date()).getDate();
+      access.start.getDate().should.equal(today);
+      done();
     });
   });
 
@@ -38,13 +44,10 @@ describe('access model', function(){
       end: today
     };
 
-    sequelize.transaction(function(t){
-      Access.create(presets, { transaction: t }).success(function(access){
-        access.start.getDate().should.equal(today.getDate());
-        access.end.toString().should.equal(presets.end.toString());
-
-        t.rollback().success(function(){done()});
-      });
+    Access.create(presets, { transaction: transaction }).success(function(access){
+      access.start.getDate().should.equal(today.getDate());
+      access.end.toString().should.equal(presets.end.toString());
+      done();
     });
   });
 

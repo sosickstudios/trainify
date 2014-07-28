@@ -5,6 +5,18 @@ var sequelize = require('./../../backend/plugins/db');
 var Company = require('./../../backend/models/company');
 
 describe('company model', function(){
+  var transaction;
+
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
+
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
+  });
 
   it('should have a model', function(){
     var company = Company.build();
@@ -12,12 +24,9 @@ describe('company model', function(){
   });
 
   it('should create a unique id', function(done){
-    sequelize.transaction(function(t){
-      Company.create({}, { transaction: t }).success(function(company){
-        company.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Company.create({}, { transaction: transaction }).success(function(company){
+      company.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -33,12 +42,9 @@ describe('company model', function(){
       name: 'Fake Name'
     };
 
-    sequelize.transaction(function(t){
-      Company.create(baseCompany, { transaction: t }).success(function(company){
-        company.should.have.properties(baseCompany);
-
-        t.rollback().success(function(){done()});
-      });
+    Company.create(baseCompany, { transaction: transaction }).success(function(company){
+      company.should.have.properties(baseCompany);
+      done();
     });
   });
 });

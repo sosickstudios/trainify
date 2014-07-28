@@ -5,6 +5,18 @@ var sequelize = require('./../../backend/plugins/db');
 var Question = require('./../../backend/models/question');
 
 describe('question model', function(){
+  var transaction;
+
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
+
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
+  });
 
   it('should have a model', function(){
     var question = Question.build();
@@ -12,12 +24,9 @@ describe('question model', function(){
   });
 
   it('should create a unique id', function(done){
-    sequelize.transaction(function(t){
-      Question.create({}, { transaction: t }).success(function(question){
-        question.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create({}, { transaction: transaction }).success(function(question){
+      question.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -30,12 +39,9 @@ describe('question model', function(){
       text: 'This is the question text',
     };
 
-    sequelize.transaction(function(t){
-      Question.create(baseQuestion, { transaction: t }).success(function(question){
-        question.should.have.properties(baseQuestion);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create(baseQuestion, { transaction: transaction }).success(function(question){
+      question.should.have.properties(baseQuestion);
+      done();
     });
   });
 
@@ -44,12 +50,9 @@ describe('question model', function(){
       type: Question.TYPE.BOOLEAN
     };
 
-    sequelize.transaction(function(t){
-      Question.create(baseQuestion, { transaction: t }).success(function(question){
-        question.type.should.equal(Question.TYPE.BOOLEAN);
-
-        t.rollback().success(function(){done()});
-      });
+    Question.create(baseQuestion, { transaction: transaction }).success(function(question){
+      question.type.should.equal(Question.TYPE.BOOLEAN);
+      done();
     });
   });
 });

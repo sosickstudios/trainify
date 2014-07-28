@@ -4,7 +4,19 @@ var should = require('should');
 var sequelize = require('./../../backend/plugins/db');
 var Category = require('./../../backend/models/category');
 
-describe('category model', function(){
+describe.only('category model', function(){
+  var transaction;
+
+  beforeEach(function(done){
+    sequelize.transaction(function(t){
+      transaction = t;
+      done();
+    });
+  });
+
+  afterEach(function(done){
+    transaction.rollback().success(function(){done()});
+  });
 
   it('should have a model', function(){
     var category = Category.build();
@@ -12,12 +24,9 @@ describe('category model', function(){
   });
 
   it('should create a unique id', function(done){
-    sequelize.transaction(function(t){
-      Category.create({}, { transaction: t }).success(function(category){
-        category.id.should.be.greaterThan(0);
-
-        t.rollback().success(function(){done()});
-      });
+    Category.create({}, { transaction: transaction }).success(function(category){
+      category.id.should.be.greaterThan(0);
+      done();
     });
   });
 
@@ -30,12 +39,9 @@ describe('category model', function(){
       weight: 20
     };
 
-    sequelize.transaction(function(t){
-      Category.create(baseCategory, { transaction: t }).success(function(category){
-        category.should.have.properties(baseCategory);
-
-        t.rollback().success(function(){done()});
-      });
+    Category.create(baseCategory, { transaction: transaction }).success(function(category){
+      category.should.have.properties(baseCategory);
+      done();
     });
   });
 });
