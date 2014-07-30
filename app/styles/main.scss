@@ -599,8 +599,8 @@ main {
     max-width: 864px;
     padding-top: 0;
     min-height: initial;
-    padding-left: 90px !important;
-    padding-right: 90px !important;
+    padding-left: 90px;
+    padding-right: 90px;
   }
 
   body {
@@ -667,8 +667,8 @@ main {
 #starburst {
   width: 50%;
   height: 400;
-  margin-left: 650px 
-  padding-left: 90px 
+  margin-left: 650px; 
+  padding-left: 90px;
   padding-right: 90px;
   margin-top: -350px;
 }
