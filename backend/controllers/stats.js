@@ -108,8 +108,8 @@ var stats = {
 							// The data that will be copied to each leaf, so that stats may be applied.
 							var leafData = training;
 
-							// Run our functions over each leaf in the tree.
-							results = treeParser(applyFunctions, result, leafData);
+							// // Run our functions over each leaf in the tree.
+							// results = treeParser(applyFunctions, result, leafData);
 
 							//Send the data as a script, to be executed on the DOM.
 							res.send('window.createVisualization(' + JSON.stringify(result) + ')');
