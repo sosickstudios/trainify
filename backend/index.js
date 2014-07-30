@@ -77,29 +77,20 @@ app.use(function(req, res, next){
   return next();
 });
 
-global.app = app;
-global.plugins = require('require-dir')('plugins');
-global.db = global.plugins.db;
-global.controllers = require('require-dir')('controllers');
-global.routes = require('./routes');
+var db = require('./plugins/db');
 
-var httpServer;
+require('./plugins/passwordless')(app);
+require('./routes')(app);
 
-global.plugins.db.sequelize
-  .sync()
-  .complete(function(err){
-    if (err) throw err[0];
+// If on DEV then we dont want to limit requests to localhost, in order to allow
+// us to test mobile devices. In production, we only accept requests from localhost, which
+// works since all requests get reverse proxied through NGINX.
+var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
 
-    // If on DEV then we dont want to limit requests to localhost, in order to allow
-    // us to test mobile devices. In production, we only accept requests from localhost, which
-    // works since all requests get reverse proxied through NGINX.
-    var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
+var httpServer = app.listen(config.server.port, host);
 
-    httpServer = app.listen(config.server.port, host);
+console.log('Listening on port %d', config.server.port);
 
-    console.log('Listening on port %d', config.server.port);
-  });
-  
 // Allow graceful shutdown.
 process.on('SIGTERM', function(){
   console.log('Received kill signal, shutting down gracefully.');

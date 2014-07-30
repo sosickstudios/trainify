@@ -9,26 +9,6 @@
 		w: 75, h: 30, s: 5, t: 10
 	};
 
-	// TODO Remove mock data
-	var mockTraining = {
-		description: 'This is the description of the training course',
-		category: {
-			name: 'ROOT Category', 
-			children: [{
-				name: 'Child 1',
-				children: [{
-					name: 'Child2'
-				}]
-			}, {
-				name: 'Child 3'
-			}]
-		},  
-		company: {
-			name: 'Company Name', 
-			bio: 'Company Bio'
-		}
-	};
-
 	// Total size of all segments; we set this later, after loading the data.
 	var totalSize = 0; 
 
@@ -53,7 +33,7 @@
 	var currentCategory;
 	// Main function to draw and set up the visualization, once we have the data.
 	function createVisualization(json) {
-
+		console.log('here');
 		// Basic setup of page elements.
 		initializeBreadcrumbTrail();
 
@@ -90,7 +70,7 @@
 		totalSize = path.node().__data__.value;
 	}
 
-	createVisualization(mockTraining.category);
+	// createVisualization(mockTraining.category);
 
 	// Fade all but the current sequence, and show it in the breadcrumb trail.
 	function mouseover(d) {

@@ -1,42 +1,56 @@
-var app = global.app;
-var controllers = global.controllers;
-
 /**
- * Routes for trainify that don't qualify to fall under a controller.
- * @param  { Object }   req  express.js application request object.
- * @param  { Object }   res  express.js application response object.
- * @param  { Function } next express.js middleware callback.
+ * Responsibe for registering all of our routes and routers.
+ *
+ * @param  {Express.application} app The express application instance.
  */
-app.get('/', function(req, res, next){
-  console.log('User is ', + req.user);
-  res.render('index', {
-    isDevelopment: process.env.NODE_ENV !== 'production'
+function registerRoutes(app){
+  app.get('/api/stats', require('./controllers/stats').treeGet);
+
+  app.route('/dash')
+  	.get(require('./controllers/dash').get);
+
+  app.use('/', require('./controllers/home'));
+
+  app.get('/api/util', function (req, res) {
+  	// var Company  =require('./models/company');
+  	// Company.create({
+  	// 	name: 'Global Project Management LLC.',
+  	// 	bio: 'Global Project Management, LLC was formed in 1996 to provide project management services to construction and power utilities companies in New Orleans and Baton Rouge. For more than 18 years, Global PM has evolved into an industry-leading project management software, training, and services firm.'
+  	// });
+  	// var Training = require('./models/training');
+  	// Training.create({
+  	// 	description: 'Project Management Training',
+  	// 	name: 'Project Management Training',
+  	// 	examTotal: 200
+  	// });
+  	
+  	// var Access = require('./models/access');
+  	// Access.findAll({include: [Training]})
+  	// 	.then(function (training){
+  	// 		console.log(training[0].trainings.length);
+  	// 		res.send(200);
+  	// 	});
+  // 	var endDate = new Date();
+  // 	endDate.setFullYear(2016);
+ 	// Access.create({
+ 	// 	end: endDate,
+ 	// 	trainingId: 1,
+ 	// 	userId: 1
+ 	// }).then(function (training){
+ 	// 	console.log(training);
+ 	// });
+ 	// 
+ 	// var Category = require('./models/category');
+
+ 	// Category.create({
+ 	// 	name: 'Category 5', 
+ 	// 	description: 'This is the category 5 description',
+ 	// 	parentId: 4
+ 	// });
+
+ 	res.send(200);
+ 	
   });
-});
+}
 
-app.get('/api/ping', function(req, res){
-  res.send('Date is ' + Date.now());
-});
-
-app.get('/api/util', function (req, res) {
-	var Course = global.plugins.db.training;
-
-	global.plugins.db.company.create({
-		bio: 'Global Project Management, LLC was formed in 1996 to provide project management services to construction and power utilities companies in New Orleans and Baton Rouge. For more than 18 years, Global PM has evolved into an industry-leading project management software, training, and services firm.',
-		name: 'Global Project Management LLC',
-		city: 'Slidell',
-		state: 'Louisiana',
-		street: '1925 Corporate Square Drive, Suite B.',
-		zip: '70458'
-	}).success(function (company) {
-		Course.create({
-			companyId: company.id,
-			name: 'Project Management Professional Training', 
-			description: 'Training for the PMI PMP certification exam.',
-			examTotal: 200
-		}).success(function (course) {
-			console.log(course);
-		});		
-	});
-
-});
+module.exports = registerRoutes;

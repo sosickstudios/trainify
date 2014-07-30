@@ -19,7 +19,7 @@
         <section class="app-bar-actions">
           <a href="#" class="app-bar-cart"><img src="images/cart.svg" width="26" height="26" /><span>$0</span></a>
           {{#if user}}
-            <a href="/logout" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>{{user.email}}</span></a>
+            <a href="/logout" class="app-bar-user signed-in"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>{{user.email}}</span></a>
           {{else}}
             <a href="/signup" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
           {{/if}}

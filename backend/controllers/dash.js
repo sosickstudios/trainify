@@ -1,12 +1,6 @@
-/**
- * Dash controller for express.js GET route /dash. Should render the 
- * dash.hbs with all proper data required for the user.
- * @param  { Object }   req   express.js request object]
- * @param  { Object }   res   express.js response object ]
- * @param  { Function } next  express.js callback 
- * @return {[ type]}        [description]
- */
+var _ = require('lodash');
 var app = global.app;
+var Training = require('./../models/training');
 
 var mockTraining = {
 	name: 'Project Management Professional',
@@ -28,30 +22,35 @@ var mockTraining = {
 	}
 };
 
-exports.get = {
-  dash: function(req, res, next){
+var Sequelize = require('sequelize');
+var Access = require('./../models/access');
+var Company = require('./../models/company');
+var Exercise = require('./../models/exercise');
 
-    res.render('dash', {
-    	training: mockTraining
-    });
-  }
+var dash = {
+	get: function (req, res, next){
+		var query = req.query.trainingId; 
+		var user = res.locals.user;
+
+		if(!query || !user){
+			res.render('error');
+			return;
+		}
+
+		Training.find(query)
+			.then(function (training) {
+				Company.find(training.companyId)
+					.then(function (company){
+						res.render('dash', {
+							company: company,
+							training: mockTraining.category
+						});
+					});
+			});
+	}
 };
 
-exports.post = {
-  dash: function (req, res){
-
-  }
-};
-
-app.route('/dash')
-  .get(exports.get.dash)
-  .post(exports.post.dash);
+module.exports = dash;
 
 
-//Courses
-//Course Provider
-//Expiration Date
-//Structure of categories
-function getDashData (req, res, next){
 
-}

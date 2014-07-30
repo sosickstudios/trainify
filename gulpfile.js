@@ -126,9 +126,9 @@ gulp.task('serve', function () {
 
 // Build Production Files, the Default Task
 gulp.task('default', ['clean'], function (cb) {
-  var runSequence = require('run-sequence');
+  //var runSequence = require('run-sequence');
   // runSequence('styles', ['jshint', 'html', 'images', 'styles', 'copy'], cb);
-  runSequence(['images', 'sass'], cb);
+  //runSequence(['images', 'sass'], cb);
 });
 
 // Run PageSpeed Insights

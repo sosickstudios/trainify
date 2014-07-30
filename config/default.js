@@ -14,7 +14,7 @@ module.exports = {
 
   db: {
     port: 5432,
-    host: '69.164.203.35',
+    host: '127.0.0.1',
     name: 'sosick',
     user: 'sosickstudios',
     password: 'b)ncpmHrgZGibtJ(uR'

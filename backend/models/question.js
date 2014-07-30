@@ -1,6 +1,8 @@
 var _ = require('lodash');
+var Sequelize = require('sequelize');
+var sequelize = require('../plugins/db');
 
-module.exports = function (sequelize, DataTypes){
+module.exports = function (){
   // Different Types of Questions
   var TYPE = {
     BOOLEAN: 'bool',
@@ -8,19 +10,19 @@ module.exports = function (sequelize, DataTypes){
   };
 
   var Question = sequelize.define('question', {
-    id:               { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    bool:             { type: DataTypes.BOOLEAN },
-    correctAnswer:    { type: DataTypes.STRING },    
-    explanation:      { type: DataTypes.TEXT },
-    figure:           { type: DataTypes.STRING },
-    incorrectAnswers: { type: DataTypes.ARRAY(DataTypes.STRING) },
-    path:             { type: DataTypes.STRING },
-    text:             { type: DataTypes.TEXT },
-    type:             { type: DataTypes.ENUM, values: _.values(TYPE), defaultValue: TYPE.MULTIPLE }
+    id:               { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+    bool:             { type: Sequelize.BOOLEAN },
+    correctAnswer:    { type: Sequelize.STRING },    
+    explanation:      { type: Sequelize.TEXT },
+    figure:           { type: Sequelize.STRING },
+    incorrectAnswers: { type: Sequelize.ARRAY(Sequelize.STRING) },
+    path:             { type: Sequelize.STRING },
+    text:             { type: Sequelize.TEXT },
+    type:             { type: Sequelize.ENUM, values: _.values(TYPE), defaultValue: TYPE.MULTIPLE }
   });
 
   //  Assign the Type object to our model.
   Question.TYPE = TYPE;
 
   return Question;
-};
+}();
