@@ -43,7 +43,7 @@ var dash = {
 					.then(function (company){
 						res.render('dash', {
 							company: company,
-							training: mockTraining.category
+							training: training
 						});
 					});
 			});
