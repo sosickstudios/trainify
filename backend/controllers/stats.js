@@ -2,10 +2,10 @@ var _ = require('lodash');
 var Answer = require('./../models/answer');
 var Category = require('./../models/category');
 var Exercise = require('./../models/exercise');
-var Training = require('./../models/training');
-var Promise = require('bluebird');
 var express = require('express');
+var Promise = require('bluebird');
 var router = express.Router();
+var Training = require('./../models/training');
 
 /**
  * Retrieve the average of a leaf, based on the questions that have been answered for that leaf 
@@ -94,6 +94,16 @@ function childrenLoader(item){
  */
 var stats = {
 	get:{
+		/**
+		 * Api call intended to provide a summary of data for a training course, 
+		 * returning a tree of data based on the categories for that training course.
+		 * Each leaf in the tree will have an object called 'stats' that will contain
+		 * calculated averages and statistics based off the current users' past 
+		 * exercises.
+		 *
+		 * @param {Object} req Express application request object.
+		 * @param {Object} res Express application response object.
+		 */
 		tree: function (req, res){
 			var user = res.locals.user;
 
