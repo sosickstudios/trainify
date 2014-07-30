@@ -47,14 +47,14 @@ function leafAverage (leaf, meta) {
 function treeParser (fns, leaf, meta) {
   // Work the tree from the bottom up, so that we may have children functions run first for stats.
   // Call all children recursively.
-  if(leaf.children && leaf.children.length) { 
+  if (leaf.children && leaf.children.length){ 
     leaf.children = _.map(leaf.children, function (item) {
       return treeParser(fns, item, meta);
     });
   }
 
   leaf.stats = {};
-  _.each(fns, function (item) {
+  _.each(fns, function (item){
     leaf.stats[item.key] = item.fn(leaf, meta);
   });
 
@@ -72,7 +72,7 @@ function childrenLoader(item){
 	var deferred = Promise.defer();
 
     item.getChildren().then(function (result){
-      if(result.length){
+      if (result.length){
         Promise.all(_.map(result, function (child) {
         	return childrenLoader(child);
         })).then(function (children){
