@@ -4,6 +4,12 @@
 	var height = 300;
 	var radius = Math.min(width, height) / 2;
 
+	var colors = {
+		standard: 'grey',
+		good: 'green',
+		bad: 'red'
+	};
+
 	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 	var b = {
 		w: 100, h: 30, s: 5, t: 10
@@ -21,7 +27,10 @@
 
 	var partition = d3.layout.partition()
 		.size([2 * Math.PI, radius * radius])
-		.value(function(d) { return 100; });
+		.value(function(d){ 
+			// TODO We should scale this according to how the d.stats.leafaverage is.
+			return 100; 
+		});
 
 	var arc = d3.svg.arc()
 		.startAngle(function(d) { return d.x; })
@@ -61,7 +70,11 @@
 			.attr('display', function(d) { return d.depth ? null : 'none'; })
 			.attr('d', arc)
 			.attr('fill-rule', 'evenodd')
-			.style('fill', function(d) { return 'grey'; })
+			.style('fill', function(d){
+				// TODO in future this should determine the fill color
+				// from accessing the d.stats.leafAverage 
+				return colors.standard; 
+			})
 			.style('opacity', 1)
 			.on('mouseover', mouseover)
 			.on('click', function () {
@@ -187,11 +200,6 @@
 			.attr('width', width)
 			.attr('height', 50)
 			.attr('id', 'trail');
-
-		// Add the label at the end, for the percentage.
-		trail.append('svg:text')
-			.attr('id', 'endlabel')
-			.style('fill', '#000');
 	}
 
 	/**
@@ -233,7 +241,11 @@
 
 		entering.append('svg:polygon')
 			.attr('points', breadcrumbPoints)
-			.style('fill', function(d) { return 'grey'; }); //This is where we must add the fill color
+			.style('fill', function(d) { 
+				// TODO fill this according to d.stats.leafAverage
+				// This is where we must add the fill color
+				return colors.standard; 
+			}); 
 
 		entering.append('svg:text')
 			.attr('x', (b.w + b.t) / 2)
