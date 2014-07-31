@@ -101,8 +101,8 @@ var stats = {
 		 * calculated averages and statistics based off the current users' past 
 		 * exercises.
 		 *
-		 * @param {Object} req Express application request object.
-		 * @param {Object} res Express application response object.
+		 * @param {Express.request} req Express application request object.
+		 * @param {Express.response} res Express application response object.
 		 */
 		tree: function (req, res){
 			var user = res.locals.user;

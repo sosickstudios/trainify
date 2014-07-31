@@ -6,7 +6,7 @@
 
 	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 	var b = {
-		w: 75, h: 30, s: 5, t: 10
+		w: 100, h: 30, s: 5, t: 10
 	};
 
 	// Total size of all segments; we set this later, after loading the data.
@@ -31,9 +31,14 @@
 
 	var clickLock = false;
 	var currentCategory;
-	// Main function to draw and set up the visualization, once we have the data.
+	
+	/**
+	 * Responsible for rendering the starburst based on the data tree that is 
+	 * passed in. 
+	 *
+	 * @param {Object} json Data tree sent in to be rendered, should have the parent-child format.
+	 */
 	function createVisualization(json) {
-		console.log('here');
 		// Basic setup of page elements.
 		initializeBreadcrumbTrail();
 
@@ -46,7 +51,8 @@
 		// For efficiency, filter nodes to keep only those large enough to see.
 		var nodes = partition.nodes(json)
 			.filter(function(d) {
-				return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
+				// 0.005 radians = 0.29 degrees
+				return (d.dx > 0.005); 
 			});
 
 		var path = vis.data([json]).selectAll('path')
@@ -59,7 +65,7 @@
 			.style('opacity', 1)
 			.on('mouseover', mouseover)
 			.on('click', function () {
-				//Any time they click on the starburst paths, we want to flip the lock flag.
+				// Any time they click on the starburst paths, we want to flip the lock flag.
 				clickLock = !clickLock;
 			});
 
@@ -70,11 +76,16 @@
 		totalSize = path.node().__data__.value;
 	}
 
-	// createVisualization(mockTraining.category);
-
-	// Fade all but the current sequence, and show it in the breadcrumb trail.
+	/**
+	 * When the user mouses over one of the partitions in the starburst, 
+	 * this callback will fire. If the clickLock is true, the function should
+	 * simply return to avoid taking focus off the category the user has chosen.
+	 *
+	 * @param {Object} d The data for the current partition that is hovered over. (Category)
+	 */
 	function mouseover(d) {
-		if(clickLock) {
+		// Make sure we don't continue if the user clicked on another partition.
+		if (clickLock) {
 			return;
 		}
 
@@ -91,12 +102,13 @@
 
 		d3.select('#practiceButton')
 			.on('click', function () {
-				console.log('here'); //TODO add call for practice exam.
+				//TODO send the user to the exam interface to practice the current category.
 			});
 
 		d3.select('#explanation')
-			.style('visibility', '');
+			.style('visibility', 'visible');
 
+		// Find the path back to the root from the current moused over partition.
 		var sequenceArray = getAncestors(d);
 		updateBreadcrumbs(sequenceArray, percentageString);
 
@@ -112,9 +124,14 @@
 			.style('opacity', 1);
 	}
 
-	// Restore everything to full opacity when moving off the visualization.
+	/**
+	 * Once the mouse is no longer hovered over the partition, restore opacity 
+	 * so that the user may once again choose a partition.
+	 *
+	 * @param {Object} d The partition that was previously hovered over. (Category)
+	 */
 	function mouseleave(d) {
-		if(clickLock) {
+		if (clickLock) {
 			return;
 		}
 
@@ -123,7 +140,8 @@
 			.style('visibility', 'hidden');
 
 		// Deactivate all segments during transition.
-		d3.selectAll('path').on('mouseover', null);
+		d3.selectAll('path')
+			.on('mouseover', null);
 
 		// Transition each segment to full opacity and then reactivate it.
 		d3.selectAll('path')
@@ -135,11 +153,17 @@
 			});
 
 		d3.select('#explanation')
-		.style('visibility', 'hidden');
+			.style('visibility', 'hidden');
 	}
 
-	// Given a node in a partition layout, return an array of all of its ancestor
-	// nodes, highest first, but excluding the root.
+	/**
+	 * Get the path back to the root in the data tree, and return.
+	 *
+	 * @param {Object} node The partition that is currently selected from the data
+	 *                      tree.
+	 * @return {[Object]} Returns the array of ancestors, that leads back to the 
+	 *                    root of the data tree.
+	 */
 	function getAncestors(node) {
 		var path = [];
 		var current = node;
@@ -152,6 +176,11 @@
 		return path;
 	}
 
+	/**
+	 * Responsible for initiating the svg space in which the breadcrumbs will 
+	 * render. 
+	 *
+	 */
 	function initializeBreadcrumbTrail() {
 		// Add the svg area.
 		var trail = d3.select('#sequence').append('svg:svg')
@@ -165,7 +194,13 @@
 			.style('fill', '#000');
 	}
 
-	// Generate a string that describes the points of a breadcrumb polygon.
+	/**
+	 * Generate a string that describes the points of a breadcrumb polygon.
+	 *
+	 * @param {Object} d partition that is describing the polygon.
+	 * @param {Number} i index that is being described
+	 * @return {String} points of the polygons for the svg area.
+	 */
 	function breadcrumbPoints(d, i) {
 		var points = [];
 		points.push('0,0');
@@ -173,14 +208,20 @@
 		points.push(b.w + b.t + ',' + (b.h / 2));
 		points.push(b.w + ',' + b.h);
 		points.push('0,' + b.h);
-		if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
+
+		// Leftmost breadcrumb; don't include 6th vertex.
+		if (i > 0) { 
 			points.push(b.t + ',' + (b.h / 2));
 		}
 		return points.join(' ');
 	}
 
-	// Update the breadcrumb trail to show the current sequence and percentage.
-	function updateBreadcrumbs(nodeArray, percentageString) {
+	/**
+	 * Update the breadcrumb trail to show the current sequence and percentage.
+	 *
+	 * @param {[Object]} nodeArray path of polygons that will represent the trail. (Category)
+	 */
+	function updateBreadcrumbs(nodeArray) {
 
 		// Data join; key function combines name and depth (= position in sequence).
 		var g = d3.select('#trail')
@@ -209,16 +250,8 @@
 		// Remove exiting nodes.
 		g.exit().remove();
 
-		// Now move and update the percentage at the end.
-		d3.select('#trail').select('#endlabel')
-			.attr('x', (nodeArray.length + 0.5) * (b.w + b.s))
-			.attr('y', b.h / 2)
-			.attr('dy', '0.35em')
-			.attr('text-anchor', 'middle')
-			.text(percentageString);
-
 		// Make the breadcrumb trail visible, if it's hidden.
 		d3.select('#trail')
-			.style('visibility', '');
+			.style('visibility', 'visible');
 	}
 })();

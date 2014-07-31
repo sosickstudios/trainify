@@ -10,8 +10,8 @@ var dash = {
 	 * This routes main purpose is to render the 'dash.hbs' handlebars view, with the 
 	 * current Training and Provider injected into the view.
 	 *
-	 * @param {Object} req Express application request object.
-	 * @param {Object} res Express application response object.
+	 * @param {Express.request} req Express application request object.
+	 * @param {Express.response} res Express application response object.
 	 */
 	get: function (req, res){
 		var query = req.query.trainingId; 
