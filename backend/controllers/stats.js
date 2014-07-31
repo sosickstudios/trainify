@@ -69,23 +69,21 @@ function treeParser (fns, leaf, meta) {
  * @param {Object.<Category>}   item The object that has relations to load.
  */
 function childrenLoader(item){
-	var deferred = Promise.defer();
-
-    item.getChildren().then(function (result){
-      if (result.length){
-        Promise.all(_.map(result, function (child) {
-        	return childrenLoader(child);
-        })).then(function (children){
-        	// Set the values of the children downstream to our object.
-        	item.dataValues.children = children;
- 			deferred.resolve(item);
-        });
-      } else {
-      	deferred.resolve(item);
-      }
-    });
-
-    return deferred.promise;
+	return new Promise(function(resolve, reject){
+		item.getChildren().then(function (result){
+			if (result.length){
+				Promise.all(_.map(result, function (child) {
+					return childrenLoader(child);
+				})).then(function (children){
+					// Set the values of the children downstream to our object.
+					item.dataValues.children = children;
+					resolve(item);
+				});
+			} else {
+				resolve(item);
+			}
+		});
+	});
 };
 
 /**
