@@ -22,7 +22,6 @@ var models = require('require-dir')('../models');
 models.answer.belongsTo(models.question, { as: 'content' });
 
 // Give the parent-child structure to the category through association.
-// models.category.hasOne(models.category, { as: 'parent', foreignKey: 'parentId'});
 models.category.hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
 
 models.company.hasMany(models.training);
