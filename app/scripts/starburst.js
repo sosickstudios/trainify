@@ -1,4 +1,4 @@
-(function (){
+(function (window){
 	// Dimensions of sunburst.
 	var width = 450;
 	var height = 300;
@@ -45,7 +45,7 @@
 	 * Responsible for rendering the starburst based on the data tree that is 
 	 * passed in. 
 	 *
-	 * @param {Object} json Data tree sent in to be rendered, should have the parent-child format.
+	 * @param {Object.<Category>} json Data tree sent in to be rendered, should have the parent-child format.
 	 */
 	function createVisualization(json) {
 		// Basic setup of page elements.
@@ -89,12 +89,16 @@
 		totalSize = path.node().__data__.value;
 	}
 
+	// Attach the function createVisualization to the window so that our call to get 
+	// stats can access this function.
+	window.createVisualization = createVisualization;
+	
 	/**
 	 * When the user mouses over one of the partitions in the starburst, 
 	 * this callback will fire. If the clickLock is true, the function should
 	 * simply return to avoid taking focus off the category the user has chosen.
 	 *
-	 * @param {Object} d The data for the current partition that is hovered over. (Category)
+	 * @param {Object.<Category>} d The data for the current partition that is hovered over.
 	 */
 	function mouseover(d) {
 		// Make sure we don't continue if the user clicked on another partition.
@@ -141,7 +145,7 @@
 	 * Once the mouse is no longer hovered over the partition, restore opacity 
 	 * so that the user may once again choose a partition.
 	 *
-	 * @param {Object} d The partition that was previously hovered over. (Category)
+	 * @param {Object.<Category>} d The partition that was previously hovered over.
 	 */
 	function mouseleave(d) {
 		if (clickLock) {
@@ -172,7 +176,7 @@
 	/**
 	 * Get the path back to the root in the data tree, and return.
 	 *
-	 * @param {Object} node The partition that is currently selected from the data
+	 * @param {Object.<Category>} node The partition that is currently selected from the data
 	 *                      tree.
 	 * @return {[Object]} Returns the array of ancestors, that leads back to the 
 	 *                    root of the data tree.
@@ -266,4 +270,4 @@
 		d3.select('#trail')
 			.style('visibility', 'visible');
 	}
-})();
+})(window);

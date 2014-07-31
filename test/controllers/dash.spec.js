@@ -50,7 +50,6 @@ describe('dash controller', function(){
           Training.create(trainingFields, { transaction: t }).success(function(training){
             request(global.app)
               .get('/dash?trainingId=' + training.id)
-              .send({})
               .expect(companyName)
               .expect(companyBio)
               .expect(trainingName)
