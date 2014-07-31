@@ -1,32 +1,53 @@
 {{>header}}
 
 <div class="dash">
-	{{! All information relating to the course. }}
-	<div class="dash-courseinfo">
-	  <div class="course">
-	  	<span class="name">{{training.name}}</span><span class="remaining"></span><br/>
-	  	<p class="description">{{training.description}}</p>
-	  </div>
-	  <div class="actions">
-	  	<button class="generate-exam">Generate Simulated Exam</button>
-	  </div>
-	  <div class="provider">
-	  	<span class="name">Provided By {{company.name}}</span><br/>
-	  	<p class="bio">{{company.bio}}</p>
-	  </div>
+	<div class="dash-stats">
+		<div class="course-count">
+			<span class="dash-text">1</span><br/>
+			Course(s)
+		</div>
+		<div class="exam-passcount">
+			<span class="dash-text">8</span><br/>
+			Tests Passed
+		</div>
+		<div class="exam-failcount">
+			<span class="dash-text">3</span><br/>
+			Tests Failed
+		</div>
+		<div class="exam-average">
+			<span class="dash-text">88%</span><br/>
+			Test Average
+		</div>
 	</div>
 
-	{{! Starburst }}
-	<div id="starburst">
-	  <div id="sequence"></div>
-	  <div id="chart">
-	    <div id="explanation" style="visibility: hidden;">
-	      <span id="percentage"></span>&#37;<br/>
-	      questions answered correctly.
-	      <br/>
-	      <button id="practiceButton">Practice <span id="buttonText"></span></button>
-	    </div>
-	  </div>
+	<div class="dash-overview">
+		{{! All information relating to the course. }}
+		<div class="dash-courseinfo">
+		  <div class="course">
+		  	<span class="name">{{training.name}}</span><span class="remaining"></span><br/>
+		  	<p class="description">{{training.description}}</p>
+		  </div>
+		  <div class="actions">
+		  	<button class="generate-exam">Generate Simulated Exam</button>
+		  </div>
+		  <div class="provider">
+		  	<span class="name">Provided By {{company.name}}</span><br/>
+		  	<p class="bio">{{company.bio}}</p>
+		  </div>
+		</div>
+
+		{{! Starburst }}
+		<div id="starburst">
+		  <div id="sequence"></div>
+		  <div id="chart">
+		    <div id="explanation" style="visibility: hidden;">
+		      <span id="percentage"></span>&#37;<br/>
+		      questions answered correctly.
+		      <br/>
+		      <button id="practiceButton">Practice <span id="buttonText"></span></button>
+		    </div>
+		  </div>
+		</div>
 	</div>
 </div>
 

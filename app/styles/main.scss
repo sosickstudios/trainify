@@ -1,8 +1,14 @@
 @import 'h5bp';
 @import 'fonts';
 
+$primary-green: #9fcc46;
+$primary-orange: #f68421;
+$primary-red: #f62621;
 $primary-violet: #da138e;
+
 $secondary-text: #676767;
+
+$primary-text-size: 1.5em;
 $secondary-text-size: 0.9em;
 
 html,
@@ -619,8 +625,7 @@ main {
 
 .dash-courseinfo {
   width: 30%;
-  margin-left: 290px;
-  margin-top: 50px;
+  margin: 0 0 0 20%;
 
   .course {
     .name {
@@ -663,6 +668,41 @@ main {
       color: $secondary-text;
     }
   }
+}
+
+.dash-statsbar {
+  float: left;
+  font-size: 1.5em;
+  padding: 10px 5px;
+  margin: 0 3.5%;
+}
+
+.dash-text{
+  margin-left: 30%;
+}
+
+.dash-stats {
+  margin-left: 17%;
+  width: 75%;
+  .course-count {
+    @extend .dash-statsbar;
+    color: $primary-violet;
+  }
+
+  .exam-average {
+    @extend .dash-statsbar;
+    color: $primary-orange;
+  }
+
+  .exam-failcount {
+    @extend .dash-statsbar;
+    color: $primary-red;
+  }
+
+  .exam-passcount {
+    @extend .dash-statsbar;
+    color: $primary-green;
+  } 
 }
 
 #starburst {
