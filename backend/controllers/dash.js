@@ -35,6 +35,3 @@ router.route('/')
 	.get(dash.get);
 
 module.exports = router;
-
-
-

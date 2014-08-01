@@ -56,9 +56,10 @@ describe('dash controller', function(){
               .expect(200, trainingDescription, function(){
                 t.rollback().success(function(){done();});
               });
-          });          
-        })
-
+          }).failure(function(){
+            t.rollback.success(function(){done();})
+          });      
+        });
       });
     });
 
