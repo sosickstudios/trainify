@@ -16,7 +16,7 @@
  *  limitations under the License
  *
  */
-(function (window) {
+(function () {
   'use strict';
 
   var querySelector = document.querySelector.bind(document);
@@ -26,7 +26,6 @@
   var appbarElement = querySelector('.app-bar');
   var courseBtn = querySelector('.app-bar-all-courses');
   var menuBtn = querySelector('.menu');
-  var main = querySelector('main');
 
   function closeMenu() {
     body.classList.remove('open');
@@ -63,10 +62,10 @@
    * to.
    */
   function toggleCourseChange(course){
-    if(!initialized) return;
+    if (!initialized) return;
 
     // Go through the array of listeners and pass in the newly selected or loaded training course.
-    for(var i = 0; i < listeners.length; i++){
+    for (var i = 0; i < listeners.length; i++){
       var callback = listeners[i];
       callback(course);
     }
@@ -105,11 +104,10 @@
     navdrawerContainer.classList.toggle('open');
   }
 
-  // main.addEventListener('click', closeMenu);
   menuBtn.addEventListener('click', toggleMenu);
   navdrawerContainer.addEventListener('click', function (event) {
     if (event.target.nodeName === 'A' || event.target.nodeName === 'LI') {
       closeMenu();
     }
   });
-})(window);
+})();

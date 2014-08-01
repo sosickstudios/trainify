@@ -7,3 +7,4 @@ npm-debug.log
 test/e2e/logs/*
 test/e2e/selenium*
 coverage/
+*.sublime-workspace

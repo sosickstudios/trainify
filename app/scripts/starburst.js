@@ -72,7 +72,7 @@
 			.attr('fill-rule', 'evenodd')
 			.style('fill', function(d){
 				// TODO in future this should determine the fill color
-				// from accessing the d.stats.leafAverage 
+				// from accessing the d.stats.leafAverage hack(bryce)
 				return colors.standard; 
 			})
 			.style('opacity', 1)
@@ -120,7 +120,8 @@
 
 		d3.select('#practiceButton')
 			.on('click', function () {
-				//TODO send the user to the exam interface to practice the current category.
+				// TODO send the user to the exam interface to practice the current category.
+				// hack(bryce)
 			});
 
 		d3.select('#explanation')
