@@ -24,15 +24,15 @@
 		{{! All information relating to the course. }}
 		<div class="dash-courseinfo">
 		  <div class="course">
-		  	<span class="name">{{training.name}}</span><span class="remaining"></span><br/>
-		  	<p class="description">{{training.description}}</p>
+		  	<span id="course-name" class="course-name"></span><span class="remaining"></span><br/>
+		  	<p class="course-description"></p>
 		  </div>
 		  <div class="actions">
 		  	<button class="generate-exam">Generate Simulated Exam</button>
 		  </div>
-		  <div class="provider">
-		  	<span class="name">Provided By {{company.name}}</span><br/>
-		  	<p class="bio">{{company.bio}}</p>
+		  <div>
+		  	<span class="provider-name"></span><br/>
+		  	<p class="provider-bio"></p>
 		  </div>
 		</div>
 
@@ -50,8 +50,9 @@
 		</div>
 	</div>
 </div>
-
+<script type="text/javascript" src="scripts/dash.js"></script>
 <script type="text/javascript" src="scripts/d3.min.js"></script>
-<script type="text/javascript" src="scripts/starburst.js"></script>
-<script type="text/javascript" src="/api/stats/tree"></script>
+<script async type="text/javascript" src="scripts/starburst.js"></script>
+
+{{>footer}}
 

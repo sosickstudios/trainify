@@ -14,19 +14,7 @@ var dash = {
 	 * @param {Express.response} res Express application response object.
 	 */
 	get: function (req, res){
-		var query = req.query.trainingId; 
-		var user = res.locals.user;
-
-		Training.find(query)
-			.then(function (training) {
-				Company.find(training.companyId)
-					.then(function (company){
-						res.render('dash', {
-							company: company,
-							training: training
-						});
-					});
-			});
+		res.render('dash');
 	}
 };
 

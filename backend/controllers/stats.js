@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var Answer = require('./../models/answer');
 var Category = require('./../models/category');
+var Company = require('./../models/company');
 var Exercise = require('./../models/exercise');
 var express = require('express');
 var Promise = require('bluebird');
@@ -116,11 +117,17 @@ var stats = {
 							// The data that will be copied to each leaf, so that stats may be applied.
 							var leafData = training;
 
-							// // Run our functions over each leaf in the tree.
-							// results = treeParser(applyFunctions, result, leafData);
+							// TODO join the tables from raw query.
+							Company.find(training.companyId).then(function (company){
+								training.category = result;
+								var data = {course: training, company: company};
 
-							//Send the data as a script, to be executed on the DOM.
-							res.send('window.createVisualization(' + JSON.stringify(result) + ')');
+								// // Run our functions over each leaf in the tree.
+								// results = treeParser(applyFunctions, result, leafData);
+
+								//Send the data as a script, to be executed on the DOM.
+								res.send('window.Trainify.initCourseData(' + JSON.stringify([data]) + ');');
+							});
 						});
 					
 				});

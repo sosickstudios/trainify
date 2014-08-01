@@ -627,15 +627,13 @@ main {
   width: 30%;
   margin: 0 0 0 20%;
 
-  .course {
-    .name {
-      color: $primary-violet;
-    }
+  .course-name {
+    color: $primary-violet;
+  }
 
-    .description {
-      font-size: $secondary-text-size;
-      color: $secondary-text;
-    }
+  .course-description {
+    font-size: $secondary-text-size;
+    color: $secondary-text;
   }
 
   .actions {
@@ -658,15 +656,13 @@ main {
       }
   }
 
-  .provider {
-    .name {
-      color: #585858;
-    }
+  .provider-name {
+    color: #585858;
+  }
 
-    .bio {
-      font-size: $secondary-text-size;
-      color: $secondary-text;
-    }
+  .provider-bio {
+    font-size: $secondary-text-size;
+    color: $secondary-text;
   }
 }
 

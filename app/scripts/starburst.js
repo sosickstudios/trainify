@@ -88,11 +88,12 @@
 		// Get total size of the tree = value of root node from partition.
 		totalSize = path.node().__data__.value;
 	}
-
-	// Attach the function createVisualization to the window so that our call to get 
-	// stats can access this function.
-	window.createVisualization = createVisualization;
 	
+	// Attach a listener for when the data is loaded or changed/refreshed.
+	window.Trainify.attachCourseDataListener(function (data){
+		createVisualization(data.course.category);
+	});
+
 	/**
 	 * When the user mouses over one of the partitions in the starburst, 
 	 * this callback will fire. If the clickLock is true, the function should
