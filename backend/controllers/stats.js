@@ -39,9 +39,9 @@ function leafAverage (leaf, meta) {
  * Will traverse a data tree from the bottom to the top, applying a set of functions
  * to each leaf along the way. 
  *
- * @param	{[Object.<String, Function>]}	fns    An object containing an array of objects with a * field name and function, used for attaching the calculated data to each leaf.
- * @param 	{Object.<Category>}    leaf    The current leaf that is being worked on.
- * @param 	{Object} meta 	Data that can be accessed from each leaf being worked on, used for    * calculating averages.
+ * @param {[Object.<String, Function>]} fns An object containing an array of objects with a       * field name and function, used for attaching the calculated data to each leaf.
+ * @param {Category} leaf The current leaf that is being worked on.
+ * @param {Object} meta Data that can be accessed from each leaf being worked on, used for        * calculating averages.
  * @return 	{Object} Returns a category data tree in the parent-child format with calculated statistics on each leaf.
  */
 function treeParser (fns, leaf, meta) {
@@ -66,7 +66,7 @@ function treeParser (fns, leaf, meta) {
  * nested associations using sequelizes set up getters. This method will return a tree of data,
  * that has a children field attached if there are any existent.
  *
- * @param {Object.<Category>}   item The object that has relations to load.
+ * @param {Category}   item The object that has relations to load.
  */
 function childrenLoader(item){
 	return new Promise(function(resolve, reject){

@@ -28,7 +28,7 @@
 	var partition = d3.layout.partition()
 		.size([2 * Math.PI, radius * radius])
 		.value(function(d){ 
-			// TODO We should scale this according to how the d.stats.leafaverage is.
+			// HACK(BRYCE) We should scale this according to how the d.stats.leafaverage is.
 			return 100; 
 		});
 
@@ -45,7 +45,7 @@
 	 * Responsible for rendering the starburst based on the data tree that is 
 	 * passed in. 
 	 *
-	 * @param {Object.<Category>} json Data tree sent in to be rendered, should have the parent-  * child format.
+	 * @param {Category} json Data tree sent in to be rendered, should have the parent-  * child format.
 	 */
 	function createVisualization(json) {
 		// Basic setup of page elements.
@@ -71,7 +71,7 @@
 			.attr('d', arc)
 			.attr('fill-rule', 'evenodd')
 			.style('fill', function(d){
-				// TODO in future this should determine the fill color
+				// HACK(BRYCE) in future this should determine the fill color
 				// from accessing the d.stats.leafAverage hack(bryce)
 				return colors.standard; 
 			})
@@ -99,7 +99,7 @@
 	 * this callback will fire. If the clickLock is true, the function should
 	 * simply return to avoid taking focus off the category the user has chosen.
 	 *
-	 * @param {Object.<Category>} d The data for the current partition that is hovered over.
+	 * @param {Category} d The data for the current partition that is hovered over.
 	 */
 	function mouseover(d) {
 		// Make sure we don't continue if the user clicked on another partition.
@@ -147,7 +147,7 @@
 	 * Once the mouse is no longer hovered over the partition, restore opacity 
 	 * so that the user may once again choose a partition.
 	 *
-	 * @param {Object.<Category>} d The partition that was previously hovered over.
+	 * @param {Category} d The partition that was previously hovered over.
 	 */
 	function mouseleave(d) {
 		if (clickLock) {
@@ -178,7 +178,7 @@
 	/**
 	 * Get the path back to the root in the data tree, and return.
 	 *
-	 * @param {Object.<Category>} node The partition that is currently selected from the data
+	 * @param {Category} node The partition that is currently selected from the data
 	 *                      tree.
 	 * @return {[Object]} Returns the array of ancestors, that leads back to the 
 	 *                    root of the data tree.
@@ -210,7 +210,7 @@
 	/**
 	 * Generate a string that describes the points of a breadcrumb polygon.
 	 *
-	 * @param {Object.<Category>} d partition that is describing the polygon.
+	 * @param {Category} d partition that is describing the polygon.
 	 * @param {Number} i index that is being described
 	 * @return {String} points of the polygons for the svg area.
 	 */
@@ -232,7 +232,7 @@
 	/**
 	 * Update the breadcrumb trail to show the current sequence and percentage.
 	 *
-	 * @param {[Object.<Category>]} nodeArray path of polygons that will represent the trail.      * (Category)
+	 * @param {[Category]} nodeArray path of polygons that will represent the trail.      * (Category)
 	 */
 	function updateBreadcrumbs(nodeArray) {
 
@@ -247,8 +247,8 @@
 		entering.append('svg:polygon')
 			.attr('points', breadcrumbPoints)
 			.style('fill', function(d) { 
-				// TODO fill this according to d.stats.leafAverage
-				// This is where we must add the fill color
+				// HACK(BRYCE): TODO fill this according to d.stats.leafAverage This is where we 
+				// must add the fill color
 				return colors.standard; 
 			}); 
 
