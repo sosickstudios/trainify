@@ -18,7 +18,7 @@
         failCount.innerHTML = '3';
         examAverage.innerHTML = '88%';
 
-        trainingName.innerHTML = data.company.name;
+        trainingName.innerHTML = data.course.name;
         trainingDescription.innerHTML = data.course.description;
 
         providerName.innerHTML = 'Provided By ' + data.company.name;
