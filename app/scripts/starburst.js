@@ -1,4 +1,4 @@
-(function (window){
+(function (){
 	// Dimensions of sunburst.
 	var width = 450;
 	var height = 300;
@@ -45,7 +45,7 @@
 	 * Responsible for rendering the starburst based on the data tree that is 
 	 * passed in. 
 	 *
-	 * @param {Object.<Category>} json Data tree sent in to be rendered, should have the parent-child format.
+	 * @param {Object.<Category>} json Data tree sent in to be rendered, should have the parent-  * child format.
 	 */
 	function createVisualization(json) {
 		// Basic setup of page elements.
@@ -198,7 +198,6 @@
 	/**
 	 * Responsible for initiating the svg space in which the breadcrumbs will 
 	 * render. 
-	 *
 	 */
 	function initializeBreadcrumbTrail() {
 		// Add the svg area.
@@ -211,7 +210,7 @@
 	/**
 	 * Generate a string that describes the points of a breadcrumb polygon.
 	 *
-	 * @param {Object} d partition that is describing the polygon.
+	 * @param {Object.<Category>} d partition that is describing the polygon.
 	 * @param {Number} i index that is being described
 	 * @return {String} points of the polygons for the svg area.
 	 */
@@ -233,7 +232,7 @@
 	/**
 	 * Update the breadcrumb trail to show the current sequence and percentage.
 	 *
-	 * @param {[Object]} nodeArray path of polygons that will represent the trail. (Category)
+	 * @param {[Object.<Category>]} nodeArray path of polygons that will represent the trail.      * (Category)
 	 */
 	function updateBreadcrumbs(nodeArray) {
 
@@ -272,4 +271,4 @@
 		d3.select('#trail')
 			.style('visibility', 'visible');
 	}
-})(window);
+})();
