@@ -34,8 +34,7 @@ describe('training model', function(){
     var baseTraining = {
       description: 'This is a description',
       examTotal: 20,
-      logo: 'Fake Logo URL',
-      questionId: 6
+      logo: 'Fake Logo URL'
     };
 
     Training.create(baseTraining, { transaction: transaction }).success(function(training){

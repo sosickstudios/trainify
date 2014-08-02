@@ -11,7 +11,7 @@ var Promise = require('bluebird');
 var sequelize = require('./../../backend/plugins/db');
 var Category = require('./../../backend/models/category');
 
-describe('stats controller', function(){
+describe.skip('stats controller', function(){
   describe('/api/stats/tree', function(){
 
     var transaction;
