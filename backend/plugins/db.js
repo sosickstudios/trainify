@@ -21,20 +21,21 @@ var models = require('require-dir')('../models');
 // Associations for models to allow includes
 models.answer.belongsTo(models.question, { as: 'content' });
 
-models.category.hasOne(models.category, { as: 'parent', foreignKey: 'parentId'});
+// Give the parent-child structure to the category through association.
+models.category.hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
 
 models.company.hasMany(models.training);
 models.company.hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
 
 models.exercise.hasMany(models.answer);
 
-models.question.hasOne(models.training);
+models.question.belongsTo(models.exercise);
 
 models.training.hasMany(models.access);
 models.training.hasMany(models.exercise);
 models.training.hasOne(models.category);
 
-models.user.hasMany(models.access);
+models.user.hasMany(models.access, {as: 'access'});
 models.user.hasMany(models.exercise, { as: 'exercises' });
 
 Object.keys(models).forEach(function(modelName) {

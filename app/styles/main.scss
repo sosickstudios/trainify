@@ -1,6 +1,16 @@
 @import 'h5bp';
 @import 'fonts';
 
+$primary-green: #9fcc46;
+$primary-orange: #f68421;
+$primary-red: #f62621;
+$primary-violet: #da138e;
+
+$secondary-text: #676767;
+
+$primary-text-size: 1.5em;
+$secondary-text-size: 0.9em;
+
 html,
 body {
   width: 100%;
@@ -611,4 +621,128 @@ main {
     position: relative;
     margin-top: 0;
   }
+}
+
+.dash-courseinfo {
+  width: 30%;
+  margin: 0 0 0 20%;
+
+  .course-name {
+    color: $primary-violet;
+  }
+
+  .course-description {
+    font-size: $secondary-text-size;
+    color: $secondary-text;
+  }
+
+  .actions {
+    margin: 15px 0 15px 10px;
+
+    .generate-exam {
+
+      display: block;
+      font-size: $secondary-text-size;
+      color: $primary-violet;
+      border: 1px solid $primary-violet;
+      white-space: nowrap;
+      padding: 10px 20px;
+      background: #FFF;
+
+      &:hover {
+        background: $primary-violet;
+        color: #fcfcfc;
+      }
+      }
+  }
+
+  .provider-name {
+    color: #585858;
+  }
+
+  .provider-bio {
+    font-size: $secondary-text-size;
+    color: $secondary-text;
+  }
+}
+
+.dash-statsbar {
+  float: left;
+  font-size: 1.5em;
+  padding: 10px 5px;
+  margin: 0 3.5%;
+}
+
+.dash-text{
+  margin-left: 30%;
+}
+
+.dash-stats {
+  margin-left: 17%;
+  width: 75%;
+  .course-count {
+    @extend .dash-statsbar;
+    color: $primary-violet;
+  }
+
+  .exam-average {
+    @extend .dash-statsbar;
+    color: $primary-orange;
+  }
+
+  .exam-failcount {
+    @extend .dash-statsbar;
+    color: $primary-red;
+  }
+
+  .exam-passcount {
+    @extend .dash-statsbar;
+    color: $primary-green;
+  } 
+}
+
+#starburst {
+  width: 50%;
+  height: 400;
+  margin-left: 650px; 
+  padding-left: 90px;
+  padding-right: 90px;
+  margin-top: -350px;
+}
+
+#sequence {
+  width: 600px;
+  height: 70px;
+}
+
+#legend {
+  padding: 10px 0 0 3px;
+}
+
+#sequence text, #legend text {
+  font-weight: 600;
+  fill: #fff;
+}
+
+#chart {
+  position: relative;
+}
+
+#chart path {
+  stroke: #fff;
+}
+
+#explanation {
+  font-size: $secondary-text-size;
+  position: absolute;
+  top: 90px;
+  left: 165px;
+  width: 140px;
+  text-align: center;
+  color: #666;
+  z-index: 1;
+}
+
+#percentage {
+  font-size: $secondary-text-size;
 }

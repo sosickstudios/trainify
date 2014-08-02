@@ -2,8 +2,8 @@ var passwordless = require('passwordless');
 var express = require('express');
 var utils = require('../utils');
 var router = express.Router();
-
 var User = require('./../models/user');
+
 
 /**
  * Contains the routes that have custom handling logic.
@@ -24,16 +24,10 @@ var signup = {
    */
   post: passwordless.requestToken(function(email, delivery, next){
     // Get the user, if it doesn't exist we will go ahead and create a new one.
-    User.find({ where: {email: email}}).then(function receiveUser(user){
-      if (user){
-        next(null /* error */, user.id);
-      } else {
-        User.create({email: email}).then(function createUser(createdUser){
-          next(null /* error */, createdUser.id);
-        });
-      }
-    }, next)
-  }, {userField: 'email'})
+    User.findOrCreate({email: email}).then(function receiveUser(user){
+      next(null /* error */, user.id);
+    }, next);
+  }, { userField: 'email' })
 };
 
 router.get('/', utils.render('index'));

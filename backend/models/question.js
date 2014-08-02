@@ -10,19 +10,12 @@ module.exports = function (){
   };
 
   var Question = sequelize.define('question', {
-    id:           { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
-    answer: {
-    	type: Sequelize.STRING,
-    	get: function () {
-    		return JSON.parse(this.answer);
-    	},
-    	set: JSON.stringify
-    },
-    explanation:  { type: Sequelize.TEXT },
-    figure:       { type: Sequelize.STRING },
-    path:         { type: Sequelize.STRING },
-    text:         { type: Sequelize.TEXT },
-    type:         { type: Sequelize.ENUM, values: _.values(TYPE), defaultValue: TYPE.MULTIPLE }
+    id:               { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
+    explanation:      { type: Sequelize.TEXT },
+    figure:           { type: Sequelize.STRING },
+    path:             { type: Sequelize.STRING },
+    text:             { type: Sequelize.TEXT },
+    type:             { type: Sequelize.ENUM, values: _.values(TYPE), defaultValue: TYPE.MULTIPLE }
   });
 
   //  Assign the Type object to our model.

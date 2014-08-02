@@ -60,6 +60,7 @@ function handlePerformDelivery(token, uid, recipient, callback){
 // Register our delivery handler.
 passwordless.addDelivery(handlePerformDelivery);
 
+var Access = require('./../models/access');
 module.exports = function registerPasswordless(app){
   // When a token is authenticated, allows for the tokens to persist across instances. Specifically
   // this will assign a value to the req.user for the ID of the user.
@@ -68,7 +69,7 @@ module.exports = function registerPasswordless(app){
   app.use(function(req, res, next){
       if (req.user){
         // If we have a user, assign the full user to the locals.
-        User.find(req.user)
+        User.find({ where: {id: req.user}, include: [{model: Access, as: 'access'}]})
             .then(function(user){
               res.locals.user = user;
               next();
