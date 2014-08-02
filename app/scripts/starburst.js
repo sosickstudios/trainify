@@ -91,7 +91,7 @@
 	
 	// Attach a listener for when the data is loaded or changed/refreshed.
 	window.Trainify.attachCourseDataListener(function (data){
-		createVisualization(data.course.category);
+		createVisualization(data.category);
 	});
 
 	/**

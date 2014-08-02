@@ -6,5 +6,6 @@ module.exports = sequelize.define('training', {
 	description:       { type: Sequelize.TEXT },
 	examTotal:         { type: Sequelize.INTEGER },
 	logo:              { type: Sequelize.STRING },
-	name:              { type: Sequelize.TEXT}
+	name:              { type: Sequelize.TEXT },
+    practiceTotal:     { type: Sequelize.INTEGER }
 });
