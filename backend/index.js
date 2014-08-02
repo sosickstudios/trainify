@@ -1,12 +1,11 @@
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
 var config = require('config');
+var cookieParser = require('cookie-parser');
 var hbs = require('hbs');
 var path = require('path');
 var session = require('express-session');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var _ = require('lodash');
 
 // Store the session configuration information so we
 // can modify it if in a secure environment.
@@ -44,10 +43,6 @@ app.use(session(sessionConfig));
 app.use(function(req, res, next){
   res.locals.isDevelopment = process.env.NODE_ENV !== 'production';
   next();
-});
-
-app.get('/api/ping', function(req, res){
-  res.send('Date is ' + Date.now());
 });
 
 if (process.env.NODE_ENV !== 'production'){

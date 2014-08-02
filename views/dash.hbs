@@ -1,0 +1,58 @@
+{{>header}}
+
+<div class="dash">
+	<div class="dash-stats">
+		<div class="course-count">
+			<span class="dash-text"></span><br/>
+			Course(s)
+		</div>
+		<div class="exam-passcount">
+			<span class="dash-text"></span><br/>
+			Tests Passed
+		</div>
+		<div class="exam-failcount">
+			<span class="dash-text"></span><br/>
+			Tests Failed
+		</div>
+		<div class="exam-average">
+			<span class="dash-text"></span><br/>
+			Test Average
+		</div>
+	</div>
+
+	<div class="dash-overview">
+		{{! All information relating to the course. }}
+		<div class="dash-courseinfo">
+		  <div class="course">
+		  	<span id="course-name" class="course-name"></span><span class="remaining"></span><br/>
+		  	<p class="course-description"></p>
+		  </div>
+		  <div class="actions">
+		  	<button class="generate-exam">Generate Simulated Exam</button>
+		  </div>
+		  <div>
+		  	<span class="provider-name"></span><br/>
+		  	<p class="provider-bio"></p>
+		  </div>
+		</div>
+
+		{{! Starburst }}
+		<div id="starburst">
+		  <div id="sequence"></div>
+		  <div id="chart">
+		    <div id="explanation" style="visibility: hidden;">
+		      <span id="percentage"></span>&#37;<br/>
+		      questions answered correctly.
+		      <br/>
+		      <button id="practiceButton">Practice <span id="buttonText"></span></button>
+		    </div>
+		  </div>
+		</div>
+	</div>
+</div>
+<script async type="text/javascript" src="scripts/dash.js"></script>
+<script type="text/javascript" src="scripts/d3.min.js"></script>
+<script async type="text/javascript" src="scripts/starburst.js"></script>
+
+{{>footer}}
+
