@@ -12,7 +12,7 @@ var sequelize = require('./../../backend/plugins/db');
 var Company = require('./../../backend/models/company');
 var Training = require('./../../backend/models/training');
 
-describe('dash controller', function(){
+describe.skip('dash controller', function(){
   describe('/dash', function(){
 
     beforeEach(function(){
@@ -33,7 +33,7 @@ describe('dash controller', function(){
       var companyBio = new RegExp('<p class="provider-bio">');
       var trainingName = new RegExp('<span class=\"course-name\">');
       var trainingDescription = new RegExp('<p class=\"course-description\">')
-      
+
       request(global.app)
         .get('/dash')
         .expect(companyName)

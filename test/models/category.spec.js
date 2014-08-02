@@ -4,7 +4,7 @@ var should = require('should');
 var sequelize = require('./../../backend/plugins/db');
 var Category = require('./../../backend/models/category');
 
-describe.only('category model', function(){
+describe('category model', function(){
   var transaction;
 
   beforeEach(function(done){
