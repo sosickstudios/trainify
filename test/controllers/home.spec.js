@@ -69,6 +69,13 @@ describe('home controller', function(){
         .end(done);
     });
 
+    it('should list training courses', function(done){
+      request(global.app)
+        .get('/')
+        .expect(/Test Course/)
+        .end(done);
+    });
+
     it('should fail if a user is not sent', function(done){
       request(global.app)
         .post('/signup')
@@ -82,7 +89,7 @@ describe('home controller', function(){
     it('should fail if the database fails', function(done){
       var home = rewire('./../../backend/controllers/home');
       var mockUser = {
-        find: function(){
+        findOrCreate: function(){
           return Promise.reject('Database failed');
         }
       };

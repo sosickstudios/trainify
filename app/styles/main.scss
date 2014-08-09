@@ -1,5 +1,6 @@
 @import 'h5bp';
 @import 'fonts';
+@import 'components/components';
 
 $primary-green: #9fcc46;
 $primary-orange: #f68421;
@@ -41,6 +42,13 @@ p {
   line-height: 1.5em;
 }
 
+// Cancel out any other before styles that might of been applied.
+ul li {
+  &::before {
+    content: '';
+  }
+}
+
 p a {
   margin: -6px;
   padding: 6px;
@@ -78,26 +86,47 @@ p a {
   border-bottom: 1px solid #e1e1e1;
 }
 
+// Allow our buttons to have a uniform look, regardless of color. This is intended to be used
+// along with one of our $color-<x> options, but can use whatever.
+@mixin button($color){
+  font-size: 0.9em;
+  width: auto;
+  color: $color;
+  border: 1px solid $color;
+  white-space: nowrap;
+  padding: 5px 25px;
+  background-color: transparent;
+
+  &:link,
+  &:visited {
+    color: $color;
+    text-decoration: none;
+  }
+
+  &:hover {
+    background: $color;
+    color: #fcfcfc;
+  }
+}
+
+.btn-green {
+  @include button($primary-green);
+}
+
+.btn-orange {
+  @include button($primary-orange);
+}
+
 .logo-container {
   border-bottom: 2px solid #fff;
 
   button.app-bar-all-courses {
+    @include button($primary-violet);
     float: right;
     position: absolute;
     display: block;
     top: 63px;
-    font-size: 0.9em;
     right: 15px;
-    width: auto;
-    color: #da138e;
-    border: 1px solid #da138e;
-    white-space: nowrap;
-    padding: 10px 20px;
-
-    &:hover {
-      background: #da138e;
-      color: #fcfcfc;
-    }
   }
 
   h1 {
@@ -145,6 +174,96 @@ p a {
   background: #f5f5f5;
 }
 
+.btn--buy {
+  font-family: "foco",sans-serif;
+  float: right;
+  z-index: 5;
+  color: $primary-orange;
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.7em;
+  top: 3px;
+
+  &::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    margin: 2px 0 0 -23px;
+    display: block;
+    background: url('/images/cart.svg');
+    background-size: cover;
+  }
+
+  &:link,
+  &:visited {
+    color: $primary-orange;
+  }
+
+  &:hover {
+    color: lighten($primary-orange, 10);
+  }
+}
+
+.description {
+  text-align: justify;
+}
+
+.courses {
+  padding: 0;
+  margin: 20px 0 0 0;
+  font-size: 0.9em;
+
+  > li > div {
+    margin-right: 0;
+  }
+
+  li {
+    padding: 0;
+  }
+
+  > li {
+    position: relative;
+    padding: 0 0 0 10px;
+
+    &::before{
+      content: ' ';
+      position: absolute;
+      left: -5px;
+      height: 100%;
+      display: block;
+      background: $primary-orange;
+      width: 6px;
+    }
+  }
+
+  h4 {
+    padding: 0;
+  }
+}
+
+.outline {
+  padding: 0 0 0 50px;
+  font-size: 1.1em;
+}
+
+p {
+  padding-top: 0;
+}
+
+.company-bio {
+  background: rgba(#000, 0.1);
+  border: 1px solid rgba(#000, 0.2);
+  padding: 10px;
+  margin: 20px 20px 0 20px;
+}
+
+.outline-categories {
+  border-top: 1px solid $primary-orange;
+  font-size: 0.9em;
+  padding: 0 0 0 20px;
+}
+
 main.signup {
   text-align: center;
   margin-top: 2em;
@@ -179,7 +298,7 @@ main.signup {
 
     input[type="email"] {
       border: 1px solid #da138e;
-      line-height: 2.2em;
+      line-height: 2.0em;
       padding: 0.3em 0.5em;
       width: 20em;
       font-size: 0.8em;
@@ -201,7 +320,7 @@ main.signup {
         color: #da138e;
         text-transform: uppercase;
         font-size: 0.7em;
-        top: -1.2em;
+        top: -2.2em;
         left: 0;
       }
     }
@@ -211,15 +330,15 @@ main.signup {
       position: absolute;
       outline: none;
       top: 0.2em;
-      line-height: 3.4em;
-      right: 0em;
+      line-height: 1.75em;
+      right: -0.5em;
       border: none;
       background-repeat: no-repeat;
       margin: 0;
       padding: 0;
       width: 3.2em;
       background-image: url(/images/submit-btn.svg);
-      background-size: 2.2em;
+      background-size: 1.6em;
       background-position: center;
     }
 
@@ -241,7 +360,7 @@ footer .social {
   }
 }
 
-footer .links {
+footer .site-links {
   background: #928f8a;
   min-height: 150px;
   color: #fcfcfc;
@@ -250,7 +369,7 @@ footer .links {
   line-height: 1.5em;
 }
 
-footer .links a {
+footer .site-links a {
   color: #fcfcfc;
   text-decoration: none;
   display: block;
@@ -353,7 +472,7 @@ footer .external {
   span {
     position: relative;
     margin: 0.2rem;
-    top: 0.15em;
+    top: -0.1em;
   }
 }
 
@@ -542,12 +661,20 @@ main {
   }
 }
 
+@media only screen and (min-width: 800px) {
+  .g-wide--2 {
+    width: 50%;
+  }
+}
+
 /** Larger Screens - desktops and tablets **/
-@media all and (min-width: 1100px) {
+@media all and (min-width: 1200px) {
+  $fixed-width: 1000px;
+
   .app-bar,
   footer {
     position: relative;
-    max-width: 864px;
+    max-width: $fixed-width;
     margin: 0 auto;
   }
 
@@ -558,7 +685,7 @@ main {
   }
 
   .app-bar-container {
-    max-width: 864px;
+    max-width: $fixed-width;
   }
 
   .app-bar-actions {

@@ -68,7 +68,7 @@ gulp.task('sass-dev', function(){
 });
 
 gulp.task('sass', function(){
-  gulp.src('app/styles/main.scss')
+  gulp.src(['app/styles/*.scss', 'app/styles/components/*.scss'])
     .pipe($.sass())
     .on('error', console.error.bind(console))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
@@ -128,8 +128,15 @@ gulp.task('serve', function () {
   gulp.watch(['app/images/**/*'], reload);
 });
 
+gulp.task('develop', function () {
+    $.nodemon({ script: './backend', ext: 'hbs js' })
+        .on('restart', function () {
+            console.log('restarted!')
+        })
+});
+
 // Build Production Files, the Default Task
-gulp.task('default', ['clean'], function (cb) {
+gulp.task('default', ['develop', 'serve'], function (cb) {
   //var runSequence = require('run-sequence');
   // runSequence('styles', ['jshint', 'html', 'images', 'styles', 'copy'], cb);
   //runSequence(['images', 'sass'], cb);
