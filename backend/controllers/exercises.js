@@ -13,7 +13,7 @@ var Training = require('./../models/training');
  * Take a set of questions and rank their priority to be drawn from a well. 
  *
  * @param {Array.<Question>} questions Data sent in to be ranked.
- * @param {Array.<Result>} answers Questions that have been previously answered for all exercises  *                                 for a specific question.
+ * @param {Array.<Result>} answers Results for questions that a user previously answered.
  * @return {Array.<Question>}
  */
 function prioritizeQuestions (questions, answers){
@@ -32,7 +32,7 @@ function prioritizeQuestions (questions, answers){
         // We need to check if this question has a set of answers.
         var questionAnswers = answers[question.id] ? answers[question.id] : [];
 
-        // We want it to start at 10 in case of no questions answered yet, this means its priority // is high.
+        // Priority starts at 10, to indicate a high status in case of no answers for question.
         var priorityWeight = 10; 
 
         var correct = 0;
@@ -126,11 +126,12 @@ function prioritizeQuestions (questions, answers){
 /**
  * Class to describe a leaf on a data tree, with the purpose of assigning questions 
  *
- * @param {Category} leaf The category that is in the parent-child format to be represented as a   *                        leaf.
- * @param {Number} parentTotal The amount of questions that the parent is responsible for        *                             providing.
+ * @param {Category} leaf The category, in parent-child format, to be a leaf.
+ * @param {Number} parentTotal Number of questions parent needs to provide.
  * @param {Array.<Question>} leafQuestions Questions that belong to the absolute path of this leaf.
- * @param {Array.<Leaf>} childrenQuestions Questions that belong to the children that fall below *                                         this path (This leaf is the parent)
- * @param {[Object.<Question.id, Array.<Result>>]} answers A copy of all answers, grouped by       *                                                         question id.
+ * @param {Array.<Leaf>} childrenQuestions Leaves that represent children of this path 
+ *                                         (This leaf is the parent)
+ * @param {[Object.<Question.id, Array.<Result>>]} answers A copy of all answers.
  */
 function Leaf(leaf, parentTotal, leafQuestions, childrenQuestions, answers){
     this.leaf = leaf;
@@ -214,7 +215,8 @@ Leaf.prototype.getQuestions = function (){
 /**
  * Function for producing extra questions in the case that this leaf is asked to provide extra.
  *
- * @param {Number} questionCount Number of questions that this leaf is being asked to provide *                               extra.
+ * @param {Number} questionCount Number of questions that this leaf is being asked to provide
+ *                               extra.
  * 
  * @return {Array.<Question>}
  */
@@ -269,7 +271,7 @@ Leaf.prototype.pullWellsSync = function (questionCount){
 /**
  * In the case that one well dries up, we can remove it.
  *
- * @param {Number} index Index of the well to remove from the chidlren wells.
+ * @param {Number} index Index of the well to remove from the children wells.
  */
 Leaf.prototype.removeChildWell = function (index){
     this.childrenWells.splice(index, 1);
@@ -312,8 +314,9 @@ var exercise = {
      * Route for generating an exercise.
      *
      * URL should be in the following format:
-     *
-     * /exercise?category={category.id}&path={category.path}&trainingId={training.id}&type={[      * Practice, Exam Prep]}
+     * 
+     * /exercise?category={category.id}&path={category.path}&trainingId={training.id}&type={[
+     * Practice, Exam Prep]}
      *
      * @param {Express.request} req Express application request object.
      * @param {Express.response} res Express application response object.
@@ -347,7 +350,8 @@ var exercise = {
             // Training course, loaded with exercises and results.
             var training = result[1];
 
-            // The second promise was to query all exercises by the user, to get the answers to    // all previous questions answered.
+            // The second promise was to query all exercises by the user, to get the answers to
+            // all previous questions answered.
             var answers = _(training.exercises).pluck('results').flatten().groupBy('questionId').value();
 
             // If we are generating an exam prep, we will use the root category associated to the 
@@ -384,7 +388,8 @@ var exercise = {
         });
     },
     /**
-     * Update request for an exercise. This will take an object that is expected to be the Result * model. 
+     * Update request for an exercise. This will take an object that is expected to be the Result
+     * model. 
      *
      * @param {Express.request} req Express application request object.
      * @param {Express.response} res Express application response object.

@@ -18,7 +18,7 @@ describe('answer model', function(){
   });
 
   afterEach(function(done){
-    transaction.rollback().success(function () {done()});
+    transaction.rollback().success(function(){done()});
   });
 
   it('should have a model', function(){

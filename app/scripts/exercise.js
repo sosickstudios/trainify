@@ -131,9 +131,8 @@
      *
      * @param {Element.<div>} content Element containing the exercise.
      * @param {Number} id The db id of the exercise being taken.
-     * @param {Number} count Amount of questions that exist for this exercise.
      */
-    function Exercise (content, id, count) {
+    function Exercise (content, id) {
         this.content = content;
         this.id = id;
 
@@ -170,10 +169,9 @@
     var exercise;
     function init (){
         var content = querySelector('.exercise');
-        var questionCount = parseInt(content.dataset.questionCount, 10);
         var exerciseId = content.dataset.exerciseId;
 
-        exercise = new Exercise(content, exerciseId, questionCount);
+        exercise = new Exercise(content, exerciseId);
     }
     init();
 
