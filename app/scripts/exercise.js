@@ -21,7 +21,6 @@
         // The list of answers /=> Array.<Element.<li>>
         this.answers = question.querySelectorAll('.question-answers li');
 
-        var self = this;
         this.result = {
             // If we have already sent an update request, this will store the result id.
             id: null,

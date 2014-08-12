@@ -8,6 +8,7 @@ var Question = require('./../models/question');
 var Result = require('./../models/result');
 var router = express.Router();
 var Training = require('./../models/training');
+var utils = require('../utils');
 
 /**
  * Take a set of questions and rank their priority to be drawn from a well. 
@@ -96,6 +97,8 @@ function prioritizeQuestions (questions, answers){
         if (exposureCount){
 
             var highestExposureCount = 0;
+
+            // Find out which question has been answered the most times.
             _.each(answers, function (item) {
                 highestExposureCount = item.length > highestExposureCount ? item.length : highestExposureCount;
             });
@@ -112,7 +115,7 @@ function prioritizeQuestions (questions, answers){
             priorityWeight = exposurePriorityWeight + percentagePriorityWeight;  
         }
 
-        return{
+        return {
             weight: priorityWeight,
             question: question
         };
@@ -146,14 +149,14 @@ function Leaf(leaf, parentTotal, leafQuestions, childrenQuestions, answers){
     // prioritize the questions for this well. Ranking them in order to smartly generate the 
     // exercise for the pupil.
     this.selfWell = prioritizeQuestions(leafQuestions, answers) || [];
-
+    
     /**
      * Check to see if this leaf has questions left to pull from.
      *
      * @return {Boolean} 
      */
     this.isLeafDry = function (){
-        return (!this.childrenWells.length && !this.selfWell.length); 
+        return !this.childrenWells.length && !this.selfWell.length; 
     };
     
     // How many total questions is the leaf responsible for.
@@ -186,16 +189,15 @@ Leaf.prototype.getQuestions = function (){
         questions = this.selfWell.splice(0, this.selfTake);
     }
 
-    var self = this;
-    _.each(self.childrenWells, function (item, index){
+    _.each(this.childrenWells, function (item, index){
         if (!item.isLeafDry()){
             //Add the children questions from the child well.
             questions = questions.concat(item.getQuestions()); 
         } else{
             //Remove the dry well.
-            self.removeChildWell(index); 
+            this.removeChildWell(index); 
         }
-    });
+    }, this);
 
     // How many questions are we responsible for, and how many did we provide from this leaf.
     var difference = this.leafTotal - questions.length;
@@ -204,7 +206,7 @@ Leaf.prototype.getQuestions = function (){
     }
 
     // If there are children that still have questions to make our difference up.
-    if (difference && !self.isLeafDry()){
+    if (difference && !this.isLeafDry()){
         // Make sure to flatten the returning well.
         questions = questions.concat(_.flatten(this.pullWellsSync(difference)));
     }
@@ -360,7 +362,7 @@ var exercise = {
 
             return category.treeLoader().then(function (tree){
                 // The total amount to draw from questions.
-                var total = isPractice ? training.practiceTotal : training.examTotal;
+                var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
 
                 // Start the recursive draw of questions from the tree.
                 return getQuestions(total, tree, answers);
@@ -383,9 +385,8 @@ var exercise = {
                 exercise: exercise, 
                 questions: questions
             });
-        }).catch(function (){
-            res.render('error');
-        });
+        })
+        .catch(utils.error);
     },
     /**
      * Update request for an exercise. This will take an object that is expected to be the Result
@@ -401,11 +402,7 @@ var exercise = {
         Question.find({where: {id: questionId}, include: [Answer]})
             .then(function (question){
                 var update = req.body;
-
-                var result = false;
-                if(question.answer.correct === update.chosen){
-                    result = true;
-                }
+                var result = question.answer.correct === update.chosen;
 
                 if(update.id) {
                     return Result.update({result: result}, {id: id}, {returning: true});
@@ -414,11 +411,9 @@ var exercise = {
                     return question.createResult(update);
                 }
                 
-            }).then(function (result){
-                res.send(200, result);
-            }).catch(function (e){
-                res.send(500, e);
-            });
+            })
+            .then(res.json)
+            .catch(utils.error);
     }
 };
 

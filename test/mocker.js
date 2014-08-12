@@ -66,8 +66,8 @@ module.exports = function (data){
                     Access.create({
                         trainingId: training.id, 
                         userId: user.id, 
-                        practiceTotal: 4,
-                        examTotal: 4,
+                        practiceExamTotal: 4,
+                        structuredExamTotal: 4,
                         end: (new Date())},
                     {transaction: transaction}),
                     Category.create({
