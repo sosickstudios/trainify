@@ -120,8 +120,9 @@ module.exports = function (data){
                     access: [access]
                 };
 
-                global.app.use(function (req, res){
+                global.app.use(function (req, res, next){
                     res.locals.user = usr;
+                    next();
                 });
                 
                 done();

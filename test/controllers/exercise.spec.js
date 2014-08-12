@@ -6,7 +6,7 @@ var rewire = require('rewire');
 var Promise = require('bluebird');
 var sequelize = require('./../../backend/plugins/db');
 
-describe('exercise controller', function(){
+describe.skip('exercise controller', function(){
   describe('/exercise', function(){
 
     var data = {};
@@ -14,7 +14,7 @@ describe('exercise controller', function(){
 
     it('should get the exercise view', function(done){
       var view = new RegExp('<div class=\"exercise\">');
-      var urlString = '/exercise?trainingId=' + data.training.id + '&type=Exam Prep&path=,&category='+data.root.id;
+      var urlString = '/exercise?trainingId=' + data.training.id + '&type=Exam Prep&path=,&category='+ data.root.id;
 
       request(global.app)
           .get(urlString)
