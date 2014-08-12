@@ -33,9 +33,9 @@ describe('training model', function(){
   it('should save all fields for the model', function(done){
     var baseTraining = {
       description: 'This is a description',
-      examTotal: 20,
-      logo: 'Fake Logo URL',
-      questionId: 6
+      practiceExamTotal: 20,
+      structuredExamTotal: 20,
+      logo: 'Fake Logo URL'
     };
 
     Training.create(baseTraining, { transaction: transaction }).success(function(training){

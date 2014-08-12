@@ -14,10 +14,9 @@ var Training = require('./../../backend/models/training');
 
 describe('dash controller', function(){
   describe('/dash', function(){
-
-    beforeEach(function(){
-      require('./../../backend/routes')(global.app);
-    });
+    
+    var data = {};
+    require('./../mocker')(data);
 
     it('should get the dash view', function(done){
       var main = new RegExp('<div class=\"dash\">');
@@ -30,16 +29,16 @@ describe('dash controller', function(){
 
     it('should retrieve the dash page for a training course', function(done){
       var companyName = new RegExp('<span class=\"provider-name\">');
-      var companyBio = new RegExp('<p class="provider-bio">');
+      var companyBio = new RegExp('<p class=\"provider-bio\">');
       var trainingName = new RegExp('<span class=\"course-name\">');
       var trainingDescription = new RegExp('<p class=\"course-description\">')
-      
+
       request(global.app)
         .get('/dash')
         .expect(companyName)
         .expect(companyBio)
         .expect(trainingName)
-        .expect(200, trainingDescription);
+        .expect(200, trainingDescription, done);
     });
 
   }); // describe('/dash')

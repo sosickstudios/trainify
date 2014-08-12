@@ -31,11 +31,11 @@ describe('answer model', function(){
     });
   });
 
-  it('should save the chosen answer, number, and result.', function(done){
+  it('should save the answer with all possible fields', function(done){
     var fields = {
-      chosen: 'This is the chosen answer.',
-      number: 25,
-      result: true
+      bool: true,
+      correct: 'This is the correct answer',
+      incorrect: ['This is one of the incorrect answers.', 'This is the second incorrect answer.']
     };
 
     Answer.create(fields, { transaction: transaction }).success(function(answer){
