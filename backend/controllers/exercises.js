@@ -419,7 +419,6 @@ var exercise = {
                 }
                 
             }).then(function (result){
-                console.log(result);
                 // Return a non-DAO instance from sequelize.
                 res.json(result.values);
             })
