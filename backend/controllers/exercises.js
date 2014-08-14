@@ -290,6 +290,9 @@ function getQuestions (parentTotal, leaf, answers) {
 
         Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
             // We have committed a raw query which bypasses the getter/setters for sequelize.
+            // This is so when we have a high count exercise, the overhead from DAO instances isn't
+            // too much.
+        
             // Must parse the string that is the anwer.
             questions = _.map(questions, function (question){
                 question.answer = JSON.parse(question.answer);
