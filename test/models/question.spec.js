@@ -32,11 +32,18 @@ describe('question model', function(){
 
   it('should save all fields for the model', function(done){
     var baseQuestion = {
-      // answer: { correct: 'This is the correct answer', incorrect: [ 'One Incorrect', 'Two Incorrect']},
-      explanation: 'This is a fake explanation',
       figure: 'This is the figure url',
       path: 'Fake Path',
       text: 'This is the question text',
+      answer: {
+        type: 'multiple',
+        values: [
+          { id: 1, text: 'This is the correct answer', explanation: 'this is why' },
+          { id: 2, text: 'This is a incorrect answer', explanation: 'because' },
+          { id: 3, text: 'This is a incorrect', explanation: 'because again'},
+          { id: 4, text: 'This is another', explanation: 'Bryce says so'}
+        ]
+      }
     };
 
     Question.create(baseQuestion, { transaction: transaction }).success(function(question){
@@ -45,7 +52,35 @@ describe('question model', function(){
     });
   });
 
-  it('should check type enum', function (done){
+  it('should update a questions answer', function(done){
+    var baseQuestion = {
+      figure: 'This is the figure url',
+      path: 'Fake Path',
+      text: 'This is the question text',
+      answer: {
+        type: 'multiple',
+        values: [
+          { id: 1, text: 'correct answer', explanation: 'this is why', isCorrect: true},
+          { id: 2, text: 'This is a incorrect answer', explanation: 'because' },
+          { id: 3, text: 'This is a incorrect', explanation: 'because again'},
+          { id: 4, text: 'This is another', explanation: 'Bryce says so'}
+        ]
+      }
+    };
+
+    Question.create(baseQuestion, {transaction: transaction}).then(function(question){
+      question.should.have.properties(baseQuestion);
+
+      baseQuestion.answer.values[0].text = 'Correct answer text';
+
+      return Question.update(baseQuestion, {id: question.id}, {returning: true, transaction: transaction});
+    }).then(function(affected){
+      affected.should.equal(1);
+      done();
+    }).catch(done);
+  });
+
+  it('should check type enum', function(done){
     var baseQuestion = {
       type: Question.TYPE.BOOLEAN
     };

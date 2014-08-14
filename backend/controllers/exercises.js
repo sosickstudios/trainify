@@ -288,10 +288,20 @@ function getQuestions (parentTotal, leaf, answers) {
 
         // Find all questions that fall under this leaf.
         var path = leaf.path + leaf.id + ',';
-        Question.findAll({where: {path: path}, include: [Answer]}).then(function (questions){
+
+        Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
+            // We have committed a raw query which bypasses the getter/setters for sequelize.
+            // Must parse the string that is the anwer.
+            questions = _.map(questions, function (question){
+                question.answer = JSON.parse(question.answer);
+                question.answer.values = _.shuffle(_.values(question.answer.values));
+
+                return question;
+            });
+
             //If the leaf has children, retrieve the questions from the child.
             if(leaf.children && leaf.children.length) {
-                Promise.all(_.map(leaf.dataValues.children, function (item) {
+                Promise.all(_.map(leaf.children, function (item) {
                     return getQuestions(weightTotal, item, answers);
                 })).then(function (childrenResults){
                     // filter out any empty leaves that can't provide questions.
@@ -371,15 +381,7 @@ var exercise = {
             // We have the tree set up properly, now get our questions from the (Root).
             questions = tree.getQuestions();
 
-            questions = _.map(questions, function (question){
-                var newQuestion = question.dataValues;
-                if (question.type === 'multiple'){
-                    newQuestion.answers = _.shuffle(question.answer.incorrect.concat(question.answer.correct));
-                } else {
-                    newQuestion.answers = ['TRUE', 'FALSE'];
-                }
-                return newQuestion;
-            });
+            questions = _.shuffle(_.values(questions));
 
             res.render('exercise', {
                 exercise: exercise, 
@@ -399,20 +401,28 @@ var exercise = {
         var questionId = req.body.questionId;
 
         // Find the question, make sure to load the answer associated with it.
-        Question.find({where: {id: questionId}, include: [Answer]})
+        Question.find(questionId)
             .then(function (question){
                 var update = req.body;
-                var result = question.answer.correct === update.chosen;
-
+                
+                // The answer the user selected.
+                var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
+                    
+                // Each correct answer if flagged by a isCorrect Boolean
+                var result = typeof chosen.isCorrect === 'boolean' && chosen.isCorrect;
+               
+                // Should this be the second time of updating the result, it will hold an id.
                 if(update.id) {
-                    return Result.update({result: result}, {id: id}, {returning: true});
+                    return Result.update({result: result, chosen: chosen.id}, {id: id}, {returning: true});
                 } else {
                     update.result = result;
                     return question.createResult(update);
                 }
                 
+            }).then(function (result){
+                // Return a non-DAO instance from sequelize.
+                res.json(result.values);
             })
-            .then(res.json)
             .catch(utils.error);
     }
 };

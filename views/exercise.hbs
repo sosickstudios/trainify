@@ -8,8 +8,8 @@
             <p>{{this.text}}</p>
 
             <ul class="question-answers">
-                {{#each this.answers}}
-                <li>{{this}}</li>
+                {{#each this.answer.values}}
+                <li data-answer-id="{{this.id}}">{{this.text}}</li>
                 {{/each}}
             </ul>
         </li>

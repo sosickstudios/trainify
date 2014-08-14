@@ -21,9 +21,6 @@ var models = require('require-dir')('../models');
 // Associations for models to allow includes
 
 // Give the parent-child structure to the category through association.
-models.answer
-    .belongsTo(models.question);
-
 models.category
     .hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
 
@@ -36,7 +33,6 @@ models.exercise
     .hasMany(models.result);
 
 models.question
-    .hasOne(models.answer)
     .hasMany(models.result);
 
 models.result

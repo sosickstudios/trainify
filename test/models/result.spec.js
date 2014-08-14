@@ -35,7 +35,7 @@ describe('answer model', function(){
 
   it('should save the result with all possible fields', function(done){
     var fields = {
-      chosen: 'This is the chosen answer',
+      chosen: 3,
       number: 5,
       result: true
     };
@@ -66,6 +66,6 @@ describe('answer model', function(){
       result.exerciseId.should.equal(exercise.id);
       result.questionId.should.equal(question.id);
       done();
-    }).catch(done).catch(done);
+    });
   });
 });

@@ -52,7 +52,7 @@
          */
         this.setRequest = function(response){
             response = JSON.parse(response);
-            this.id = response.id;
+            this.result.id = response.id;
             this.result.correct = response.result;
         }.bind(this);
 
@@ -69,19 +69,18 @@
      * @param {Event} event The event passed in from the listener.
      */
     Question.prototype.selectAnswer = function (element){
-        var answer = element.textContent;
-        this.result.chosen = answer;
+        var answer = element;
 
-        // Find the answer that has been selected in our NodeList of answer elements.
-        for (var i = 0; i < this.answers.length; i++){
-            
-            // Retrieve the answer at index from the NodeList
-            var item = this.answers.item(i);
+        // Set the current chosen answer to the answer id.
+        this.result.chosen = answer.dataset.answerId;
 
-            // Check to see if this is the answer the user just selected.
-            item.dataset.answerSelected = item.textContent === answer;
+        for(var i = 0; i < this.answers.length; i++){
+            var item = this.answers[i];
+
+            //TODO(BRYCE) Need to do some css here to set the element to a chosen state/unset
+            //unchosen.
         }
-
+        // Set the flag that the question has been answered at least once.
         this.content.dataset.questionAnswered = true;
     };
 
@@ -91,7 +90,7 @@
      * @return {Boolean}
      */
     Question.prototype.isAnswered = function (){
-        return this.content.dataset.questionResult instanceof Boolean && this.content.dataset.questionAnswered;
+        return this.content.dataset.questionResult && this.content.dataset.questionAnswered;
     };
 
     /**
