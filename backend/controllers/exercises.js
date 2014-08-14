@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var Answer = require('./../models/answer');
 var Category = require('./../models/category');
 var Exercise = require('./../models/exercise');
 var express = require('express');
