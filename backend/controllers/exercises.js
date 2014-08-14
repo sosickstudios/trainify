@@ -408,17 +408,18 @@ var exercise = {
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
                     
                 // Each correct answer if flagged by a isCorrect Boolean
-                var result = typeof chosen.isCorrect === 'boolean' && chosen.isCorrect;
+                var result = chosen.isCorrect;
                
                 // Should this be the second time of updating the result, it will hold an id.
                 if(update.id) {
-                    return Result.update({result: result, chosen: chosen.id}, {id: id}, {returning: true});
+                    return Result.update({result: result, chosen: chosen.id}, {id: update.id}, {returning: true});
                 } else {
                     update.result = result;
                     return question.createResult(update);
                 }
                 
             }).then(function (result){
+                console.log(result);
                 // Return a non-DAO instance from sequelize.
                 res.json(result.values);
             })

@@ -38,10 +38,10 @@ describe('question model', function(){
       answer: {
         type: 'multiple',
         values: [
-          { id: 1, text: 'This is the correct answer', explanation: 'this is why' },
-          { id: 2, text: 'This is a incorrect answer', explanation: 'because' },
-          { id: 3, text: 'This is a incorrect', explanation: 'because again'},
-          { id: 4, text: 'This is another', explanation: 'Bryce says so'}
+          { id: 1, text: 'correct answer', explanation: 'this is why', isCorrect: true },
+          { id: 2, text: 'incorrect answer', explanation: 'because', isCorrect: false },
+          { id: 3, text: 'incorrect', explanation: 'because again', isCorrect: false },
+          { id: 4, text: 'This is another', explanation: 'Bryce says so', isCorrect: false}
         ]
       }
     };
@@ -60,10 +60,10 @@ describe('question model', function(){
       answer: {
         type: 'multiple',
         values: [
-          { id: 1, text: 'correct answer', explanation: 'this is why', isCorrect: true},
-          { id: 2, text: 'This is a incorrect answer', explanation: 'because' },
-          { id: 3, text: 'This is a incorrect', explanation: 'because again'},
-          { id: 4, text: 'This is another', explanation: 'Bryce says so'}
+          { id: 1, text: 'correct answer', explanation: 'this is why', isCorrect: true },
+          { id: 2, text: 'incorrect answer', explanation: 'because', isCorrect: false },
+          { id: 3, text: 'This is a incorrect', explanation: 'because again', isCorrect: false},
+          { id: 4, text: 'This is another', explanation: 'Bryce says so', isCorrect: false}
         ]
       }
     };
