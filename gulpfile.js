@@ -146,8 +146,7 @@ gulp.task('data', function(){
         path: item.path,
         text: item.text,
         type: item.type,
-        answer: answer,
-        trainingId: trainingId
+        answer: answer
       }
     }));
   });
