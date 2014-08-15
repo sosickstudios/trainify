@@ -1,0 +1,21 @@
+{{>header}}
+
+
+<div class="exercise" data-exercise-id="{{this.exercise.id}}">
+    <ul>
+    {{#each questions}}
+        <li class="exercise-question" data-question-id="{{this.id}}">
+            <p>{{this.text}}</p>
+
+            <ul class="question-answers">
+                {{#each this.answer.values}}
+                <li data-answer-id="{{id}}">{{text}}</li>
+                {{/each}}
+            </ul>
+        </li>
+    {{/each}}
+    <ul>
+</div>
+
+<script async type="text/javascript" src="scripts/exercise.js"></script>
+{{>footer}}

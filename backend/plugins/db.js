@@ -18,24 +18,37 @@ module.exports = sequelize;
 
 var models = require('require-dir')('../models');
 
+
 // Give the parent-child structure to the category through association.
-models.category.hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
+models.category
+    .hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
 
-models.company.hasMany(models.training);
-models.company.hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
+models.company
+    .hasMany(models.training)
+    .hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
 
-models.exercise.hasMany(models.answer);
+models.exercise
+    .belongsTo(models.user)
+    .hasMany(models.result);
 
-models.question.belongsTo(models.training);
+models.question
+    .hasMany(models.result);
 
-models.training.hasMany(models.access);
-models.training.hasMany(models.exercise);
-models.training.hasMany(models.category);
+models.result
+    .belongsTo(models.exercise)
+    .belongsTo(models.question);
 
-models.user.hasMany(models.access, {as: 'access'});
-models.user.hasMany(models.exercise, { as: 'exercises' });
+models.training
+    .belongsTo(models.company)
+    .hasMany(models.access)
+    .hasMany(models.exercise)
+    .hasOne(models.category);
 
-sequelize.sync({force: true});
+models.user
+    .hasMany(models.access, {as: 'access'})
+    .hasMany(models.exercise, { as: 'exercises' });
+
+// sequelize.sync({force: true});
 
 Object.keys(models).forEach(function(modelName) {
   if ('associate' in models[modelName]) {

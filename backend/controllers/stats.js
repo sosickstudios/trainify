@@ -1,10 +1,10 @@
 var _ = require('lodash');
-var Answer = require('./../models/answer');
 var Category = require('./../models/category');
 var Company = require('./../models/company');
 var Exercise = require('./../models/exercise');
 var express = require('express');
 var Promise = require('bluebird');
+var Result = require('./../models/result');
 var router = express.Router();
 var Training = require('./../models/training');
 
@@ -21,7 +21,7 @@ function leafAverage (leaf, meta) {
 	// the results from questions and calculate an average. We chain this 
 	// through lodash by first getting all the questions, then flattening 
 	// them into one single array and filtering the unanswered questions.
-	var questions = _(meta.training.exercises).pluck('questions').flatten().filter(function (item) {
+	var questions = _(meta.training.exercises).pluck('questions').flatten().filter(function (item){
 		return leaf.path && item.content && (item.content.path === (leaf.path + leaf._id + ','));
 	}).value();
 
@@ -44,11 +44,11 @@ function leafAverage (leaf, meta) {
  * @param {Object} meta Data that can be accessed from each leaf being worked on, used for        * calculating averages.
  * @return 	{Object} Returns a category data tree in the parent-child format with calculated statistics on each leaf.
  */
-function treeParser (fns, leaf, meta) {
+function treeParser (fns, leaf, meta){
   // Work the tree from the bottom up, so that we may have children functions run first for stats.
   // Call all children recursively.
   if (leaf.children && leaf.children.length){ 
-    leaf.children = _.map(leaf.children, function (item) {
+    leaf.children = _.map(leaf.children, function (item){
       return treeParser(fns, item, meta);
     });
   }
@@ -60,31 +60,6 @@ function treeParser (fns, leaf, meta) {
 
   return leaf;
 }
-
-/**
- * Returns a function that can be called recursively for recusively eager loading
- * nested associations using sequelizes set up getters. This method will return a tree of data,
- * that has a children field attached if there are any existent.
- *
- * @param {Category}   item The object that has relations to load.
- */
-function childrenLoader(item){
-	return new Promise(function(resolve, reject){
-		item.getChildren().then(function (result){
-			if (result.length){
-				Promise.all(_.map(result, function (child) {
-					return childrenLoader(child);
-				})).then(function (children){
-					// Set the values of the children downstream to our object.
-					item.dataValues.children = children;
-					resolve(item);
-				});
-			} else {
-				resolve(item);
-			}
-		});
-	});
-};
 
 /**
  * Contains the routes that have custom handling logic.
@@ -104,31 +79,28 @@ var stats = {
 		 */
 		tree: function (req, res){
 			var user = res.locals.user;
-
-			Training.find({ where: {id: _.pluck(user.access, 'trainingId')}, include: [{model: Category}, {model: Exercise, include: [ Answer ]}]})
+			
+			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
+				include:[Category, { model: Exercise, where: {userId: user.id}, 
+					include: [Result]}, Company]})
 				.then(function (training){
-					// Convert the training category into the parent-child tree format.
-					childrenLoader(training.category)
-						.then(function (result){
-							// The functions to apply to each leaf of the tree;
-							var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
 
-							// The data that will be copied to each leaf, so that stats may be applied.
-							var leafData = training;
+					// Load our category into the parent-child structure.
+					training.category.treeLoader().then(function (result){
+						training.category = result;
 
-							// TODO join the tables from raw query.
-							Company.find(training.companyId).then(function (company){
-								training.category = result;
-								var data = {course: training, company: company};
+						//The functions to apply to each leaf of the tree;
+						var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
 
-								// // Run our functions over each leaf in the tree.
-								// results = treeParser(applyFunctions, result, leafData);
+						// The data that will be copied to each leaf, so that stats may be applied.
+						var leafData = training;
 
-								//Send the data as a script, to be executed on the DOM.
-								res.send('window.Trainify.initCourseData(' + JSON.stringify([data]) + ');');
-							});
-						});
-					
+						// Run our functions over each leaf in the tree.
+						// results = treeParser(applyFunctions, result, leafData);
+						
+						//Send the data as a script, to be executed on the DOM.
+						res.send('window.Trainify.initCourseData('+JSON.stringify([training])+')');
+					});
 				});
 		}
 	} 

@@ -13,16 +13,16 @@
     var examAverage = querySelector('.exam-average .dash-text');
 
     function dataChange (data){
-        courseCount.innerHTML = '1';
-        passCount.innerHTML = '8';
-        failCount.innerHTML = '3';
-        examAverage.innerHTML = '88%';
+        courseCount.textContent = '1';
+        passCount.textContent = '8';
+        failCount.textContent = '3';
+        examAverage.textContent = '88%';
 
-        trainingName.innerHTML = data.course.name;
-        trainingDescription.innerHTML = data.course.description;
+        trainingName.textContent = data.name;
+        trainingDescription.textContent = data.description;
 
-        providerName.innerHTML = 'Provided By ' + data.company.name;
-        providerBio.innerHTML = data.company.bio;
+        providerName.textContent = 'Provided By ' + data.company.name;
+        providerBio.textContent = data.company.bio;
     }
 
     window.Trainify.attachCourseDataListener(dataChange);

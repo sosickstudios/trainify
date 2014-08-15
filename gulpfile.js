@@ -37,7 +37,7 @@ gulp.task('jshint', function () {
     .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
 });
 
-gulp.task('questions', function(){
+gulp.task('data', function(){
   require('./backend/plugins/db');
   var Category = require('./backend/models/category');
   var Question = require('./backend/models/question');
@@ -150,87 +150,6 @@ gulp.task('questions', function(){
         trainingId: trainingId
       }
     }));
-  });
-
-  // function getParentId(target){
-  //   // Bleh, have to get the parent out of cats and then search for it in the DB.
-  //   var parts = target.path.split(',');
-  //   var parent = parts[parts.length - 2];
-  //   parts.length -= 2;
-  //   return parts.join(',') + ',';
-  // }
-
-  // console.log(getParentId(question));
-  // console.log(question.path);
-
-  // var category = Category.find({where: {
-  //   path: getParentId(question)
-  // }}).success(function(parent){
-  //   console.log('PARENT ID IS %s', parent.id);
-  //   //question.
-  // });
-});
-
-gulp.task('cats', function(){
-  //process.env.NODE_ENV = 'remote';
-  require('./backend/plugins/db');
-  var Category = require('./backend/models/category');
-  var categories = require('./import/categories');
-  var _ = require('lodash');
-  var Promise = require('bluebird');
-
-  var topLevelCategories = _.filter(categories, function(category){
-    return !category.path;
-  });
-
-  var topCategory = topLevelCategories[0];
-  var level1Categories = _.filter(categories, function(category){
-    return category.path === ',' + topCategory._id.$oid + ',';
-  });
-
-  topCategory.trainingId = 10;
-
-  Category.create(topCategory).success(function(category){
-    var level1Instances = _.map(level1Categories, function(lvl1Cat){
-      lvl1Cat.trainingId = 10;
-      lvl1Cat.parentId = category.id;
-
-      return Category.create(lvl1Cat);
-    });
-
-    Promise.all(level1Instances).then(function(lvl1Created){
-      _.each(lvl1Created, function(lvl1Cat){
-        var id = lvl1Cat.selectedValues._id.$oid;
-        lvl1Cat = lvl1Cat.toJSON();
-        var lvl2Instances = _.filter(categories, function(category){
-          return category.path === lvl1Cat.path + id + ',';
-        });
-
-        var lvl2Instances = _.map(lvl2Instances, function(lvl2Cat){
-          lvl2Cat.trainingId = 10;
-          lvl2Cat.parentId = lvl1Cat.id;
-
-          return Category.create(lvl2Cat);
-        });
-
-        Promise.all(lvl2Instances).then(function(lvl2Created){
-          _.each(lvl2Created, function(lvl2Cat){
-            var id = lvl2Cat.selectedValues._id.$oid;
-            lvl2Cat = lvl2Cat.toJSON();
-            var lvl3Instances = _.filter(categories, function(category){
-              return category.path === lvl2Cat.path + id + ',';
-            });
-
-            lvl3Instances = _.map(lvl3Instances, function(lvl3Cat){
-              lvl3Cat.trainingId = 10;
-              lvl3Cat.parentId = lvl2Cat.id;
-
-              return Category.create(lvl3Cat);
-            });
-          });
-        });
-      });
-    });
   });
 });
 

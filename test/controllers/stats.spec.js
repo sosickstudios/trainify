@@ -5,7 +5,6 @@ var express = require('express');
 var request = require('supertest');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var hbs = require('hbs');
 var rewire = require('rewire');
 var Promise = require('bluebird');
 var sequelize = require('./../../backend/plugins/db');
@@ -13,7 +12,7 @@ var Category = require('./../../backend/models/category');
 
 describe.skip('stats controller', function(){
   describe('/api/stats/tree', function(){
-
+    
     var transaction;
     before(function(done){
       sequelize.transaction(function(t){
@@ -41,13 +40,6 @@ describe.skip('stats controller', function(){
           .expect('Content-Type', 'text/html; charset=utf-8')
           .expect(200, main, done);
     });
-
-
-
-
-
-
-
   }); // describe('/api/stats/tree')
 
 }); // describe('stats controller')
