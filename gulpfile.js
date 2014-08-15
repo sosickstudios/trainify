@@ -41,33 +41,134 @@ gulp.task('questions', function(){
   require('./backend/plugins/db');
   var Category = require('./backend/models/category');
   var Question = require('./backend/models/question');
+  var categories = require('./import/categories');
   var questions = require('./import/questions');
   var _ = require('lodash');
   var Promise = require('bluebird');
+  var trainingId = 1;
+  var idMap = {};
 
   questions = _.filter(questions, function(question){
     return question.path;
   });
 
-  var question = questions[0];
+  Promise.all(_.map(categories, function (item){
 
-  function getParentId(target){
-    // Bleh, have to get the parent out of cats and then search for it in the DB.
-    var parts = target.path.split(',');
-    var parent = parts[parts.length - 2];
-    parts.length -= 2;
-    return parts.join(',') + ',';
-  }
+    return Category.create({
+      trainingId: trainingId,
+      name: item.name, 
+      weight: item.weight, 
+      path: item.path
+    });
+  })).then(function (items){
+    _.each(items, function (item){
+      var search = {
+        name: item.name, 
+      };
 
-  console.log(getParentId(question));
-  console.log(question.path);
+      if(item.path){
+        search.path = item.path;
+      }
 
-  var category = Category.find({where: {
-    path: getParentId(question)
-  }}).success(function(parent){
-    console.log('PARENT ID IS %s', parent.id);
-    //question.
+      var id = _.find(categories, search)._id.$oid;
+      idMap[id] = item.id;
+    });
+
+    return Promise.all(_.map(items, function (item){
+      var path = [];
+      if(item.path){
+        var temp = item.path.split(',');
+        
+        _.each(temp, function (id){
+          if(id){
+            var newId = idMap[id];
+            path.push(newId);
+          }
+        });        
+      }
+
+      if(item.path && item.path.length > 1){
+        var parentId = item.path[item.path.length - 2];
+        item.parentId = parentId;
+      }
+
+      item.path = path.join(',');
+      item.path = ',' + item.path + ',';
+      return Category.update({path: item.path}, {id: item.id});
+    }));
+  }).then(function (saves){
+    return Question.bulkCreate(_.map(questions, function (item){
+      var idCount = 1;
+      var answer = {
+        type: item.type,
+        values: []
+      };
+
+      if (item.type === 'multiple'){
+        answer.values.push({id: idCount, text: item.answer.correct, explanation: item.explanation, isCorrect: true});
+
+        _.each(item.answer.incorrect, function (incorrect){
+          idCount++;
+          answer.values.push({id: idCount, text: incorrect.text, explanation: incorrect.explanation, isCorrect: false});
+        });
+      } else{
+        //TRUE/FALSE
+        var trueAnswer = {id: 1, text: 'True', explanation: null, isCorrect: false};
+        var falseAnswer = {id: 2, text: 'False', explanation: null, isCorrect: false};
+
+        if(item.answer.bool){
+          trueAnswer.isCorrect = true;
+          trueAnswer.explanation = item.explanation;
+        } else {
+          falseAnswer.isCorrect = true;
+          falseAnswer.explanation = item.explanation;
+        }
+        answer.values.push(trueAnswer);
+        answer.values.push(falseAnswer);
+      }
+
+      var path = [];
+      if(item.path){
+        var temp = item.path.split(',');
+        
+        _.each(temp, function (id){
+          if(id){
+            var newId = idMap[id];
+            path.push(newId);
+          }
+        });        
+      }
+
+      item.path = path.join(',');
+      item.path = ',' + item.path + ',';
+
+      return {
+        path: path,
+        text: item.text,
+        type: item.type,
+        answer: answer,
+        trainingId: trainingId
+      }
+    }));
   });
+
+  // function getParentId(target){
+  //   // Bleh, have to get the parent out of cats and then search for it in the DB.
+  //   var parts = target.path.split(',');
+  //   var parent = parts[parts.length - 2];
+  //   parts.length -= 2;
+  //   return parts.join(',') + ',';
+  // }
+
+  // console.log(getParentId(question));
+  // console.log(question.path);
+
+  // var category = Category.find({where: {
+  //   path: getParentId(question)
+  // }}).success(function(parent){
+  //   console.log('PARENT ID IS %s', parent.id);
+  //   //question.
+  // });
 });
 
 gulp.task('cats', function(){
