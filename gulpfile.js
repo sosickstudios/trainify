@@ -87,14 +87,14 @@ gulp.task('data', function(){
         });        
       }
 
-      if(item.path && item.path.length > 1){
-        var parentId = item.path[item.path.length - 2];
+      if(path && path.length > 1){
+        var parentId = path[path.length - 1];
         item.parentId = parentId;
       }
 
       item.path = path.join(',');
       item.path = ',' + item.path + ',';
-      return Category.update({path: item.path}, {id: item.id});
+      return Category.update({path: item.path, parentId: item.parentId}, {id: item.id});
     }));
   }).then(function (saves){
     return Question.bulkCreate(_.map(questions, function (item){
@@ -143,7 +143,7 @@ gulp.task('data', function(){
       item.path = ',' + item.path + ',';
 
       return {
-        path: path,
+        path: item.path,
         text: item.text,
         type: item.type,
         answer: answer,
