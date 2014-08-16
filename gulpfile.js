@@ -105,7 +105,7 @@ gulp.task('data', function(){
       };
 
       if (item.type === 'multiple'){
-        answer.values.push({id: idCount, text: item.answer.correct, explanation: item.explanation, isCorrect: true});
+        answer.values.push({id: idCount, text: item.answer.correct.text, explanation: item.explanation, isCorrect: true});
 
         _.each(item.answer.incorrect, function (incorrect){
           idCount++;
