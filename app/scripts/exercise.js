@@ -3,7 +3,8 @@
     /**
      * Prototypes representation of each question in an exercise.
      *
-     * @param {Element.<li>} question The element that has been queried that contains the question.
+     * @param {Element.<li>} question The element that has been queried which contains 
+     *                                the question.
      * @param {Number} number What number the question falls in the exercise.
      * @param {Exercise} exercise The exercise that the question belongs to.
      */
@@ -39,6 +40,7 @@
          */
         this.getRequest = function(){
             return {
+                id: this.result.id,
                 exerciseId: this.parent.id,
                 questionId: this.id,
                 chosen: this.result.chosen
@@ -52,7 +54,7 @@
          */
         this.setRequest = function(response){
             response = JSON.parse(response);
-            this.id = response.id;
+            this.result.id = response.id;
             this.result.correct = response.result;
         }.bind(this);
 
@@ -66,22 +68,19 @@
      * The question answer list has been clicked on, we should go through our answers
      * and reflect the selection.
      *
-     * @param {Event} event The event passed in from the listener.
+     * @param {Element.<li>} answer The list item that has been clicked on.
      */
-    Question.prototype.selectAnswer = function (element){
-        var answer = element.textContent;
-        this.result.chosen = answer;
+    Question.prototype.selectAnswer = function (answer){
+        // Set the current chosen answer to the answer id.
+        this.result.chosen = answer.dataset.answerId;
 
-        // Find the answer that has been selected in our NodeList of answer elements.
-        for (var i = 0; i < this.answers.length; i++){
-            
-            // Retrieve the answer at index from the NodeList
-            var item = this.answers.item(i);
+        for(var i = 0; i < this.answers.length; i++){
+            var item = this.answers[i];
 
-            // Check to see if this is the answer the user just selected.
-            item.dataset.answerSelected = item.textContent === answer;
+            //TODO(BRYCE) Need to do some css here to set the element to a chosen state/unset
+            //unchosen.
         }
-
+        // Set the flag that the question has been answered at least once.
         this.content.dataset.questionAnswered = true;
     };
 
@@ -91,7 +90,7 @@
      * @return {Boolean}
      */
     Question.prototype.isAnswered = function (){
-        return this.content.dataset.questionResult instanceof Boolean && this.content.dataset.questionAnswered;
+        return this.content.dataset.questionResult && this.content.dataset.questionAnswered;
     };
 
     /**
