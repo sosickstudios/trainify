@@ -9,7 +9,7 @@
 
             <ul class="question-answers">
                 {{#each this.answer.values}}
-                <li data-answer-id="{{id}}">{{text}}</li>
+                <li data-answer-id="{{id}}" data-is-correct="{{isCorrect}}">{{text}}</li>
                 {{/each}}
             </ul>
         </li>

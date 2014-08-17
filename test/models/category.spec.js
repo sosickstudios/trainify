@@ -32,7 +32,6 @@ describe('category model', function(){
 
   it('should save all fields for the model', function(done){
     var baseCategory = {
-      description: 'Fake description',
       logo: 'Fake Logo String',
       name: 'Category Name',
       path: 'Path for Category',

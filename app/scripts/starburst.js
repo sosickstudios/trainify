@@ -89,8 +89,10 @@
 		totalSize = path.node().__data__.value;
 	}
 	
+	var courseData;
 	// Attach a listener for when the data is loaded or changed/refreshed.
 	window.Trainify.attachCourseDataListener(function (data){
+		courseData = data;
 		createVisualization(data.category);
 	});
 
@@ -120,8 +122,9 @@
 
 		d3.select('#practiceButton')
 			.on('click', function () {
-				// TODO send the user to the exam interface to practice the current category.
-				// hack(bryce)
+				var path = currentCategory.path + currentCategory.id + ',';
+				
+				location.href = '/exercise?type=Practice&path=' + path + '&category=' + currentCategory.id + '&trainingId=' + courseData.id;
 			});
 
 		d3.select('#explanation')

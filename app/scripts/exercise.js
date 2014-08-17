@@ -73,12 +73,13 @@
     Question.prototype.selectAnswer = function (answer){
         // Set the current chosen answer to the answer id.
         this.result.chosen = answer.dataset.answerId;
+        this.result.correct = answer.dataset.isCorrect;
 
         for(var i = 0; i < this.answers.length; i++){
             var item = this.answers[i];
 
-            //TODO(BRYCE) Need to do some css here to set the element to a chosen state/unset
-            //unchosen.
+            // TODO(BRYCE) Need to do some css here to set the element to a chosen state/unset
+            // unchosen.
         }
         // Set the flag that the question has been answered at least once.
         this.content.dataset.questionAnswered = true;
@@ -112,11 +113,11 @@
     Question.prototype.sendUpdateRequest = function () {
         var request = new XMLHttpRequest();
 
-        request.onreadystatechange = function () {
-            if(request.readyState === 4 && request.status === 200){
-                this.setRequest(request.response);
-            }
-        }.bind(this);
+        // request.onreadystatechange = function () {
+        //     if(request.readyState === 4 && request.status === 200){
+        //         this.setRequest(request.response);
+        //     }
+        // }.bind(this);
 
         request.open('PUT', '/exercise', true);
         request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');

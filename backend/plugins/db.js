@@ -43,7 +43,7 @@ models.training
     .belongsTo(models.company)
     .hasMany(models.access)
     .hasMany(models.exercise)
-    .hasOne(models.category);
+    .hasMany(models.category);
 
 models.user
     .hasMany(models.access, {as: 'access'})

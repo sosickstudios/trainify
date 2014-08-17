@@ -12,7 +12,7 @@ var sequelize = require('./../../backend/plugins/db');
 var Company = require('./../../backend/models/company');
 var Training = require('./../../backend/models/training');
 
-describe('dash controller', function(){
+describe.skip('dash controller', function(){
   describe('/dash', function(){
     
     var data = {};

@@ -1,0 +1,11 @@
+{{> header }}
+
+<main>
+    You want to buy {{training.name}} for ${{training.examTotal}}?
+
+    <form action="/buy/{{training.id}}" method="post">
+        <input class="btn-green" type="submit" value="Purchase" />
+    </form>
+</main>
+
+{{> footer }}

@@ -9,23 +9,22 @@
     <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Roboto:300,400'>
     <script type="text/javascript" src="//use.typekit.net/jbg6mff.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="/styles/main.css">
   </head>
   <body>
     <header class="app-bar promote-layer">
       <div class="app-bar-container">
-        <button class="menu"><img src="images/hamburger.svg" width="24" height="24" alt="Menu"></button>
+        <button class="menu"><img src="/images/hamburger.svg" width="24" height="24" alt="Menu"></button>
         <h1 class="logo"></h1>
         <section class="app-bar-actions">
-          <a href="#" class="app-bar-cart"><img src="images/cart.svg" width="26" height="26" /><span>$0</span></a>
           {{#if user}}
-            <a href="/logout" class="app-bar-user signed-in"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>{{user.email}}</span></a>
+            <a href="/logout" class="app-bar-user signed-in"><img class="app-bar-user" src="/images/user.svg" width="26" height="26" /><span>{{user.email}}</span></a>
           {{else}}
-            <a href="/signup" class="app-bar-user"><img class="app-bar-user" src="images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
+            <a href="/signup" class="app-bar-user"><img class="app-bar-user" src="/images/user.svg" width="26" height="26" /><span>Login or Signup</span></a>
           {{/if}}
         </section>
       </div>
-      <div class="logo-container"><h1 class="logo"><a href="/"><img src="images/logo.svg" alt="Trainify" width="166" height="77" /></a></h1><button class="app-bar-all-courses">All Courses</button></div>
+      <div class="logo-container"><h1 class="logo"><a href="/"><img src="/images/logo.svg" alt="Trainify" width="166" height="77" /></a></h1></div>
     </header>
 
     <nav class="navdrawer-container promote-layer">
@@ -36,5 +35,5 @@
       </ul>
     </nav>
 
-    <script type="text/javascript" src="scripts/main.js"></script>
+    <script type="text/javascript" src="/scripts/main.js"></script>
     <script async type="text/javascript" src="/api/stats/tree"></script>

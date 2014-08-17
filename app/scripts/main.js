@@ -24,7 +24,6 @@
   var navdrawerContainer = querySelector('.navdrawer-container');
   var body = document.body;
   var appbarElement = querySelector('.app-bar');
-  var courseBtn = querySelector('.app-bar-all-courses');
   var menuBtn = querySelector('.menu');
 
   function closeMenu() {
@@ -93,10 +92,6 @@
     attachCourseDataListener: attachCourseListener,
     initCourseData: initCourseData
   };
-
-  courseBtn.addEventListener('click', function (){
-    toggleCourseChange(currentCourse);
-  });
 
   function toggleMenu() {
     body.classList.toggle('open');
