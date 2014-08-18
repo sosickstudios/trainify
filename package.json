@@ -9,7 +9,7 @@
     "start": "pm2 startOrRestart ecosystem.json --env production",
     "nginx": "ansible-playbook deployment/nginx.yml -i deployment/hosts",
     "deploy": "ansible-playbook deployment/deploy.yml -i deployment/hosts",
-    "build": "gulp",
+    "build": "gulp sass",
     "test-server": "node ./backend",
     "coveralls": "coveralls",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha",
