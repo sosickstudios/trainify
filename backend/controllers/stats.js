@@ -79,6 +79,10 @@ var stats = {
 		 */
 		tree: function (req, res){
 			var user = res.locals.user;
+
+            if (!user || _.any(user.access)){
+                return res.send(200, '');
+            }
 			
 			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
 				include:[Category, { model: Exercise, where: {userId: user.id}, 
