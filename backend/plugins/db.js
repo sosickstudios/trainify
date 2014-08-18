@@ -18,8 +18,6 @@ module.exports = sequelize;
 
 var models = require('require-dir')('../models');
 
-// Associations for models to allow includes
-
 // Give the parent-child structure to the category through association.
 models.category
     .hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
@@ -43,11 +41,13 @@ models.training
     .belongsTo(models.company)
     .hasMany(models.access)
     .hasMany(models.exercise)
-    .hasOne(models.category);
+    .hasMany(models.category);
 
 models.user
     .hasMany(models.access, {as: 'access'})
     .hasMany(models.exercise, { as: 'exercises' });
+
+// sequelize.sync();
 
 Object.keys(models).forEach(function(modelName) {
   if ('associate' in models[modelName]) {

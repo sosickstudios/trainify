@@ -37,6 +37,10 @@ gulp.task('jshint', function () {
     .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
 });
 
+gulp.task('data', function(){
+
+});
+
 // Optimize Images
 gulp.task('images', function () {
   return gulp.src('app/images/**/*')
