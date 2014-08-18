@@ -1,9 +1,13 @@
 var passwordless = require('passwordless');
 var express = require('express');
-var utils = require('../utils');
+var _ = require('lodash');
 var router = express.Router();
+var Access = require('./../models/access');
+var Category = require('./../models/category');
+var Company = require('./../models/company');
+var Training = require('./../models/training');
 var User = require('./../models/user');
-
+var utils = require('../utils');
 
 /**
  * Contains the routes that have custom handling logic.
@@ -30,9 +34,99 @@ var signup = {
   }, { userField: 'email' })
 };
 
-router.get('/', utils.render('index'));
+/**
+ * Contains the routes that handle the home routes, so the default / route.
+ * @type {Object}
+ */
+var home = {
+    /**
+     * Handles getting the training courses and related information for use
+     * on the home route.
+     *
+     * @param {Express.request} req The express request.
+     * @param {Express.response} req The express response.
+     */
+    get: function(req, res){
+        Training.findAll({include: [Category, Company]}).success(function(trainings){
+            var user = res.locals.user;
+
+            // Ensure we don't throw an error if there is no logged in user.
+            if (user && _.any(user.access)){
+                trainings.forEach(function(training){
+                    training.hasPurchased = user.access.some(function(access){
+                        return access.trainingId === training.id;
+                    });
+                });
+            }
+
+            // Assign each category tree to the courses, so we can use it in
+            // our templates. For now we just want to go 2 levels deep.
+            trainings.forEach(function(training){
+                var rootCategory = _.findWhere(training.categories, {parentId: null});
+                constructCategories(rootCategory, training.categories);
+                training.categories = rootCategory.categories;
+            });
+
+            res.render('index', {courses: trainings});
+        });
+    }
+};
+
+/**
+ * Constructs a tree hierarchy of the category and it's children.
+ * @param category
+ * @param categories
+ */
+function constructCategories(category, categories){
+    category.categories = getChildCategories(categories, category.parentId);
+
+    category.categories.forEach(function(child){
+        constructCategories(child, categories);
+    });
+}
+
+/**
+ * Gets the child categories out of a full list of categories.
+ *
+ * @param {Array.<Category>} categories The categories to search through.
+ * @param {Number} parentId The parent id to find the children of.
+ *
+ * @returns {Array.<Category>}
+ */
+function getChildCategories(categories, parentId){
+    // The top level category will be the one with no parentId.
+    var rootCategory = _.findWhere(categories, {parentId: parentId});
+
+    // Get all direct children of our root category.
+    return _.filter(categories, {parentId: rootCategory.id});
+}
+
+/**
+ * The user wants to purchase the course specified.
+ * @type {{get: Function}}
+ */
+var buy = {
+    get: function(req, res){
+        Training.find(req.param('id')).success(function(training){
+            res.render('checkout', {training: training});
+        });
+    },
+
+    post: function(req, res){
+        Access.create({
+            trainingId: req.param('id'),
+            userId: res.locals.user.id
+        }).success(function(access){
+            res.redirect('/');
+        });
+    }
+};
+
+router.get('/', home.get);
 router.get('/login', passwordless.acceptToken(), utils.redirect('/'));
 router.get('/logout', passwordless.logout(), utils.redirect('/'));
+router.get('/buy/:id', buy.get);
+router.post('/buy/:id', buy.post);
 
 router.route('/signup')
   .get(utils.render('signup'))
@@ -45,7 +139,7 @@ router.route('/signup')
  * @param  {Error}    err  The error that occured.
  */
 router.use(function(err, req, res, next){
-  res.render('error');
+  res.render('error', {error: err});
 });
 
 module.exports = router;

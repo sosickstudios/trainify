@@ -8,7 +8,7 @@ var _ = require('lodash');
 before(function(done){
   // For testing we always start with an empty DB, so force synchronize
   // so that we can ensure all of the tables are created.
-  if (process.env.NODE_ENV === 'testing' || true){
+  if (process.env.NODE_ENV === 'testing'){
     var sequelize = require('../backend/plugins/db');
 
     sequelize.sync({force: true}).then(function(){
