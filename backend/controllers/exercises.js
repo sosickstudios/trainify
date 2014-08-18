@@ -291,7 +291,7 @@ function getQuestions (parentTotal, leaf, answers) {
         Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
             // We have committed a raw query which bypasses the getter/setters for sequelize.
             // This is so when we have a high count exercise, the overhead from DAO instances isn't
-            // too much.
+            // too much. This also allows for the objects returned to be configured more easily.
         
             // Must parse the string that is the anwer.
             questions = _.map(questions, function (question){
@@ -323,6 +323,7 @@ function getQuestions (parentTotal, leaf, answers) {
     });
 }
 
+var Tree = require('./../treehelper');
 var exercise = {
     /**
      * Route for generating an exercise.
@@ -351,11 +352,6 @@ var exercise = {
         // What type of exercise are we generating.
         var isPractice = type === 'Practice';
 
-        // If we are in practice mode, then we will need to retrieve the Category.
-        if(isPractice){
-            promises.push(Category.find(categoryId));
-        }
-
         var questions;
         Promise.all(promises).then(function (result){
             // Our newly created exercise
@@ -363,22 +359,21 @@ var exercise = {
 
             // Training course, loaded with exercises and results.
             var training = result[1];
-
             // The second promise was to query all exercises by the user, to get the answers to
             // all previous questions answered.
-            var answers = _(training.exercises).pluck('results').flatten().groupBy('questionId').value();
+            var answers = _(training.exercises)
+                            .pluck('results')
+                            .flatten()
+                            .groupBy('questionId')
+                            .value();
 
-            // If we are generating an exam prep, we will use the root category associated to the 
-            // training course.
-            var category = isPractice ? result[2] : training.category;
+            // The total amount to draw from questions.
+            var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
 
-            return category.treeLoader().then(function (tree){
-                // The total amount to draw from questions.
-                var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
+            // Parse our categories into a parent-child format.
+            var tree = new Tree(path, training.categories, null /* meta */);
 
-                // Start the recursive draw of questions from the tree.
-                return getQuestions(total, tree, answers);
-            });
+            return getQuestions(total, tree.get(), answers);
         }).then(function (tree){
             // We have the tree set up properly, now get our questions from the (Root).
             questions = tree.getQuestions();
@@ -392,24 +387,46 @@ var exercise = {
         })
         .catch(utils.error);
     },
-    /**
-     * Update request for an exercise. This will take an object that is expected to be the Result
-     * model. 
-     *
-     * @param {Express.request} req Express application request object.
-     * @param {Express.response} res Express application response object.
-     */
-    put: function (req, res){
-        var questionId = req.body.questionId;
+    put: {
+        /**
+         * [exercise description]
+         *
+         * @param {Express.request} req Express application request object.
+         * @param {Express.response} res Express application response object.
+         */
+        exercise: function (req, res){
+            var exerciseId = req.body.id;
 
-        // Find the question, make sure to load the answer associated with it.
-        Question.find(questionId)
-            .then(function (question){
+            Exercise.find({where: {id: exerciseId}, include: [Result]}).then(function(exercise){
+                var correct = _.where(exercise.results, {result: true}).length;
+                var score = Math.round((correct / exercise.results.length).toFixed(2) * 100);
+
+                // Score the exercise, based on amount correct vs. incorrect.
+                exercise.score = score;
+                exercise.completed = new Date();
+
+                return exercise.save();
+            }).then(function (exercise){
+                res.send(exercise);
+            });
+        },
+        /**
+         * Update request for an exercise. This will take an object that is expected to be 
+         * the Result model. 
+         *
+         * @param {Express.request} req Express application request object.
+         * @param {Express.response} res Express application response object.
+         */
+        result: function (req, res){
+            var questionId = req.params.id;
+
+            // Find the question, make sure to load the answer associated with it.
+            Question.find(questionId).then(function (question){
                 var update = req.body;
-                
+                    
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
-                    
+                        
                 // Each correct answer if flagged by a isCorrect Boolean
                 var result = chosen.isCorrect;
                
@@ -421,19 +438,20 @@ var exercise = {
                     return question.createResult(update);
                 }
                 
-            }).then(function (result){
-                // Return a non-DAO instance from sequelize.
-                res.json(result.values);
+            }).then(function (){
+                res.send(200);
             })
             .catch(utils.error);
     }
 };
 
-// Express route '/exercise'
+// Express route '/exercise/:id'
 router.route('/')
     .get(exercise.get)
-    .put(exercise.put);
+    .put(exercise.put.exercise);
+
+// Express route '/exercise/score'
+router.route('/question/:id')
+    .put(exercise.put.result);
 
 module.exports = router;
-
-

@@ -4,6 +4,7 @@ var Company = require('./../models/company');
 var Exercise = require('./../models/exercise');
 var express = require('express');
 var Promise = require('bluebird');
+var Question = require('./../models/question');
 var Result = require('./../models/result');
 var router = express.Router();
 var Training = require('./../models/training');
@@ -21,9 +22,14 @@ function leafAverage (leaf, meta) {
 	// the results from questions and calculate an average. We chain this 
 	// through lodash by first getting all the questions, then flattening 
 	// them into one single array and filtering the unanswered questions.
-	var questions = _(meta.training.exercises).pluck('questions').flatten().filter(function (item){
-		return leaf.path && item.content && (item.content.path === (leaf.path + leaf._id + ','));
-	}).value();
+	
+	var questions = _(meta.training.exercises)
+						.pluck('results')
+						.flatten()
+						.filter(function (result){
+							return result.question.path === leaf.path + leaf.id + ',';
+						})
+						.value();
 
 	var answeredCorrect = _.where(questions, {result: true}).length;
 	var answeredTotal = questions.length;
@@ -33,32 +39,6 @@ function leafAverage (leaf, meta) {
 	var avg = Math.round((answeredCorrect / answeredTotal).toFixed(2) * 100);
 	avg = avg || -1;
 	return avg;
-}
-
-/**
- * Will traverse a data tree from the bottom to the top, applying a set of functions
- * to each leaf along the way. 
- *
- * @param {[Object.<String, Function>]} fns An object containing an array of objects with a       * field name and function, used for attaching the calculated data to each leaf.
- * @param {Category} leaf The current leaf that is being worked on.
- * @param {Object} meta Data that can be accessed from each leaf being worked on, used for        * calculating averages.
- * @return 	{Object} Returns a category data tree in the parent-child format with calculated statistics on each leaf.
- */
-function treeParser (fns, leaf, meta){
-  // Work the tree from the bottom up, so that we may have children functions run first for stats.
-  // Call all children recursively.
-  if (leaf.children && leaf.children.length){ 
-    leaf.children = _.map(leaf.children, function (item){
-      return treeParser(fns, item, meta);
-    });
-  }
-
-  leaf.stats = {};
-  _.each(fns, function (item){
-    leaf.stats[item.key] = item.fn(leaf, meta);
-  });
-
-  return leaf;
 }
 
 /**
@@ -79,28 +59,43 @@ var stats = {
 		 */
 		tree: function (req, res){
 			var user = res.locals.user;
+
+            // if (!user || _.any(user.access)){
+            // 	console.log('here');
+            //     return res.send(200, '');
+            // }
 			
 			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
 				include:[Category, { model: Exercise, where: {userId: user.id}, 
-					include: [Result]}, Company]})
+					include: [{model: Result, include: [Question]}]}, Company]})
 				.then(function (training){
+					// TODO(Bryce)This Query takes an average of 1.3s, need to somehow 
+					// optimize this in the future.
+					var Tree = require('./../treehelper');
 
 					// Load our category into the parent-child structure.
-					training.category.treeLoader().then(function (result){
-						training.category = result;
+					var tree = new Tree(',', training.categories, { training: training });
 
-						//The functions to apply to each leaf of the tree;
-						var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
+					// The functions to apply to each leaf of the tree;
+					var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
 
-						// The data that will be copied to each leaf, so that stats may be applied.
-						var leafData = training;
+					// The data that will be copied to each leaf, so that stats may be applied.
+					var leafData = training;
+					
+					// Drop the DAO instance to reduce memory useage.
+					training = training.values;
 
-						// Run our functions over each leaf in the tree.
-						// results = treeParser(applyFunctions, result, leafData);
-						
-						//Send the data as a script, to be executed on the DOM.
-						res.send('window.Trainify.initCourseData('+JSON.stringify([training])+')');
-					});
+					// What functions do we want to run on each leaf of the tree.
+					tree.treeApply(applyFunctions);
+
+					delete training.categories;
+					delete training.exercises; 
+
+					// Set our parent-child formatted category as the root for the tree.
+					training.category = tree.get();
+
+					// Send the data as a script, to be executed on the DOM.
+					res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
 				});
 		}
 	} 

@@ -88,7 +88,6 @@ require('./routes')(app);
 var host = process.env.NODE_ENV === 'production' ? 'localhost' : undefined;
 
 var httpServer = app.listen(config.server.port, host);
-
 console.log('Listening on port %d', config.server.port);
 
 // Allow graceful shutdown.
