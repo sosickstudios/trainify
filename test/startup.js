@@ -6,13 +6,17 @@ var cookieParser = require('cookie-parser');
 var _ = require('lodash');
 
 before(function(done){
-  // For testing we always start with an empty DB, so force syncronize
+  // For testing we always start with an empty DB, so force synchronize
   // so that we can ensure all of the tables are created.
-  if (process.env.NODE_ENV === 'testing' || true){
+  if (process.env.NODE_ENV === 'testing'){
     var sequelize = require('../backend/plugins/db');
-    var handler = function(){ done(); };
 
-    sequelize.sync({force: true}).then(handler, done);
+    sequelize.sync({force: true}).then(function(){
+        var importer = require('./../import');
+        importer.all().then(function(){
+            done();
+        });
+    }, done);
     return;
   }
 
