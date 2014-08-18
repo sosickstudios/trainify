@@ -87,13 +87,18 @@ gulp.task('data', function(){
         });        
       }
 
-      if(path && path.length > 1){
+      if(path && path.length){
         var parentId = path[path.length - 1];
         item.parentId = parentId;
-      }
+      } 
 
       item.path = path.join(',');
-      item.path = ',' + item.path + ',';
+      if(item.path){
+        item.path = ',' + item.path + ',';
+      } else {
+        item.path = ',';
+      }
+      
       return Category.update({path: item.path, parentId: item.parentId}, {id: item.id});
     }));
   }).then(function (saves){
