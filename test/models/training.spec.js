@@ -33,12 +33,8 @@ describe('training model', function(){
   it('should save all fields for the model', function(done){
     var baseTraining = {
       description: 'This is a description',
-<<<<<<< HEAD
-      examTotal: 20,
-=======
       practiceExamTotal: 20,
       structuredExamTotal: 20,
->>>>>>> a8dd01c223ea39cb03392fad40ab36db6771f29c
       logo: 'Fake Logo URL'
     };
 

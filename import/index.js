@@ -47,65 +47,120 @@ module.exports.categories = function(){
     return new Promise(function(resolve){
         require('./../backend/plugins/db');
         var Category = require('./../backend/models/category');
+        var Question = require('./../backend/models/question');
         var categories = require('./categories');
+        var questions = require('./questions');
         var _ = require('lodash');
         var Promise = require('bluebird');
+        var idMap = {};
 
-        var topLevelCategories = _.filter(categories, function(category){
-            return !category.path;
+        questions = _.filter(questions, function(question){
+            return question.path;
         });
 
-        var topCategory = topLevelCategories[0];
-        var level1Categories = _.filter(categories, function(category){
-            return category.path === ',' + topCategory._id.$oid + ',';
-        });
+        Promise.all(_.map(categories, function (item){
 
-        topCategory.trainingId = trainingId;
+            return Category.create({
+                trainingId: trainingId,
+                name: item.name,
+                weight: item.weight,
+                path: item.path
+            });
+        })).then(function (items){
+            _.each(items, function (item){
+                var search = {
+                    name: item.name,
+                };
 
-        Category.create(topCategory).success(function(category){
-            var level1Instances = _.map(level1Categories, function(lvl1Cat){
-                lvl1Cat.trainingId = trainingId;
-                lvl1Cat.parentId = category.id;
+                if(item.path){
+                    search.path = item.path;
+                }
 
-                return Category.create(lvl1Cat);
+                var id = _.find(categories, search)._id.$oid;
+                idMap[id] = item.id;
             });
 
-            Promise.all(level1Instances).then(function(lvl1Created){
-                _.each(lvl1Created, function(lvl1Cat){
-                    var id = lvl1Cat.selectedValues._id.$oid;
-                    lvl1Cat = lvl1Cat.toJSON();
-                    var lvl2Instances = _.filter(categories, function(category){
-                        return category.path === lvl1Cat.path + id + ',';
+            return Promise.all(_.map(items, function (item){
+                var path = [];
+                if(item.path){
+                    var temp = item.path.split(',');
+
+                    _.each(temp, function (id){
+                        if(id){
+                            var newId = idMap[id];
+                            path.push(newId);
+                        }
                     });
+                }
 
-                    var lvl2Instances = _.map(lvl2Instances, function(lvl2Cat){
-                        lvl2Cat.trainingId = trainingId;
-                        lvl2Cat.parentId = lvl1Cat.id;
+                if(path && path.length){
+                    var parentId = path[path.length - 1];
+                    item.parentId = parentId;
+                }
 
-                        return Category.create(lvl2Cat);
+                item.path = path.join(',');
+                if(item.path){
+                    item.path = ',' + item.path + ',';
+                } else {
+                    item.path = ',';
+                }
+
+                return Category.update({path: item.path, parentId: item.parentId}, {id: item.id});
+            }));
+        }).then(function (saves){
+            return Question.bulkCreate(_.map(questions, function (item){
+                var idCount = 1;
+                var answer = {
+                    type: item.type,
+                    values: []
+                };
+
+                if (item.type === 'multiple'){
+                    answer.values.push({id: idCount, text: item.answer.correct.text, explanation: item.explanation, isCorrect: true});
+
+                    _.each(item.answer.incorrect, function (incorrect){
+                        idCount++;
+                        answer.values.push({id: idCount, text: incorrect.text, explanation: incorrect.explanation, isCorrect: false});
                     });
+                } else{
+                    //TRUE/FALSE
+                    var trueAnswer = {id: 1, text: 'True', explanation: null, isCorrect: false};
+                    var falseAnswer = {id: 2, text: 'False', explanation: null, isCorrect: false};
 
-                    Promise.all(lvl2Instances).then(function(lvl2Created){
-                        _.each(lvl2Created, function(lvl2Cat){
-                            var id = lvl2Cat.selectedValues._id.$oid;
-                            lvl2Cat = lvl2Cat.toJSON();
-                            var lvl3Instances = _.filter(categories, function(category){
-                                return category.path === lvl2Cat.path + id + ',';
-                            });
+                    if(item.answer.bool){
+                        trueAnswer.isCorrect = true;
+                        trueAnswer.explanation = item.explanation;
+                    } else {
+                        falseAnswer.isCorrect = true;
+                        falseAnswer.explanation = item.explanation;
+                    }
+                    answer.values.push(trueAnswer);
+                    answer.values.push(falseAnswer);
+                }
 
-                            var lvl3Instances = _.map(lvl3Instances, function(lvl3Cat){
-                                lvl3Cat.trainingId = trainingId;
-                                lvl3Cat.parentId = lvl2Cat.id;
+                var path = [];
+                if(item.path){
+                    var temp = item.path.split(',');
 
-                                return Category.create(lvl3Cat);
-                            });
-
-                            Promise.all(lvl3Instances).then(function(){
-                                resolve();
-                            });
-                        });
+                    _.each(temp, function (id){
+                        if(id){
+                            var newId = idMap[id];
+                            path.push(newId);
+                        }
                     });
-                });
+                }
+
+                item.path = path.join(',');
+                item.path = ',' + item.path + ',';
+
+                return {
+                    path: item.path,
+                    text: item.text,
+                    type: item.type,
+                    answer: answer
+                }
+            })).then(function(){
+                resolve();
             });
         });
     });
