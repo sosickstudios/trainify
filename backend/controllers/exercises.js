@@ -291,7 +291,7 @@ function getQuestions (parentTotal, leaf, answers) {
         Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
             // We have committed a raw query which bypasses the getter/setters for sequelize.
             // This is so when we have a high count exercise, the overhead from DAO instances isn't
-            // too much.
+            // too much. This also allows for the objects returned to be configured more easily.
         
             // Must parse the string that is the anwer.
             questions = _.map(questions, function (question){
@@ -323,6 +323,7 @@ function getQuestions (parentTotal, leaf, answers) {
     });
 }
 
+var Tree = require('./../treehelper');
 var exercise = {
     /**
      * Route for generating an exercise.
@@ -351,11 +352,6 @@ var exercise = {
         // What type of exercise are we generating.
         var isPractice = type === 'Practice';
 
-        // If we are in practice mode, then we will need to retrieve the Category.
-        if(isPractice){
-            promises.push(Category.find(categoryId));
-        }
-
         var questions;
         Promise.all(promises).then(function (result){
             // Our newly created exercise
@@ -363,22 +359,21 @@ var exercise = {
 
             // Training course, loaded with exercises and results.
             var training = result[1];
-
             // The second promise was to query all exercises by the user, to get the answers to
             // all previous questions answered.
-            var answers = _(training.exercises).pluck('results').flatten().groupBy('questionId').value();
+            var answers = _(training.exercises)
+                            .pluck('results')
+                            .flatten()
+                            .groupBy('questionId')
+                            .value();
 
-            // If we are generating an exam prep, we will use the root category associated to the 
-            // training course.
-            var category = isPractice ? result[2] : training.category;
+            // The total amount to draw from questions.
+            var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
 
-            return category.treeLoader().then(function (tree){
-                // The total amount to draw from questions.
-                var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
+            // Parse our categories into a parent-child format.
+            var tree = new Tree(path, training.categories, null /* meta */);
 
-                // Start the recursive draw of questions from the tree.
-                return getQuestions(total, tree, answers);
-            });
+            return getQuestions(total, tree.get(), answers);
         }).then(function (tree){
             // We have the tree set up properly, now get our questions from the (Root).
             questions = tree.getQuestions();
@@ -421,9 +416,9 @@ var exercise = {
                     return question.createResult(update);
                 }
                 
-            }).then(function (result){
+            }).then(function (){
                 // Return a non-DAO instance from sequelize.
-                res.json(result.values);
+                res.send(200);
             })
             .catch(utils.error);
     }
@@ -435,5 +430,3 @@ router.route('/')
     .put(exercise.put);
 
 module.exports = router;
-
-
