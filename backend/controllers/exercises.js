@@ -389,7 +389,8 @@ var exercise = {
     },
     put: {
         /**
-         * [exercise description]
+         * Update an exercise by scoring and adding a completion date, returning the exercise when
+         * completed.
          *
          * @param {Express.request} req Express application request object.
          * @param {Express.response} res Express application response object.
@@ -438,9 +439,7 @@ var exercise = {
                     return question.createResult(update);
                 }
                 
-            }).then(function (){
-                res.send(200);
-            })
+            }).then(res.send)
             .catch(utils.error);
         }
     }
