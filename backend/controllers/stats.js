@@ -60,10 +60,6 @@ var stats = {
 		tree: function (req, res){
 			var user = res.locals.user;
 
-            // if (!user || _.any(user.access)){
-            // 	console.log('here');
-            //     return res.send(200, '');
-            // }
 			
 			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
 				include:[Category, { model: Exercise, where: {userId: user.id}, 
@@ -71,6 +67,7 @@ var stats = {
 				.then(function (training){
 					// TODO(Bryce)This Query takes an average of 1.3s, need to somehow 
 					// optimize this in the future.
+					// 
 					var Tree = require('./../treehelper');
 
 					// Load our category into the parent-child structure.

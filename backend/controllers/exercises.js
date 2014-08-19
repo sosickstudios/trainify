@@ -407,9 +407,7 @@ var exercise = {
                 exercise.completed = new Date();
 
                 return exercise.save();
-            }).then(function (exercise){
-                res.send(exercise);
-            });
+            }).then(res.send);
         },
         /**
          * Update request for an exercise. This will take an object that is expected to be 
@@ -438,19 +436,18 @@ var exercise = {
                     update.result = result;
                     return question.createResult(update);
                 }
-                
             }).then(res.send)
             .catch(utils.error);
         }
     }
 };
 
-// Express route '/exercise/:id'
+// Express route '/exercise'
 router.route('/')
     .get(exercise.get)
     .put(exercise.put.exercise);
 
-// Express route '/exercise/score'
+// Express route '/exercise/question/:id'
 router.route('/question/:id')
     .put(exercise.put.result);
 
