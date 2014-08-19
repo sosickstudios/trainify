@@ -626,7 +626,8 @@ button.menu img {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-main {
+main,
+main.checkout{
   margin: 0 auto;
   /* Height of the header */
   padding: 115px 25px 32px 25px;
@@ -639,6 +640,20 @@ main {
 
   a:hover {
     color: #31c5f1
+  }
+}
+
+main.checkout {
+  text-align: center;
+  margin-top: 20px;
+
+  .course {
+    font-weight: 700;
+    letter-spacing: -0.05em;
+  }
+
+  input[type="submit"] {
+    margin: 15px 0 0 0;
   }
 }
 
@@ -668,8 +683,8 @@ main {
 }
 
 /** Larger Screens - desktops and tablets **/
-@media all and (min-width: 1200px) {
-  $fixed-width: 1000px;
+@media all and (min-width: 1600px) {
+  $fixed-width: 1400px;
 
   .app-bar,
   footer {
