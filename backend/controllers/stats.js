@@ -60,6 +60,10 @@ var stats = {
 		tree: function (req, res){
 			var user = res.locals.user;
 
+            if (!user || !_.any(user.access)){
+                return res.send(200, '');
+            }
+
 			
 			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
 				include:[Category, { model: Exercise, where: {userId: user.id}, 
@@ -69,6 +73,10 @@ var stats = {
 					// optimize this in the future.
 					
 					var Tree = require('./../treehelper');
+
+                    if (!training){
+                        return res.send(200, '');
+                    }
 
 					// Load our category into the parent-child structure.
 					var tree = new Tree(',', training.categories, { training: training });
