@@ -442,6 +442,7 @@ var exercise = {
                 res.send(200);
             })
             .catch(utils.error);
+        }
     }
 };
 
