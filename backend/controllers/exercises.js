@@ -422,7 +422,7 @@ var exercise = {
             // Find the question, make sure to load the answer associated with it.
             Question.find(questionId).then(function (question){
                 var update = req.body;
-                    
+
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
                         
