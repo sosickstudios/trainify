@@ -245,6 +245,13 @@ p a {
 .outline {
   padding: 0 0 0 50px;
   font-size: 1.1em;
+  color: #222;
+
+  li {
+    border-left: 4px solid $primary-orange;
+    padding: 2px 0 2px 5px;
+    border-bottom: 1px solid $primary-orange
+  }
 }
 
 p {
@@ -631,7 +638,7 @@ main.checkout{
   margin: 0 auto;
   /* Height of the header */
   padding: 115px 25px 32px 25px;
-  min-height: 50%;
+  min-height: 70%;
 
   a,
   a:visited {
@@ -655,6 +662,22 @@ main.checkout {
   input[type="submit"] {
     margin: 15px 0 0 0;
   }
+}
+
+.courses > li {
+  position: relative;
+}
+
+.courses .purchased {
+  background: $primary-green;
+  font-size: 0.6em;
+  text-transform: uppercase;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  padding: 2px 5px;
+  position: relative;
+  top: -2px;
 }
 
 @media all and (max-width: 459px) {

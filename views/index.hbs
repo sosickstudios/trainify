@@ -5,7 +5,7 @@
     {{#courses}}
         <li class="clear">
             <div class="g-wide--2 g-wide--1">
-                <h4>{{name}} <a class="btn--buy" href="/buy/{{id}}">Purchase</a></h4>
+                <h4>{{name}} {{#unless hasPurchased}}<a class="btn--buy" href="/buy/{{id}}">Purchase</a>{{/unless}} {{#if hasPurchased}}<span class="purchased">Purchased</span>{{/if}}</h4>
                 <div class="description">
                     {{description}}
                 </div>
@@ -19,11 +19,6 @@
                 {{#categories}}
                     <li>
                         {{name}}
-                        <ul class="outline-categories">
-                            {{#categories}}
-                                <li>{{name}}</li>
-                            {{/categories}}
-                        </ul>
                     </li>
                 {{/categories}}
                 </ul>
