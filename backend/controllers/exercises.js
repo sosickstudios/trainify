@@ -387,24 +387,45 @@ var exercise = {
         })
         .catch(utils.error);
     },
-    /**
-     * Update request for an exercise. This will take an object that is expected to be the Result
-     * model. 
-     *
-     * @param {Express.request} req Express application request object.
-     * @param {Express.response} res Express application response object.
-     */
-    put: function (req, res){
-        var questionId = req.body.questionId;
+    put: {
+        /**
+         * Update an exercise by scoring and adding a completion date, returning the exercise when
+         * completed.
+         *
+         * @param {Express.request} req Express application request object.
+         * @param {Express.response} res Express application response object.
+         */
+        exercise: function (req, res){
+            var exerciseId = req.body.id;
 
-        // Find the question, make sure to load the answer associated with it.
-        Question.find(questionId)
-            .then(function (question){
+            Exercise.find({where: {id: exerciseId}, include: [Result]}).then(function(exercise){
+                var correct = _.where(exercise.results, {result: true}).length;
+                var score = Math.round((correct / exercise.results.length).toFixed(2) * 100);
+
+                // Score the exercise, based on amount correct vs. incorrect.
+                exercise.score = score;
+                exercise.completed = new Date();
+
+                return exercise.save();
+            }).then(res.send);
+        },
+        /**
+         * Update request for an exercise. This will take an object that is expected to be 
+         * the Result model. 
+         *
+         * @param {Express.request} req Express application request object.
+         * @param {Express.response} res Express application response object.
+         */
+        result: function (req, res){
+            var questionId = req.params.id;
+
+            // Find the question, make sure to load the answer associated with it.
+            Question.find(questionId).then(function (question){
                 var update = req.body;
-                
+                    
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
-                    
+                        
                 // Each correct answer if flagged by a isCorrect Boolean
                 var result = chosen.isCorrect;
                
@@ -415,18 +436,19 @@ var exercise = {
                     update.result = result;
                     return question.createResult(update);
                 }
-                
-            }).then(function (){
-                // Return a non-DAO instance from sequelize.
-                res.send(200);
-            })
+            }).then(res.send)
             .catch(utils.error);
+        }
     }
 };
 
 // Express route '/exercise'
 router.route('/')
     .get(exercise.get)
-    .put(exercise.put);
+    .put(exercise.put.exercise);
+
+// Express route '/exercise/question/:id'
+router.route('/question/:id')
+    .put(exercise.put.result);
 
 module.exports = router;

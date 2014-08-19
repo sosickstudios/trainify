@@ -75,12 +75,13 @@
         this.result.chosen = answer.dataset.answerId;
         this.result.correct = answer.dataset.isCorrect;
 
-        for(var i = 0; i < this.answers.length; i++){
+        for (var i = 0; i < this.answers.length; i++){
             var item = this.answers[i];
 
-            // TODO(BRYCE) Need to do some css here to set the element to a chosen state/unset
-            // unchosen.
+            // Highlight the selected answer.
+            item.classList.toggle('answer-selected', item.dataset.answerId === this.result.chosen);
         }
+
         // Set the flag that the question has been answered at least once.
         this.content.dataset.questionAnswered = true;
     };
@@ -91,7 +92,7 @@
      * @return {Boolean}
      */
     Question.prototype.isAnswered = function (){
-        return this.content.dataset.questionResult && this.content.dataset.questionAnswered;
+        return this.result.chosen !== null;
     };
 
     /**
@@ -113,13 +114,13 @@
     Question.prototype.sendUpdateRequest = function () {
         var request = new XMLHttpRequest();
 
-        // request.onreadystatechange = function () {
-        //     if(request.readyState === 4 && request.status === 200){
-        //         this.setRequest(request.response);
-        //     }
-        // }.bind(this);
+        request.onreadystatechange = function () {
+            if(request.readyState === 4 && request.status === 200){
+                this.parent.onQuestionAnswered();
+            }
+        }.bind(this);
 
-        request.open('PUT', '/exercise', true);
+        request.open('PUT', '/exercise/question/' + this.id, true);
         request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
         request.send(JSON.stringify(this.getRequest()));
     };
@@ -154,13 +155,52 @@
      * @param {Element.<li>} content The list item element that represents the question.
      * @param {Number} number The number that this question is on the exercise.
      */
-    Exercise.prototype.addQuestion = function (content, number){
+    Exercise.prototype.addQuestion = function(content, number){
         var question = new Question(content, this);
         this.questions.push(question);
     };
 
-    Exercise.prototype.questionCount = function (){
+    Exercise.prototype.questionCount = function(){
         return this.questions.length;
+    };
+
+    /**
+     * Check to see if all questions in the exercise are answered. If all 
+     * questions are answered, an update request to the exercise model should 
+     * be sent to score the exercise.
+     *
+     */
+    Exercise.prototype.onQuestionAnswered = function(){
+        var hasEmptyQuestion = false;
+
+        for(var i = 0; i < this.questions.length; i++){
+            if(!this.questions[i].isAnswered()) {
+                hasEmptyQuestion = true;
+            }
+        }
+
+        if (!hasEmptyQuestion){
+            // Send an update request to score the exercise;
+            this.sendUpdateRequest();
+        }
+    };
+
+    /**
+     * Send update request for exercise, in order to score the exercise and receive a score.
+     * 
+     */
+    Exercise.prototype.sendUpdateRequest = function(){
+        var request = new XMLHttpRequest();
+
+        request.onreadystatechange = function () {
+            if(request.readyState === 4 && request.status === 200){
+                // TODO(BRYCE) Set the exercise in review mode.
+            }
+        }.bind(this);
+
+        request.open('PUT', '/exercise', true);
+        request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+        request.send(JSON.stringify({id: this.id}));
     };
 
     var querySelector = document.querySelector.bind(document);
