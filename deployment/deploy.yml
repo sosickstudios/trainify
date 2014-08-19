@@ -18,11 +18,6 @@
     args:
       chdir: "{{ project_root }}/code/"
 
-  - name: Run gulp build
-    shell: npm run build
-    args:
-      chdir: "{{ project_root }}/code/"
-
   - name: Restart PM2
     shell: pm2 startOrRestart ecosystem.json --env production
     args:
