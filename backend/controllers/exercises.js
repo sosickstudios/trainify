@@ -346,7 +346,7 @@ var exercise = {
         var exercise;
         var promises = [
             Exercise.create({userId: user.id, trainingId: trainingId, type: type, path: path}, {include: [Training]}),
-            Training.find(trainingId, include: [Category, {model: Exercise, where: {userId: user.id}, include: [Result]}]})
+            Training.find({where: {id: trainingId}, include: [Category, {model: Exercise, where: {userId: user.id}, include: [Result]}]})
         ];
 
         // What type of exercise are we generating.
@@ -398,7 +398,7 @@ var exercise = {
         exercise: function (req, res){
             var exerciseId = req.body.id;
 
-            Exercise.find(exerciseId, include: [Result]}).then(function(exercise){
+            Exercise.find({where: {id: exerciseId}, include: [Result]}).then(function(exercise){
                 var correct = _.where(exercise.results, {result: true}).length;
                 var score = Math.round((correct / exercise.results.length).toFixed(2) * 100);
 
@@ -422,7 +422,7 @@ var exercise = {
             // Find the question, make sure to load the answer associated with it.
             Question.find(questionId).then(function (question){
                 var update = req.body;
-
+                    
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
                         
