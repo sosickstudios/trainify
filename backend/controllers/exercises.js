@@ -278,17 +278,24 @@ Leaf.prototype.removeChildWell = function (index){
     this.childrenWells.splice(index, 1);
 };
 
-function getQuestions (parentTotal, leaf, answers) {
+/**
+ * Should retrieve all questions for a specific path, and parse them into the Leaf class 
+ * under the parent-child format.
+ *
+ * @param {Number} total Total amount of questions that are for the exercise.
+ * @param {Category} leaf The root category, that represents the data tree.
+ * @param {Array.<Result>} answers All of the answers that the user has ever created for 
+ *                                 this exercise.
+ * @return {Leaf}
+ */
+function getQuestions (total, leaf, answers){
     return new Promise(function (resolve, reject){
-        var leafWeight = (leaf.weight / 100).toFixed(2);
-
-        // This leaf and its children must sum to this number.
-        var weightTotal = Math.round(leafWeight * parentTotal); 
 
         // Find all questions that fall under this leaf.
         var path = leaf.path + leaf.id + ',';
+        var queryString = 'path LIKE \'%' + path + '%\'';
 
-        Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
+        Question.findAll({where: [queryString]}, {raw: true}).then(function (questions){
             // We have committed a raw query which bypasses the getter/setters for sequelize.
             // This is so when we have a high count exercise, the overhead from DAO instances isn't
             // too much. This also allows for the objects returned to be configured more easily.
@@ -301,25 +308,61 @@ function getQuestions (parentTotal, leaf, answers) {
                 return question;
             });
 
-            //If the leaf has children, retrieve the questions from the child.
-            if(leaf.children && leaf.children.length) {
-                Promise.all(_.map(leaf.children, function (item) {
-                    return getQuestions(weightTotal, item, answers);
-                })).then(function (childrenResults){
-                    // filter out any empty leaves that can't provide questions.
-                    childrenResults = _.filter(childrenResults, function (item) {
-                        return !item.isLeafDry();
-                    });  
+            /**
+             * Recursive function for taking a tree node and turning it into the Leaf class.
+             *
+             * @param {Number} parentTotal The amount of questions the parent node of this 
+             *                             node is responsible for.
+             * @param {Category} leaf Category that represents a node on the data tree.
+             * @return {Leaf}
+             */
+            function initializeLeaves (parentTotal, leaf){
+                // The weight that this leaf accounts for amongst its siblings on the data tree.
+                var leafWeight = (leaf.weight / 100).toFixed(2);
 
-                    var result = new Leaf(leaf, parentTotal, questions, childrenResults, answers);
-                    resolve(result);
-                }).catch(reject);
-            } else {
-                var result = new Leaf(leaf, parentTotal, questions, [], answers);
-                resolve(result);
+                // How many questions does this leaf need to provide.
+                var weightTotal = Math.round(leafWeight * parentTotal);
+
+                // Make sure we initialize this to an empty array, for the Leaf class.
+                var childrenLeaves = [];
+
+                // The function calls the children first, working from the bottom -> top of tree.
+                if (leaf.children){
+                    // Turn all of the children into the Leaf class by calling this function
+                    // recursively.
+                    childrenLeaves = _(leaf.children)
+                        .map(function(item){
+                            item = initializeLeaves(weightTotal, item);
+                            return item;
+                        })
+                        .filter(function (item){
+                            // If the leaf has nothing to provide, no reason to pass to Leaf class.
+                            return !item.isLeafDry();
+                        })
+                        .value();
+                }
+
+                // The absolute path to this leaf for questions.
+                var leafAbsPath = leaf.path + leaf.id + ',';
+
+                // All questions for this leaf.
+                var leafQuestions = _.where(questions, {path: leafAbsPath});
+
+                // Return our leaf class.
+                return new Leaf(leaf, parentTotal, leafQuestions, childrenLeaves, answers);
             }
 
-        }).catch(reject);
+            // Since the leaf sent in is the root by default, we want whatever total of questions 
+            // to represent 100% of the leaf. (In the case that we have a leaf that is not by 
+            // default the root)
+            leaf.weight = 100;
+
+            // Turn our data tree into classes.
+            leaf = initializeLeaves(total, leaf);
+
+            resolve(leaf);
+        })
+        .catch(reject);
     });
 }
 
@@ -337,6 +380,7 @@ var exercise = {
      * @param {Express.response} res Express application response object.
      */
     get: function (req, res){
+        //TODO(Bryce) Clean up the parameters that are expected for this route.
         var categoryId = req.query.category;
         var path = req.query.path;
         var trainingId = req.query.trainingId;
@@ -345,20 +389,24 @@ var exercise = {
 
         var exercise;
         var promises = [
-            Exercise.create({userId: user.id, trainingId: trainingId, type: type, path: path}, {include: [Training]}),
+            Exercise.create({userId: user.id, trainingId: trainingId, type: type, path: path}),
             Training.find({where: {id: trainingId}, include: [Category, {model: Exercise, where: {userId: user.id}, include: [Result]}]})
         ];
 
         // What type of exercise are we generating.
         var isPractice = type === 'Practice';
 
-        var questions;
+        // Create our exercise, and find the training course that it belongs to.
         Promise.all(promises).then(function (result){
+            // TODO(Bryce) This query needs to be optimized if possible, atm it takes an
+            // average of 3.3s -> Main culprit is eager loading.
+    
             // Our newly created exercise
             exercise = result[0];
 
             // Training course, loaded with exercises and results.
             var training = result[1];
+
             // The second promise was to query all exercises by the user, to get the answers to
             // all previous questions answered.
             var answers = _(training.exercises)
@@ -370,14 +418,17 @@ var exercise = {
             // The total amount to draw from questions.
             var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
 
+            // console.log(path);
             // Parse our categories into a parent-child format.
-            var tree = new Tree(path, training.categories, null /* meta */);
+            var tree = new Tree(categoryId, null /* path */, training.categories, null /* meta */);
 
             return getQuestions(total, tree.get(), answers);
         }).then(function (tree){
-            // We have the tree set up properly, now get our questions from the (Root).
-            questions = tree.getQuestions();
 
+            // We have the tree set up properly, now get our questions from the (Root).
+            var questions = tree.getQuestions();
+
+            // Randomize the questions
             questions = _.shuffle(_.values(questions));
 
             res.render('exercise', {
@@ -407,7 +458,9 @@ var exercise = {
                 exercise.completed = new Date();
 
                 return exercise.save();
-            }).then(res.send);
+            }).then(function (exercise){
+                res.send(exercise);
+            }).catch(utils.apiError);
         },
         /**
          * Update request for an exercise. This will take an object that is expected to be 
@@ -436,8 +489,10 @@ var exercise = {
                     update.result = result;
                     return question.createResult(update);
                 }
-            }).then(res.send)
-            .catch(utils.error);
+            }).then(function (){
+                res.send(200);
+            })
+            .catch(utils.apiError);
         }
     }
 };

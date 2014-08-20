@@ -44,3 +44,22 @@ module.exports.error = function renderError(error){
     };
   }(error));
 };
+
+/**
+ * Returns a functoin that can be passed in order to log errors for a bad API request.
+ *
+ * @param {Error} error The error that has been caught.
+ * @return {Function}   The handler function for the error.
+ */
+module.exports.apiError = function apiError(error){
+  return (function (e){
+    return function (req, res){
+      if(process.env.NODE_ENV === 'development'){
+        console.log(e.stack);
+      }
+
+      res.send(500);      
+    }
+
+  }(error));
+};

@@ -46,6 +46,56 @@ function leafAverage (leaf, meta) {
  * @type {Object}
  */
 var stats = {
+	get:{
+		/**
+		 * Api call intended to provide a summary of data for a training course, 
+		 * returning a tree of data based on the categories for that training course.
+		 * Each leaf in the tree will have an object called 'stats' that will contain
+		 * calculated averages and statistics based off the current users' past 
+		 * exercises.
+		 *
+		 * @param {Express.request} req Express application request object.
+		 * @param {Express.response} res Express application response object.
+		 */
+		tree: function (req, res){
+			var user = res.locals.user;
+
+			
+			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
+				include:[Category, { model: Exercise, where: {userId: user.id}, 
+					include: [{model: Result, include: [Question]}]}, Company]})
+				.then(function (training){
+					// TODO(Bryce)This Query takes an average of 1.3s, need to somehow 
+					// optimize this in the future.
+					
+					var Tree = require('./../treehelper');
+
+					// Load our category into the parent-child structure.
+					var tree = new Tree(null /* Id */, ',', training.categories, { training: training });
+
+					// The functions to apply to each leaf of the tree;
+					var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
+
+					// The data that will be copied to each leaf, so that stats may be applied.
+					var leafData = training;
+					
+					// Drop the DAO instance to reduce memory useage.
+					training = training.values;
+
+					// What functions do we want to run on each leaf of the tree.
+					tree.treeApply(applyFunctions);
+
+					delete training.categories;
+					delete training.exercises; 
+
+					// Set our parent-child formatted category as the root for the tree.
+					training.category = tree.get();
+
+					// Send the data as a script, to be executed on the DOM.
+					res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
+				});
+		}	
+	},
     get:{
         /**
          * Api call intended to provide a summary of data for a training course,
@@ -100,6 +150,7 @@ var stats = {
                 });
         }
     }
+>>>>>>> 89d2155ed3c5ef689d18ac446e719bb5b8ec2f6b
 };
 
 // Express route '/api/stats/tree'
