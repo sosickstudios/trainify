@@ -4,18 +4,20 @@ var _ = require('lodash');
  * Tree helper for parsing categories into a parent-child format, as well as apply 
  * utility functions to the result. 
  *
+ * @param {Number} id A id that identifies the category that should be the root of the tree.
  * @param {String} path A string containing the root that is desired for the tree.
  * @param {Array.<Category>} cats An array of categories for parsing our data tree.
  * @param {Object} meta Data that can be used by the apply function, in an effort to avoid 
  *                      copying data on a per-leaf basis.
  */
 function Tree (id, path, cats, meta){
-    this.id = id;
+    this.id = parseInt(id, 10);
     this.categories = cats;
     this.path = path;
 
     // Find the tree by the id firstly, and the path secondly.
-    var searchTerm = this.id ? {id: parseInt(this.id, 10)} : {path: this.path};
+    // There are times when we need to find the tree by path (Root) and id (Non-Root) exercise.
+    var searchTerm = this.id ? {id: this.id} : {path: this.path};
 
     // The root leaf of the tree.
     this.root = _.find(this.categories, searchTerm).values;

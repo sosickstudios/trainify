@@ -71,7 +71,7 @@ var stats = {
 					var Tree = require('./../treehelper');
 
 					// Load our category into the parent-child structure.
-					var tree = new Tree(null /* Category Id */, ',', training.categories, { training: training });
+					var tree = new Tree(null /* Id */, ',', training.categories, { training: training });
 
 					// The functions to apply to each leaf of the tree;
 					var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];

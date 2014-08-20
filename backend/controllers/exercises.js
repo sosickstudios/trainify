@@ -278,6 +278,16 @@ Leaf.prototype.removeChildWell = function (index){
     this.childrenWells.splice(index, 1);
 };
 
+/**
+ * Should retrieve all questions for a specific path, and parse them into the Leaf class 
+ * under the parent-child format.
+ *
+ * @param {Number} total Total amount of questions that are for the exercise.
+ * @param {Category} leaf The root category, that represents the data tree.
+ * @param {Array.<Result>} answers All of the answers that the user has ever created for 
+ *                                 this exercise.
+ * @return {Leaf}
+ */
 function getQuestions (total, leaf, answers){
     return new Promise(function (resolve, reject){
 
@@ -410,7 +420,7 @@ var exercise = {
 
             // console.log(path);
             // Parse our categories into a parent-child format.
-            var tree = new Tree(categoryId, null /* Relative Path */, training.categories, null /* meta */);
+            var tree = new Tree(categoryId, null /* path */, training.categories, null /* meta */);
 
             return getQuestions(total, tree.get(), answers);
         }).then(function (tree){
