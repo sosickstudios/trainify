@@ -150,7 +150,6 @@ var stats = {
                 });
         }
     }
->>>>>>> 89d2155ed3c5ef689d18ac446e719bb5b8ec2f6b
 };
 
 // Express route '/api/stats/tree'
