@@ -110,10 +110,13 @@
 		}
 
 		currentCategory = d;
-		var percentage = (100 * d.value / totalSize).toPrecision(3);
-		var percentageString = percentage + '%';
-
-
+		var percentageString;
+		if(currentCategory.stats.leafAverage !== -1) {
+			percentageString = currentCategory.stats.leafAverage + '%';
+		} else {
+			percentageString = 'No questions taken.';
+		}
+		
 		d3.select('#percentage')
 			.text(percentageString);
 
