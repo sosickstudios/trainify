@@ -55,5 +55,5 @@ module.exports.apiError = function apiError(error){
       res.send(500);      
     }
 
-  }(error))
+  }(error));
 };
