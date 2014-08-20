@@ -128,7 +128,7 @@ var stats = {
                     }
 
                     // Load our category into the parent-child structure.
-                    var tree = new Tree(',', training.categories, { training: training });
+                    var tree = new Tree(null /* id */, ',', training.categories, { training: training });
 
                     // The functions to apply to each leaf of the tree;
                     var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
