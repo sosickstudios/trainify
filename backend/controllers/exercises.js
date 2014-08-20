@@ -426,9 +426,7 @@ var exercise = {
                 questions: questions
             });
         })
-        .catch(function (e){
-            console.log(e.stack);
-        });
+        .catch(utils.error);
     },
     put: {
         /**
@@ -452,7 +450,7 @@ var exercise = {
                 return exercise.save();
             }).then(function (exercise){
                 res.send(exercise);
-            });
+            }).catch(utils.apiError);
         },
         /**
          * Update request for an exercise. This will take an object that is expected to be 
@@ -484,9 +482,7 @@ var exercise = {
             }).then(function (){
                 res.send(200);
             })
-            .catch(function (e){
-                console.log(e.stack);
-            });
+            .catch(utils.apiError);
         }
     }
 };

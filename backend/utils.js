@@ -44,3 +44,16 @@ module.exports.error = function renderError(error){
     };
   }(error));
 };
+
+module.exports.apiError = function apiError(error){
+  return (function (e){
+    return function (req, res){
+      if(process.env.NODE_ENV === 'development'){
+        console.log(e.stack);
+      }
+
+      res.send(500);      
+    }
+
+  }(error))
+};
