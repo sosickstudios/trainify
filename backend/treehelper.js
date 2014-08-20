@@ -9,10 +9,18 @@ var _ = require('lodash');
  * @param {Object} meta Data that can be used by the apply function, in an effort to avoid 
  *                      copying data on a per-leaf basis.
  */
-function Tree (path, cats, meta){
+function Tree (id, path, cats, meta){
+    this.id = id;
     this.categories = cats;
     this.path = path;
-    this.root = _.find(this.categories, { path: path }).values;
+
+    // Find the tree by the id firstly, and the path secondly.
+    var searchTerm = this.id ? {id: parseInt(this.id, 10)} : {path: this.path};
+
+    // The root leaf of the tree.
+    this.root = _.find(this.categories, searchTerm).values;
+
+    // Any data that may be relevant to the treeApply function.
     this.meta = meta;
 
     this.parseTree(this.root);
@@ -80,16 +88,6 @@ Tree.prototype.treeApply = function(fns, meta){
     this.leafApply(this.root);
 };
 
-Tree.prototype.treeTransform = function (fns, meta){
-    if(meta){
-        this.meta = meta;
-    }
-
-    this.fns = fns;
-
-    return this.leafTransform(this.root);
-}
-
 /**
  * Apply the class functions on a leaf that is passed in, which is in the parent-child
  * format. Should work a data from the bottom-to-top, applying all functions in the fns
@@ -116,31 +114,6 @@ Tree.prototype.leafApply = function(leaf){
     }, this);
 
     return leaf;    
-};
-
-/**
- * Each leaf needs the current category, parentTotal, questions, and children, answers
- *
- * @param {[type]} leaf [description]
- * @return {[type]}
- */
-Tree.prototype.leafTransform = function(leaf){
-    var leaf = leaf;
-
-    var children;
-    if (leaf.children && leaf.children.length){
-        children = _.map(leaf.children, function (item){
-            return this.leafTransform(item);
-        }, this);
-    }
-
-    // Run the chain
-    _.each(this.fns, function(item){
-        var fn = item.fn.bind(this);
-        leaf = fn(leaf, children);
-    }, this);
-
-    return leaf;
 };
 
 module.exports = Tree;
