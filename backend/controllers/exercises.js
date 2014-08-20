@@ -278,17 +278,14 @@ Leaf.prototype.removeChildWell = function (index){
     this.childrenWells.splice(index, 1);
 };
 
-function getQuestions (parentTotal, leaf, answers) {
+function getQuestions (total, leaf, answers){
     return new Promise(function (resolve, reject){
-        var leafWeight = (leaf.weight / 100).toFixed(2);
-
-        // This leaf and its children must sum to this number.
-        var weightTotal = Math.round(leafWeight * parentTotal); 
 
         // Find all questions that fall under this leaf.
         var path = leaf.path + leaf.id + ',';
+        var queryString = 'path LIKE \'%' + path + '%\'';
 
-        Question.findAll({where: {path: path}}, {raw: true}).then(function (questions){
+        Question.findAll({where: [queryString]}, {raw: true}).then(function (questions){
             // We have committed a raw query which bypasses the getter/setters for sequelize.
             // This is so when we have a high count exercise, the overhead from DAO instances isn't
             // too much. This also allows for the objects returned to be configured more easily.
@@ -301,25 +298,40 @@ function getQuestions (parentTotal, leaf, answers) {
                 return question;
             });
 
-            //If the leaf has children, retrieve the questions from the child.
-            if(leaf.children && leaf.children.length) {
-                Promise.all(_.map(leaf.children, function (item) {
-                    return getQuestions(weightTotal, item, answers);
-                })).then(function (childrenResults){
-                    // filter out any empty leaves that can't provide questions.
-                    childrenResults = _.filter(childrenResults, function (item) {
-                        return !item.isLeafDry();
-                    });  
+            function initializeLeaves (parentTotal, leaf){
+                var leafWeight = (leaf.weight / 100).toFixed(2);
 
-                    var result = new Leaf(leaf, parentTotal, questions, childrenResults, answers);
-                    resolve(result);
-                }).catch(reject);
-            } else {
-                var result = new Leaf(leaf, parentTotal, questions, [], answers);
-                resolve(result);
+                var weightTotal = Math.round(leafWeight * parentTotal);
+
+                var childrenLeaves = [];
+                if(leaf.children){
+                    childrenLeaves = _(leaf.children)
+                        .map(function(item){
+                            item = initializeLeaves(weightTotal, item);
+                            return item;
+                        })
+                        .filter(function (item){
+                            return !item.isLeafDry();
+                        })
+                        .value();
+                }
+
+                var leafAbsPath = leaf.path + leaf.id + ',';
+                var leafQuestions = _.where(questions, {path: leafAbsPath});
+
+                return new Leaf(leaf, parentTotal, leafQuestions, childrenLeaves, answers);
             }
 
-        }).catch(reject);
+            // Since the leaf sent in is the root by default, we want whatever total of questions 
+            // to represent 100% of the leaf. (In the case that we have a leaf that is not by 
+            // default the root)
+            leaf.weight = 100;
+            leaf = initializeLeaves(total, leaf);
+
+            resolve(leaf);
+
+        })
+        .catch(reject);
     });
 }
 
@@ -351,8 +363,6 @@ var exercise = {
 
         // What type of exercise are we generating.
         var isPractice = type === 'Practice';
-
-        var questions;
         Promise.all(promises).then(function (result){
             // Our newly created exercise
             exercise = result[0];
@@ -372,11 +382,12 @@ var exercise = {
 
             // Parse our categories into a parent-child format.
             var tree = new Tree(path, training.categories, null /* meta */);
-
+            
             return getQuestions(total, tree.get(), answers);
         }).then(function (tree){
+
             // We have the tree set up properly, now get our questions from the (Root).
-            questions = tree.getQuestions();
+            var questions = tree.getQuestions();
 
             questions = _.shuffle(_.values(questions));
 
@@ -385,7 +396,9 @@ var exercise = {
                 questions: questions
             });
         })
-        .catch(utils.error);
+        .catch(function (e){
+            console.log(e.stack);
+        });
     },
     put: {
         /**
@@ -436,8 +449,12 @@ var exercise = {
                     update.result = result;
                     return question.createResult(update);
                 }
-            }).then(res.send)
-            .catch(utils.error);
+            }).then(function (){
+                res.send(200);
+            })
+            .catch(function (e){
+                console.log(e.stack);
+            });
         }
     }
 };

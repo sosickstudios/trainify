@@ -80,6 +80,16 @@ Tree.prototype.treeApply = function(fns, meta){
     this.leafApply(this.root);
 };
 
+Tree.prototype.treeTransform = function (fns, meta){
+    if(meta){
+        this.meta = meta;
+    }
+
+    this.fns = fns;
+
+    return this.leafTransform(this.root);
+}
+
 /**
  * Apply the class functions on a leaf that is passed in, which is in the parent-child
  * format. Should work a data from the bottom-to-top, applying all functions in the fns
@@ -106,6 +116,31 @@ Tree.prototype.leafApply = function(leaf){
     }, this);
 
     return leaf;    
+};
+
+/**
+ * Each leaf needs the current category, parentTotal, questions, and children, answers
+ *
+ * @param {[type]} leaf [description]
+ * @return {[type]}
+ */
+Tree.prototype.leafTransform = function(leaf){
+    var leaf = leaf;
+
+    var children;
+    if (leaf.children && leaf.children.length){
+        children = _.map(leaf.children, function (item){
+            return this.leafTransform(item);
+        }, this);
+    }
+
+    // Run the chain
+    _.each(this.fns, function(item){
+        var fn = item.fn.bind(this);
+        leaf = fn(leaf, children);
+    }, this);
+
+    return leaf;
 };
 
 module.exports = Tree;
