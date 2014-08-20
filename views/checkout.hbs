@@ -1,7 +1,7 @@
 {{> header }}
 
-<main>
-    You want to buy {{training.name}} for ${{training.examTotal}}?
+<main class="checkout">
+    Would you like to buy <span class="course">{{training.name}}</span>? Don't worry, it's free during out beta period.
 
     <form action="/buy/{{training.id}}" method="post">
         <input class="btn-green" type="submit" value="Purchase" />
