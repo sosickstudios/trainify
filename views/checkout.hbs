@@ -1,10 +1,23 @@
 {{> header }}
 
 <main class="checkout">
-    Would you like to buy <span class="course">{{training.name}}</span>? Don't worry, it's free during out beta period.
+    {{#if total}}
+        Would you like to buy <span class="course">{{training.name}}</span> for ${{total}}?
+    {{/if}}
+    {{#unless total}}
+        Would you like to access <span class="course">{{training.name}}</span>? Don't worry, it's free during our beta period.
+    {{/unless}}
 
     <form action="/buy/{{training.id}}" method="post">
-        <input class="btn-green" type="submit" value="Purchase" />
+        <script
+                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                data-key="{{stripe}}"
+                data-image="/images/logo.svg"
+                data-name="Trainify"
+                data-email="{{user.email}}"
+                data-description="1 course (${{total}}.00)"
+                data-amount="{{total}}00">
+        </script>
     </form>
 </main>
 

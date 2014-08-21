@@ -4,11 +4,11 @@ var should = require('should');
 var express = require('express');
 var request = require('supertest');
 var session = require('express-session');
-var bodyParser = require('body-parser');
 var hbs = require('hbs');
 var rewire = require('rewire');
 var Promise = require('bluebird');
 var sequelize = require('./../../backend/plugins/db');
+var testutils = require('./../testutils');
 var User = require('./../../backend/models/user');
 
 describe('home controller', function(){
@@ -53,20 +53,21 @@ describe('home controller', function(){
     });
 
     it('should login', function(done){
-      request(global.app)
-        .get('/login')
-        .end(function(err, res){
-          res.header['location'].should.equal('/');
-          done();
-        });
+        request(global.app)
+            .get('/login')
+            .end(function(err, res){
+                res.header['location'].should.equal('/');
+                done();
+            });
     });
 
     it('should show the user', function(done){
-      // We have been redirected, let's check our user now
-      request(global.app)
-        .get('/')
-        .expect(/testuser@trainify.io/)
-        .end(done);
+        testutils.setUser().then(function(){
+            request(global.app)
+                    .get('/')
+                    .expect(/testuser@trainify.io/)
+                    .end(done);
+        });
     });
 
     it('should list training courses', function(done){

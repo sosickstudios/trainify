@@ -1,3 +1,4 @@
+var config = require('config');
 var passwordless = require('passwordless');
 var express = require('express');
 var _ = require('lodash');
@@ -107,8 +108,16 @@ function getChildCategories(categories, parentId){
  */
 var buy = {
     get: function(req, res){
+        if (!res.locals.user){
+            return res.redirect('/signup');
+        }
+
         Training.find(req.param('id')).success(function(training){
-            res.render('checkout', {training: training});
+            res.render('checkout', {
+                training: training,
+                stripe: config.stripe,
+                total: 20
+            });
         });
     },
 
