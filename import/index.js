@@ -21,8 +21,9 @@ module.exports.training = function(){
             name: 'Test Course',
             description: 'Test Description',
             companyId: companyId, 
-            practiceExamTotal: 25,
-            structuredExamTotal: 50
+            practiceExamTotal: 5,
+            structuredExamTotal: 50,
+            cost: 20
         }).then(function(course){
             trainingId = course.id;
             resolve();
@@ -71,7 +72,7 @@ module.exports.categories = function(){
         })).then(function (items){
             _.each(items, function (item){
                 var search = {
-                    name: item.name,
+                    name: item.name
                 };
 
                 if(item.path){

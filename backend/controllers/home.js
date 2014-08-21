@@ -1,3 +1,4 @@
+var config = require('config');
 var passwordless = require('passwordless');
 var express = require('express');
 var _ = require('lodash');
@@ -107,18 +108,52 @@ function getChildCategories(categories, parentId){
  */
 var buy = {
     get: function(req, res){
+        if (!res.locals.user){
+            return res.redirect('/signup');
+        }
+
         Training.find(req.param('id')).success(function(training){
-            res.render('checkout', {training: training});
+            res.render('checkout', {
+                training: training,
+                stripe: config.stripe.publicKey
+            });
         });
     },
 
     post: function(req, res){
-        Access.create({
-            trainingId: req.param('id'),
-            userId: res.locals.user.id
-        }).success(function(access){
-            res.redirect('/');
-        });
+        function completeAccess(){
+            Access.create({
+                trainingId: req.param('id'),
+                userId: res.locals.user.id
+            }).success(function(){
+                res.redirect('/');
+            });
+        }
+        if (req.param('stripeToken')){
+            // Get the training course for the cost and error rendering.
+            Training.find(req.param('id')).success(function(training){
+                var stripe = require('stripe')(config.stripe.secretKey);
+
+                stripe.charges.create({
+                    amount: training.cost * 100,
+                    currency: 'usd',
+                    card: req.param('stripeToken'),
+                    description: res.locals.user.email
+                }).then(function(){
+                    completeAccess();
+                }, function(err){
+                    res.render('checkout', {
+                        training: training,
+                        stripe: config.stripe.publicKey,
+                        error: err
+                    });
+                });
+            });
+        } else {
+            // If no Stripe token exists, then the course is free, so just
+            // grant access to the course.
+            completeAccess();
+        }
     }
 };
 

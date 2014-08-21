@@ -49,7 +49,10 @@ beforeEach(function(){
   }));
 
   app.use(function(req, res, next){
-    res.locals.user = {email: 'testuser@trainify.io'}
+    if (app.locals){
+        res.locals = app.locals;
+    }
+
     next();
   });
 

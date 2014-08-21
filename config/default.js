@@ -4,6 +4,11 @@ module.exports = {
     port: 6379
   },
 
+  stripe: {
+      publicKey: 'pk_test_Tg9YdyqBcp1aQsYV7eM4PNNx',
+      secretKey: 'sk_test_abZ1lpj2ylrplGnFMyjwlGSt'
+  },
+
   server: {
     port: 6158,
     session: 'SomeTHINGRand0m',

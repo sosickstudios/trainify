@@ -113,6 +113,44 @@ p a {
   @include button($primary-green);
 }
 
+form > button.stripe-button-el {
+  @include button($primary-green);
+  background-image: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0 25px;
+  font-family: inherit;
+  margin: 25px 0 0 0;
+
+  &:not(:disabled):active {
+    background-color: $primary-green;
+
+    span {
+      background-color: $primary-green;
+      background-image: none;
+      box-shadow: none;
+    }
+  }
+
+  > span {
+    font-family: inherit;
+    font-size: 0.9em;
+    font-weight: 600;
+    text-shadow: none;
+    min-height: auto !important;
+    padding: 0;
+    background-image: none;
+    background-color: transparent;
+    color: $primary-green;
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: none;
+      color: #fff;
+    }
+  }
+}
+
 .btn-orange {
   @include button($primary-orange);
 }
