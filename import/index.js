@@ -20,7 +20,9 @@ module.exports.training = function(){
         Training.findOrCreate({
             name: 'Test Course',
             description: 'Test Description',
-            companyId: companyId
+            companyId: companyId, 
+            practiceExamTotal: 25,
+            structuredExamTotal: 50
         }).then(function(course){
             trainingId = course.id;
             resolve();
