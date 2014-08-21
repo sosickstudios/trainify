@@ -113,10 +113,6 @@ p a {
   @include button($primary-green);
 }
 
-.stripe-button-el:not(:disabled):active span {
-
-}
-
 form > button.stripe-button-el {
   @include button($primary-green);
   background-image: none;
