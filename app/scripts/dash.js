@@ -16,10 +16,10 @@
 
     var examBtnListener;
     function dataChange (data){
-        courseCount.textContent = '1';
-        passCount.textContent = '8';
-        failCount.textContent = '3';
-        examAverage.textContent = '88%';
+        courseCount.textContent = data.stats.courseCount;
+        passCount.textContent = data.stats.passCount;
+        failCount.textContent = data.stats.failCount;
+        examAverage.textContent = data.stats.examAverage + '%';
 
         trainingName.textContent = data.name;
         trainingDescription.textContent = data.description;

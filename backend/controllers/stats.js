@@ -42,6 +42,42 @@ function leafAverage (leaf, meta) {
 }
 
 /**
+ * Calculate the data that will be displayed on the top of the dash.
+ *
+ * @param {Array.<Exercise>} exercises The exercises for the given training course.
+ * 
+ * @return {Object}
+ */
+function examStats (exercises){
+    var result = {};
+
+    // Find all exercises that have been completed.
+    var all = _.where(exercises, function (exercise){
+        return exercise.completed !== null;
+    });
+
+    // Find all exercises that have been completed and failed.
+    result.failCount = _.where(all, function (exercise){
+        return exercise.score <= 65;
+    }).length;
+
+    // Find all exercises that have been completed and passed.
+    result.passCount = _.where(all, function (exercise){
+        return exercise.score > 65;
+    }).length;
+    
+    // Calculate the average of all exams that have been completed.
+    var totalEarnedPoints = _.reduce(all, function (sum, exercise){
+        return sum += exercise.score; 
+    }, 0);
+
+    // Get the exam average by doing totalEarnedPoints / totalPossiblePoints
+    result.examAverage = Math.round((totalEarnedPoints / (all.length * 100)).toFixed(2) * 100);
+
+    return result;
+}
+
+/**
  * Contains the routes that have custom handling logic.
  * @type {Object}
  */
@@ -103,6 +139,12 @@ var stats = {
 
                 	// What functions do we want to run on each leaf of the tree.
                 	tree.treeApply(applyFunctions);
+
+                    // Stats to display at the top of the dash.
+                    training.stats = examStats(trainingExercises);
+
+                    // Set how many courses are available to the user.
+                    training.stats.courseCount = trainings.length;
 
                 	// Set our parent-child formatted category as the root for the tree.
                 	training.category = tree.get();
