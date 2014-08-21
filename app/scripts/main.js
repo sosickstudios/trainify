@@ -75,7 +75,7 @@
    * first training course, then calls the toggleCourseChange function to let all listeners know 
    * that there is new data.
    *
-   * @param {[Object<Training>]} data Contains an array of training courses that have been purchased
+   * @param {Training} data Contains an array of training courses that have been purchased
    * and may be purchased.
    */
   function initCourseData(data){

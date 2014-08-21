@@ -23,7 +23,7 @@ function leafAverage (leaf, meta) {
     // through lodash by first getting all the questions, then flattening
     // them into one single array and filtering the unanswered questions.
 
-    var questions = _(meta.training.exercises)
+    var questions = _(meta.exercises)
             .pluck('results')
             .flatten()
             .filter(function (result){
@@ -42,60 +42,46 @@ function leafAverage (leaf, meta) {
 }
 
 /**
+ * Calculate the data that will be displayed on the top of the dash.
+ *
+ * @param {Array.<Exercise>} exercises The exercises for the given training course.
+ * 
+ * @return {Object}
+ */
+function examStats (exercises){
+    var result = {};
+
+    // Find all exercises that have been completed.
+    var all = _.where(exercises, function (exercise){
+        return exercise.completed !== null;
+    });
+
+    // Find all exercises that have been completed and failed.
+    result.failCount = _.where(all, function (exercise){
+        return exercise.score <= 65;
+    }).length;
+
+    // Find all exercises that have been completed and passed.
+    result.passCount = _.where(all, function (exercise){
+        return exercise.score > 65;
+    }).length;
+    
+    // Calculate the average of all exams that have been completed.
+    var totalEarnedPoints = _.reduce(all, function (sum, exercise){
+        return sum += exercise.score; 
+    }, 0);
+
+    // Get the exam average by doing totalEarnedPoints / totalPossiblePoints
+    result.examAverage = Math.round((totalEarnedPoints / (all.length * 100)).toFixed(2) * 100);
+
+    return result;
+}
+
+/**
  * Contains the routes that have custom handling logic.
  * @type {Object}
  */
 var stats = {
-	get:{
-		/**
-		 * Api call intended to provide a summary of data for a training course, 
-		 * returning a tree of data based on the categories for that training course.
-		 * Each leaf in the tree will have an object called 'stats' that will contain
-		 * calculated averages and statistics based off the current users' past 
-		 * exercises.
-		 *
-		 * @param {Express.request} req Express application request object.
-		 * @param {Express.response} res Express application response object.
-		 */
-		tree: function (req, res){
-			var user = res.locals.user;
-
-			
-			Training.find({where: {id: _.pluck(user.access, 'trainingId')}, 
-				include:[Category, { model: Exercise, where: {userId: user.id}, 
-					include: [{model: Result, include: [Question]}]}, Company]})
-				.then(function (training){
-					// TODO(Bryce)This Query takes an average of 1.3s, need to somehow 
-					// optimize this in the future.
-					
-					var Tree = require('./../treehelper');
-
-					// Load our category into the parent-child structure.
-					var tree = new Tree(null /* Id */, ',', training.categories, { training: training });
-
-					// The functions to apply to each leaf of the tree;
-					var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
-
-					// The data that will be copied to each leaf, so that stats may be applied.
-					var leafData = training;
-					
-					// Drop the DAO instance to reduce memory useage.
-					training = training.values;
-
-					// What functions do we want to run on each leaf of the tree.
-					tree.treeApply(applyFunctions);
-
-					delete training.categories;
-					delete training.exercises; 
-
-					// Set our parent-child formatted category as the root for the tree.
-					training.category = tree.get();
-
-					// Send the data as a script, to be executed on the DOM.
-					res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
-				});
-		}	
-	},
     get:{
         /**
          * Api call intended to provide a summary of data for a training course,
@@ -114,40 +100,59 @@ var stats = {
                 return res.send(200, '');
             }
 
-            Training.find({where: {id: _.pluck(user.access, 'trainingId')},
-                include:[Category, { model: Exercise, where: {userId: user.id},
-                    include: [{model: Result, include: [Question]}]}, Company]})
-                .then(function (training){
-                    // TODO(Bryce)This Query takes an average of 1.3s, need to somehow
-                    // optimize this in the future.
+            var trainingIds = _.pluck(user.access, 'trainingId');
+            var promises = [
+            	Category.findAll({where: {trainingId: trainingIds}}),
+            	Exercise.findAll({where: {userId: user.id, trainingId: trainingIds}, 
+            		include: [{model: Result, include: [Question]}]}),
+            	Training.findAll({where: {id: trainingIds}, include: [Company]}, {raw: true})
+            ];
 
-                    var Tree = require('./../treehelper');
+            Promise.all(promises).then(function (results){
+            	/**
+            	 * Results is the resolves promises above, broken apart from eager loading to
+            	 * optimize the time of the query.
+            	 *
+            	 * results[0]: Categories for all trainings the user has access to.
+            	 * results[1]: Exercises for all trainings the user has access to.
+            	 * results[2]: Training courses the user has access to.
+            	 */
+            	var categories = results[0];
+            	var exercises = results[1];
+            	var trainings = results[2];
 
-                    if (!training){
-                        return res.send(200, '');
-                    }
+                var Tree = require('./../treehelper');
 
-                    // Load our category into the parent-child structure.
-                    var tree = new Tree(null /* id */, ',', training.categories, { training: training });
+                if (!trainings.length){
+                    return res.send(200, '');
+                }
+                // The functions to apply to each leaf of the tree;
+                var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
 
-                    // The functions to apply to each leaf of the tree;
-                    var applyFunctions = [{key: 'leafAverage', fn: leafAverage}];
+                // Convert the categories for the training into a tree.
+                _.each(trainings, function(training){
+                	var trainingCategories = _.where(categories, {trainingId: training.id});
+                	var trainingExercises = _.where(exercises, {trainingId: training.id});
 
-                    // Drop the DAO instance to reduce memory useage.
-                    training = training.values;
+                	// Load our category into the parent-child structure.
+                	var tree = new Tree(null /* id */, ',', trainingCategories, { training: training, exercises: trainingExercises });
 
-                    // What functions do we want to run on each leaf of the tree.
-                    tree.treeApply(applyFunctions);
+                	// What functions do we want to run on each leaf of the tree.
+                	tree.treeApply(applyFunctions);
 
-                    delete training.categories;
-                    delete training.exercises;
+                    // Stats to display at the top of the dash.
+                    training.stats = examStats(trainingExercises);
 
-                    // Set our parent-child formatted category as the root for the tree.
-                    training.category = tree.get();
+                    // Set how many courses are available to the user.
+                    training.stats.courseCount = trainings.length;
 
-                    // Send the data as a script, to be executed on the DOM.
-                    res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
+                	// Set our parent-child formatted category as the root for the tree.
+                	training.category = tree.get();
                 });
+
+                // Send the data as a script, to be executed on the DOM.
+                res.send('window.Trainify.initCourseData(' + JSON.stringify(trainings) + ')');
+            });
         }
     }
 };

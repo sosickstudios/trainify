@@ -20,7 +20,6 @@ function Tree (id, path, cats, meta){
     var searchTerm = this.id ? {id: this.id} : {path: this.path};
 
     // The root leaf of the tree.
-    console.log(searchTerm);
     this.root = _.find(this.categories, searchTerm).values;
 
     // Any data that may be relevant to the treeApply function.
@@ -118,5 +117,6 @@ Tree.prototype.leafApply = function(leaf){
 
     return leaf;    
 };
+
 
 module.exports = Tree;

@@ -5,9 +5,10 @@
 	var radius = Math.min(width, height) / 2;
 
 	var colors = {
-		standard: 'grey',
-		good: 'green',
-		bad: 'red'
+		standard: 'moccasin',
+		caution: 'gold',
+		passing: 'green',
+		failing: 'red'
 	};
 
 	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
@@ -40,6 +41,26 @@
 
 	var clickLock = false;
 	var currentCategory;
+
+	/**
+	 * Determine the fill color for a node on the starburst based on the stats.leafAverage
+	 *
+	 * @param {Category} d The category that has a stats object attached.
+	 * @return {String}	   Should return the string of the color to be used for filling.
+	 */
+	function determineFillColor (d){
+		var leafAverage = d.stats.leafAverage;
+
+		if(leafAverage === -1){
+			return colors.standard;
+		} else if(leafAverage <= 50){
+			return colors.failing;
+		} else if(50 < leafAverage && leafAverage <= 80){
+			return colors.caution;
+		} else if(leafAverage > 80){
+			return colors.passing;
+		}
+	}
 	
 	/**
 	 * Responsible for rendering the starburst based on the data tree that is 
@@ -71,9 +92,7 @@
 			.attr('d', arc)
 			.attr('fill-rule', 'evenodd')
 			.style('fill', function(d){
-				// HACK(BRYCE) in future this should determine the fill color
-				// from accessing the d.stats.leafAverage hack(bryce)
-				return colors.standard; 
+				return determineFillColor(d); 
 			})
 			.style('opacity', 1)
 			.on('mouseover', mouseover)
@@ -110,10 +129,13 @@
 		}
 
 		currentCategory = d;
-		var percentage = (100 * d.value / totalSize).toPrecision(3);
-		var percentageString = percentage + '%';
-
-
+		var percentageString;
+		if(currentCategory.stats.leafAverage !== -1) {
+			percentageString = currentCategory.stats.leafAverage + '%';
+		} else {
+			percentageString = 'No questions taken.';
+		}
+		
 		d3.select('#percentage')
 			.text(percentageString);
 
@@ -250,9 +272,7 @@
 		entering.append('svg:polygon')
 			.attr('points', breadcrumbPoints)
 			.style('fill', function(d) { 
-				// HACK(BRYCE): TODO fill this according to d.stats.leafAverage This is where we 
-				// must add the fill color
-				return colors.standard; 
+				return determineFillColor(d); 
 			}); 
 
 		entering.append('svg:text')
