@@ -62,7 +62,7 @@ p a {
   left: 0;
   right: 0;
   overflow: hidden;
-  z-index: 1;
+  z-index: 2;
   background: #fff;
 }
 
@@ -86,6 +86,50 @@ p a {
   border-bottom: 1px solid #e1e1e1;
 }
 
+.headroom {
+  @extend .promote-layer;
+  transition: transform 200ms linear;
+  position: fixed;
+  display: block;
+  top: 120px;
+  left: 0;
+  right: 0;
+  background: $primary-violet;
+  padding: 7px 0;
+  z-index: 1;
+  color: #fff;
+  font-family: "foco", sans-serif;
+  font-size: 1.1em;
+}
+.headroom--pinned {
+  transform: translateY(0%);
+}
+.headroom--unpinned {
+  transform: translateY(-100%);
+}
+
+.progress-meter {
+  width: 95px;
+  height: 95px;
+  position: absolute;
+  top: 7px;
+  right: -34px;
+}
+
+.progress-percent {
+  letter-spacing: -0.1em;
+  font-size: 0.7em;
+  position: relative;
+  left: 4px;
+  top: -2px;
+}
+
+.progress-meter path {
+  stroke: #fff;
+  transition: all 1s;
+  transform: scale(0.4);
+}
+
 // Allow our buttons to have a uniform look, regardless of color. This is intended to be used
 // along with one of our $color-<x> options, but can use whatever.
 @mixin button($color){
@@ -106,6 +150,86 @@ p a {
   &:hover {
     background: $color;
     color: #fcfcfc;
+  }
+}
+
+.exercise-status {
+  button {
+    @extend .btn-white;
+  }
+
+  > div {
+    width: 25%;
+  }
+
+  > div,
+  > h2 {
+    display: inline-block;
+  }
+
+  .start-over {
+    padding: 0 0 0 20px;
+  }
+
+  h2 {
+    width: 48%;
+    margin: 0;
+    padding: 0;
+    font-size: 1.1em;
+    text-align: center;
+  }
+
+  .progress {
+    text-align: right;
+    padding: 0 20px 0 0;
+  }
+}
+
+li {
+  padding-left: 0 !important;
+}
+
+.exercise {
+  > ul {
+    margin: 0 auto;
+    padding: 40px 10% 0 20%;
+  }
+
+  li.exercise-question {
+    list-style-type: decimal;
+    padding-bottom: 30px;
+
+    .question-answers {
+      padding: 10px 0 0 0;
+      margin-left: 50px;
+      list-style-type: lower-alpha;
+      color: $primary-violet;
+      font-size: 0.9em;
+      font-weight: 700;
+
+      li {
+        cursor: pointer;
+        padding: 3px 0;
+        width: 500px;
+      }
+
+      li.answer-selected {
+        color: #000;
+        position: relative;
+
+        &:before {
+          background: rgba(#000, 0.1);
+          border: 1px solid rgba(#000, 0.2);
+          width: 550px;
+          height: 120%;
+          top: -10%;
+          content: ' ';
+          display: block;
+          position: absolute;
+          left: -30px;
+        }
+      }
+    }
   }
 }
 
@@ -155,8 +279,16 @@ form > button.stripe-button-el {
   @include button($primary-orange);
 }
 
+.btn-white {
+  @include button(#fff);
+
+  &:hover {
+    color: #000;
+  }
+}
+
 .logo-container {
-  border-bottom: 2px solid #fff;
+  border-bottom: 0px solid #fff;
 
   button.app-bar-all-courses {
     @include button($primary-violet);
@@ -688,6 +820,10 @@ main.checkout{
   }
 }
 
+main.exercise {
+  padding-top: 160px;
+}
+
 main.checkout {
   text-align: center;
   margin-top: 20px;
@@ -952,8 +1088,4 @@ main.checkout {
 
 #percentage {
   font-size: $secondary-text-size;
-}
-
-.answer-selected {
-  color: blue;
 }

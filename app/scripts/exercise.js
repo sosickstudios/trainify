@@ -1,5 +1,9 @@
 (function (){
 
+    var header = document.querySelector('.exercise-status');
+    var headroom = new Headroom(header);
+    headroom.init();
+
     /**
      * Prototypes representation of each question in an exercise.
      *
@@ -172,14 +176,25 @@
      */
     Exercise.prototype.onQuestionAnswered = function(){
         var hasEmptyQuestion = false;
+        var totalAnswered = 0;
 
         for(var i = 0; i < this.questions.length; i++){
             if(!this.questions[i].isAnswered()) {
                 hasEmptyQuestion = true;
+            } else {
+                totalAnswered++;
             }
         }
 
+        var percent = totalAnswered / this.questions.length * 100;
+        var progress = (100 - percent) / 100 * -250;
+        document.getElementById('p').setAttribute('stroke-dashoffset', progress);
+        document.querySelector('.progress-percent').textContent = percent.toFixed() + '%';
+
         if (!hasEmptyQuestion){
+            headroom.destroy();
+            header.classList.add('headroom');
+            header.classList.add('headroom--pinned');
             // Send an update request to score the exercise;
             this.sendUpdateRequest();
         }

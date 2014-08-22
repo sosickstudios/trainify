@@ -288,7 +288,7 @@ Leaf.prototype.removeChildWell = function (index){
  *                                 this exercise.
  * @return {Leaf}
  */
-function getQuestions (total, leaf, answers){
+function getQuestions (total, leaf, answers, training){
     return new Promise(function (resolve, reject){
 
         // Find all questions that fall under this leaf.
@@ -360,7 +360,7 @@ function getQuestions (total, leaf, answers){
             // Turn our data tree into classes.
             leaf = initializeLeaves(total, leaf);
 
-            resolve(leaf);
+            resolve([leaf, training]);
         })
         .catch(reject);
     });
@@ -422,8 +422,9 @@ var exercise = {
             // Parse our categories into a parent-child format.
             var tree = new Tree(categoryId, null /* path */, training.categories, null /* meta */);
 
-            return getQuestions(total, tree.get(), answers);
-        }).then(function (tree){
+            return getQuestions(total, tree.get(), answers, training);
+        }).then(function (results){
+            var tree = results[0];
 
             // We have the tree set up properly, now get our questions from the (Root).
             var questions = tree.getQuestions();
@@ -433,7 +434,8 @@ var exercise = {
 
             res.render('exercise', {
                 exercise: exercise, 
-                questions: questions
+                questions: questions,
+                training: results[1]
             });
         })
         .catch(utils.error);

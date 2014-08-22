@@ -1,7 +1,21 @@
 {{>header}}
 
+<div class="exercise-status">
+    <div class="start-over"><button>Start Over</button></div>
+    <h2>{{training.name}}</h2>
+    <div class="progress">
+        <span class="progress-percent">0%</span>
+        <svg class="progress-meter" version="1.1" x="0px" y="0px">
+            <path id='p' fill="none"
+                  stroke-dashoffset="-260"
+                  stroke-dasharray="282 282"
+                  stroke-width="8"
+                  d="M45,4C22.392,4,4,22.393,4,45c0,22.608,18.392,41,41,41s41-18.392,41-41S67.608,4,45,4z"/>
+         </svg>
+    </div>
+</div>
 
-<div class="exercise" data-exercise-id="{{this.exercise.id}}">
+<main class="exercise" data-exercise-id="{{this.exercise.id}}">
     <ul>
     {{#each questions}}
         <li class="exercise-question" data-question-id="{{this.id}}">
@@ -15,7 +29,8 @@
         </li>
     {{/each}}
     <ul>
-</div>
+</main>
 
+<script src="/scripts/headroom.min.js"></script>
 <script async type="text/javascript" src="scripts/exercise.js"></script>
 {{>footer}}
