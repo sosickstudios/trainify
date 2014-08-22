@@ -188,9 +188,8 @@
 
         var percent = totalAnswered / this.questions.length * 100;
         var progress = (100 - percent) / 100 * -250;
-        console.log(progress);
         document.getElementById('p').setAttribute('stroke-dashoffset', progress);
-        document.querySelector('.progress-percent').textContent = percent + '%';
+        document.querySelector('.progress-percent').textContent = percent.toFixed() + '%';
 
         if (!hasEmptyQuestion){
             headroom.destroy();
