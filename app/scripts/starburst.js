@@ -5,10 +5,10 @@
 	var radius = Math.min(width, height) / 2;
 
 	var colors = {
-		standard: 'moccasin',
-		caution: 'gold',
-		passing: 'green',
-		failing: 'red'
+		standard: '#31c5f1',
+		caution: '#fdd53c',
+		passing: '#9fcc46',
+		failing: '#f68421'
 	};
 
 	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
@@ -133,7 +133,7 @@
 		if(currentCategory.stats.leafAverage !== -1) {
 			percentageString = currentCategory.stats.leafAverage + '%';
 		} else {
-			percentageString = 'No questions taken.';
+			percentageString = 'N/A';
 		}
 		
 		d3.select('#percentage')

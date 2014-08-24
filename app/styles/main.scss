@@ -120,7 +120,7 @@ p a {
   letter-spacing: -0.1em;
   font-size: 0.7em;
   position: relative;
-  left: 4px;
+  left: 8px;
   top: -2px;
 }
 
@@ -185,14 +185,14 @@ p a {
   }
 }
 
-li {
-  padding-left: 0 !important;
-}
-
 .exercise {
   > ul {
     margin: 0 auto;
     padding: 40px 10% 0 20%;
+  }
+
+  li {
+    padding-left: 0;
   }
 
   li.exercise-question {
@@ -804,6 +804,7 @@ button.menu img {
 }
 
 main,
+main.dash,
 main.checkout{
   margin: 0 auto;
   /* Height of the header */
@@ -852,6 +853,11 @@ main.checkout {
   padding: 2px 5px;
   position: relative;
   top: -2px;
+}
+
+#percentage {
+  display: block;
+  font-size: 2.9em;
 }
 
 @media all and (max-width: 459px) {
@@ -962,9 +968,16 @@ main.checkout {
   }
 }
 
+.dash-overview {
+  .dash-courseinfo,
+  #starburst {
+    width: 49.5%;
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+
 .dash-courseinfo {
-  width: 30%;
-  margin: 0 0 0 20%;
 
   .course-name {
     color: $primary-violet;
@@ -1005,24 +1018,22 @@ main.checkout {
   }
 }
 
-.dash {
-  margin-top: 10rem;
-}
-
 .dash-statsbar {
-  float: left;
   font-size: 1.5em;
-  padding: 10px 5px;
-  margin: 0 3.5%;
-}
-
-.dash-text{
-  margin-left: 30%;
 }
 
 .dash-stats {
-  margin-left: 17%;
-  width: 75%;
+  text-align: center;
+
+  > li {
+    display: inline-block;
+    width: 33%;
+  }
+
+  .dash-text {
+    display: block;
+  }
+
   .course-count {
     @extend .dash-statsbar;
     color: $primary-violet;
@@ -1044,26 +1055,13 @@ main.checkout {
   } 
 }
 
-#starburst {
-  width: 50%;
-  height: 400;
-  margin-left: 650px; 
-  padding-left: 90px;
-  padding-right: 90px;
-  margin-top: -350px;
-}
-
-#sequence {
-  width: 600px;
-  height: 70px;
-}
-
 #legend {
   padding: 10px 0 0 3px;
 }
 
 #sequence text, #legend text {
   font-weight: 600;
+  font-size: 0.6em;
   fill: #fff;
 }
 
@@ -1071,21 +1069,33 @@ main.checkout {
   position: relative;
 }
 
-#chart path {
-  stroke: #fff;
-}
-
 #explanation {
-  font-size: $secondary-text-size;
   position: absolute;
-  top: 90px;
-  left: 165px;
-  width: 140px;
-  text-align: center;
-  color: #666;
-  z-index: 1;
+  top: 225px;
+  left: 152px;
+
+
+  button {
+    @extend .btn-white;
+    border-width: 0;
+    color: #000;
+    padding: 0;
+    white-space: normal;
+    width: 150px;
+    line-height: 1.2em;
+
+    &:hover {
+      background: none;
+      color: $primary-violet;
+    }
+  }
 }
 
 #percentage {
-  font-size: $secondary-text-size;
+  margin-bottom: 5px;
+  line-height: 0.7em;
+}
+
+#chart path {
+  stroke: #fff;
 }

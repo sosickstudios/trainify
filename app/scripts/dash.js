@@ -16,7 +16,7 @@
 
     var examBtnListener;
     function dataChange (data){
-        courseCount.textContent = data.stats.courseCount;
+        //courseCount.textContent = data.stats.courseCount;
         passCount.textContent = data.stats.passCount;
         failCount.textContent = data.stats.failCount;
         examAverage.textContent = data.stats.examAverage + '%';

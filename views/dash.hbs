@@ -1,24 +1,20 @@
 {{>header}}
 
-<div class="dash">
-	<div class="dash-stats">
-		<div class="course-count">
-			<span class="dash-text"></span><br/>
-			Course(s)
-		</div>
-		<div class="exam-passcount">
-			<span class="dash-text"></span><br/>
-			Tests Passed
-		</div>
-		<div class="exam-failcount">
-			<span class="dash-text"></span><br/>
-			Tests Failed
-		</div>
-		<div class="exam-average">
-			<span class="dash-text"></span><br/>
-			Test Average
-		</div>
-	</div>
+<main class="dash">
+    <ul class="dash-stats">
+        <li class="exam-passcount">
+            <span class="dash-text"></span>
+            <span class="dash-explanation">Tests Passed</span>
+        </li>
+        <li class="exam-failcount">
+            <span class="dash-text"></span>
+            <span class="dash-explanation">Tests Failed</span>
+        </li>
+        <li class="exam-average">
+            <span class="dash-text"></span>
+            <span class="dash-explanation">Test Average</span>
+        </li>
+    </ul>
 
 	<div class="dash-overview">
 		{{! All information relating to the course. }}
@@ -41,15 +37,13 @@
 		  <div id="sequence"></div>
 		  <div id="chart">
 		    <div id="explanation" style="visibility: hidden;">
-		      <span id="percentage"></span><br/>
-		      questions answered correctly.
-		      <br/>
-		      <button id="practiceButton">Practice <span id="buttonText"></span></button>
+		      <button id="practiceButton"><span id="percentage"></span><span id="buttonText"></span></button>
 		    </div>
 		  </div>
 		</div>
 	</div>
-</div>
+</main>
+
 <script async type="text/javascript" src="scripts/dash.js"></script>
 <script type="text/javascript" src="scripts/d3.min.js"></script>
 <script async type="text/javascript" src="scripts/starburst.js"></script>
