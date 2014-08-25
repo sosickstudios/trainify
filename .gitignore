@@ -9,4 +9,3 @@ test/e2e/selenium*
 coverage/
 *.sublime-workspace
 /.idea/
-deployment/roles/
