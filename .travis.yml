@@ -13,6 +13,7 @@ script:
 addons:
   postgresql: "9.3"
 before_script:
-  - psql -c 'create database sosick;' -U postgres
+  - psql -c 'create database sosicktest;' -U postgres
+  - psql -c 'create user sosickstudios;grant all privileges on database sosicktest to sosickstudios;' -U postgres
 services:
   - redis-server

@@ -381,16 +381,17 @@ var exercise = {
      */
     get: function (req, res){
         //TODO(Bryce) Clean up the parameters that are expected for this route.
-        var categoryId = req.query.category;
+        var categoryId = parseInt(req.query.category, 10);
         var path = req.query.path;
-        var trainingId = req.query.trainingId;
+        var trainingId = parseInt(req.query.trainingId, 10);
         var type = req.query.type || 'Exam Prep';
         var user = res.locals.user;
 
         var exercise;
         var promises = [
             Exercise.create({userId: user.id, trainingId: trainingId, type: type, path: path}),
-            Training.find({where: {id: trainingId}, include: [Category, {model: Exercise, where: {userId: user.id}, include: [Result]}]})
+            Training.find({where: {id: trainingId}, include: [Category, {model: Exercise, 
+                    include: [Result]}]})
         ];
 
         // What type of exercise are we generating.
@@ -407,8 +408,10 @@ var exercise = {
             // Training course, loaded with exercises and results.
             var training = result[1];
 
-            // The second promise was to query all exercises by the user, to get the answers to
-            // all previous questions answered.
+            if(training.exercises.length){
+                training.exercises = _.filter(training.exercises, {userId: user.id});
+            }
+            
             var answers = _(training.exercises)
                             .pluck('results')
                             .flatten()
@@ -438,7 +441,7 @@ var exercise = {
                 training: results[1]
             });
         })
-        .catch(utils.error);
+        .catch(utils.apiError);
     },
     put: {
         /**

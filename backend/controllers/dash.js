@@ -1,6 +1,6 @@
-var Company = require('./../models/company');
 var express = require('express');
 var router = express.Router();
+var stats = require('./stats');
 var Training = require('./../models/training');
 
 var dash = {

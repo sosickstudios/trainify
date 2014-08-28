@@ -31,8 +31,13 @@
     <nav class="navdrawer-container promote-layer">
       <h4>Navigation</h4>
       <ul>
-        <li><a href="#hello">Store</a></li>
-        <li><a href="#get-started">My Courses</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/dash">My Courses</a></li>
+        {{#if user}}
+            <li><a href="/logout">Logout</a></li>
+        {{else}}
+            <li><a href="/signup">Login</a></li>
+        {{/if}}
       </ul>
     </nav>
 

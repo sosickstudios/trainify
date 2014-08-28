@@ -195,6 +195,7 @@
             headroom.destroy();
             header.classList.add('headroom');
             header.classList.add('headroom--pinned');
+            header.classList.add('completed');
             // Send an update request to score the exercise;
             this.sendUpdateRequest();
         }
@@ -226,6 +227,10 @@
         var exerciseId = content.dataset.exerciseId;
 
         exercise = new Exercise(content, exerciseId);
+
+        document.querySelector('.start-over button').addEventListener('click', function(){
+           location.reload();
+        });
     }
     init();
 
