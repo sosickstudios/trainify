@@ -8,6 +8,9 @@
                 <h4>{{name}} {{#unless hasPurchased}}<a class="btn--buy" href="/buy/{{id}}">Purchase</a>{{/unless}} {{#if hasPurchased}}<span class="purchased">Purchased</span>{{/if}}</h4>
                 <div class="description">
                     {{description}}
+                    {{#if hasPurchased}}
+                        <br /><a href="/dash">Access your course</a>
+                    {{/if}}
                 </div>
                 <div class="company-bio">
                     {{company.name}} <br/>

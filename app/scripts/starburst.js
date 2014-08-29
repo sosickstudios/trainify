@@ -3,6 +3,7 @@
 	var width = 450;
 	var height = 300;
 	var radius = Math.min(width, height) / 2;
+    var originalButtonTxt = document.querySelector('#buttonText').innerHTML;
 
 	var colors = {
 		standard: '#31c5f1',
@@ -13,7 +14,7 @@
 
 	// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 	var b = {
-		w: 100, h: 30, s: 5, t: 10
+		w: 200, h: 30, s: 5, t: 10
 	};
 
 	// Total size of all segments; we set this later, after loading the data.
@@ -142,10 +143,12 @@
 		d3.select('#buttonText')
 			.text(d.name);
 
+        document.querySelector('#buttonText').classList.add('active');
+
 		d3.select('#practiceButton')
 			.on('click', function () {
 				var path = currentCategory.path + currentCategory.id + ',';
-				
+
 				location.href = '/exercise?type=Practice&path=' + path + '&category=' + currentCategory.id + '&trainingId=' + courseData.id;
 			});
 
@@ -196,8 +199,12 @@
 				d3.select(this).on('mouseover', mouseover);
 			});
 
-		d3.select('#explanation')
-			.style('visibility', 'hidden');
+		//d3.select('#explanation')
+		//	.style('visibility', 'hidden');
+        document.querySelector('#percentage').textContent = '';
+
+        document.querySelector('#buttonText').innerHTML = originalButtonTxt;
+        document.querySelector('#buttonText').classList.remove('active');
 	}
 
 	/**
@@ -227,7 +234,7 @@
 	function initializeBreadcrumbTrail() {
 		// Add the svg area.
 		var trail = d3.select('#sequence').append('svg:svg')
-			.attr('width', width)
+			.attr('width', 650)
 			.attr('height', 50)
 			.attr('id', 'trail');
 	}

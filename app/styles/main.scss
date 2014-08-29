@@ -969,11 +969,17 @@ main.checkout {
 }
 
 .dash-overview {
+  padding-top: 20px;
+
   .dash-courseinfo,
   #starburst {
-    width: 49.5%;
-    display: inline-block;
+    display: block;
+    margin: 0 auto;
     vertical-align: top;
+  }
+
+  > div {
+    margin-right: 0;
   }
 }
 
@@ -1055,29 +1061,37 @@ main.checkout {
   } 
 }
 
+#sequence {
+  width: 650px;
+  margin: 0 auto;
+}
+
 #legend {
   padding: 10px 0 0 3px;
 }
 
 #sequence text, #legend text {
   font-weight: 600;
-  font-size: 0.6em;
+  font-size: 0.6em;;
   fill: #fff;
 }
 
 #chart {
   position: relative;
+  width: 450px;
+  margin: 0 auto;
 }
 
 #explanation {
   position: absolute;
-  top: 225px;
+  top: 115px;
   left: 152px;
 
 
   button {
     @extend .btn-white;
     border-width: 0;
+    position: relative;
     color: #000;
     padding: 0;
     white-space: normal;
@@ -1091,9 +1105,20 @@ main.checkout {
   }
 }
 
+#buttonText {
+  &.active::after {
+    content: 'Take Exam';
+    display: block;
+    text-transform: uppercase;
+    color: $primary-violet;
+    text-decoration: underline;
+    font-size: 0.75em;
+  }
+}
+
 #percentage {
   margin-bottom: 5px;
-  line-height: 0.7em;
+  line-height: 0.8em;
 }
 
 #chart path {
