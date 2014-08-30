@@ -162,3 +162,4 @@ router.route('/tree')
     .get(stats.get.tree);
 
 module.exports = router;
+module.exports.tree = stats.get.tree;

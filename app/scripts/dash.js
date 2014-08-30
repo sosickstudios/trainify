@@ -16,7 +16,7 @@
 
     var examBtnListener;
     function dataChange (data){
-        courseCount.textContent = data.stats.courseCount;
+        //courseCount.textContent = data.stats.courseCount;
         passCount.textContent = data.stats.passCount;
         failCount.textContent = data.stats.failCount;
         examAverage.textContent = data.stats.examAverage + '%';
@@ -24,18 +24,21 @@
         trainingName.textContent = data.name;
         trainingDescription.textContent = data.description;
 
-        providerName.textContent = 'Provided By ' + data.company.name;
-        providerBio.textContent = data.company.bio;
+        // TODO(darius): Determine how much of this should be enabled
+        // and how.
+
+        //providerName.textContent = 'Provided By ' + data.company.name;
+        //providerBio.textContent = data.company.bio;
 
         // Make sure we remove the old data listener, if there is one.
-        examBtn.removeEventListener('click', examBtnListener);
+        //examBtn.removeEventListener('click', examBtnListener);
 
-        examBtnListener = function (){
-            location.href = '/exercise?trainingId=' + data.id + '&path=,&category=' + data.category.id + '&type=Exam Prep';
-        };
+        //examBtnListener = function (){
+        //    location.href = '/exercise?trainingId=' + data.id + '&path=,&category=' + data.category.id + '&type=Exam Prep';
+        //};
 
         // Attach the new listener, with the new location.href set.
-        examBtn.addEventListener('click', examBtnListener);
+        //examBtn.addEventListener('click', examBtnListener);
     }
 
     window.Trainify.attachCourseDataListener(dataChange);
