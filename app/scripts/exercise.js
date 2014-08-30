@@ -226,6 +226,10 @@
         var exerciseId = content.dataset.exerciseId;
 
         exercise = new Exercise(content, exerciseId);
+
+        document.querySelector('.start-over button').addEventListener('click', function(){
+           location.reload();
+        });
     }
     init();
 

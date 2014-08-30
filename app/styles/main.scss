@@ -119,9 +119,9 @@ p a {
 .progress-percent {
   letter-spacing: -0.1em;
   font-size: 0.7em;
-  position: relative;
-  left: 8px;
-  top: -2px;
+  position: absolute;
+  right: 30px;
+  top: 12px;
 }
 
 .progress-meter path {
