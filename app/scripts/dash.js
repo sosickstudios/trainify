@@ -24,6 +24,9 @@
         trainingName.textContent = data.name;
         trainingDescription.textContent = data.description;
 
+        // TODO(darius): Determine how much of this should be enabled
+        // and how.
+
         //providerName.textContent = 'Provided By ' + data.company.name;
         //providerBio.textContent = data.company.bio;
 
