@@ -19,7 +19,12 @@
         //courseCount.textContent = data.stats.courseCount;
         passCount.textContent = data.stats.passCount;
         failCount.textContent = data.stats.failCount;
-        examAverage.textContent = data.stats.examAverage + '%';
+        if (data.stats.examAverage){
+            examAverage.textContent = data.stats.examAverage + '%';
+        } else {
+            examAverage.textContent = 'N/A';
+        }
+
 
         trainingName.textContent = data.name;
         trainingDescription.textContent = data.description;
