@@ -6,6 +6,9 @@ $primary-green: #9fcc46;
 $primary-orange: #f68421;
 $primary-red: #f62621;
 $primary-violet: #da138e;
+$primary-blue: #31c5f1;
+$primary-yellow: #fdd53c;
+$primary-beige: #c2b59b;
 
 $secondary-text: #676767;
 
@@ -84,6 +87,35 @@ p a {
   background: #f5f5f5;
   height: 2.5em;
   border-bottom: 1px solid #e1e1e1;
+}
+
+.exercise-status .exercise-overview {
+  display: none;
+  background: $primary-blue;
+  width: 100%;
+  position: relative;
+  top: 7px;
+  height: 38px;
+  padding-top: 5px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8em;
+  border: 2px solid #d8e2e5;
+  border-width: 2px 0;
+
+  a {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: $primary-yellow;
+    }
+  }
+}
+
+.exercise-status.completed .exercise-overview {
+  display: block;
 }
 
 .headroom {

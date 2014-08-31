@@ -195,6 +195,7 @@
             headroom.destroy();
             header.classList.add('headroom');
             header.classList.add('headroom--pinned');
+            header.classList.add('completed');
             // Send an update request to score the exercise;
             this.sendUpdateRequest();
         }
