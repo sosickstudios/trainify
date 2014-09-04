@@ -95,7 +95,7 @@ var stats = {
          */
         tree: function (req, res){
             var user = res.locals.user;
-
+            
             if (!user || !_.any(user.access)){
                 return res.send(200, '');
             }

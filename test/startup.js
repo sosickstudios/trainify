@@ -5,25 +5,12 @@ var hbs = require('hbs');
 var cookieParser = require('cookie-parser');
 var _ = require('lodash');
 
-before(function(done){
-  // For testing we always start with an empty DB, so force synchronize
-  // so that we can ensure all of the tables are created.
-  if (process.env.NODE_ENV === 'testing'){
-    var sequelize = require('../backend/plugins/db');
-
-    sequelize.sync({force: true}).then(function(){
-        var importer = require('./../import');
-        importer.all().then(function(){
-            done();
-        });
-    }, done);
-    return;
-  }
-
+afterEach(function (done){
+  global.app.locals.user = null;
   done();
 });
 
-beforeEach(function(){
+beforeEach(function(done){
   var app = global.app = express();
   app.set('view engine', 'hbs');
 
@@ -56,6 +43,21 @@ beforeEach(function(){
     next();
   });
 
+  // Set our express middleware / routes.
   require('../backend/plugins/passwordless')(app);
   require('../backend/plugins/db');
+  require('../backend/routes')(app);
+
+  // We shouldn't need this here, but just as a safety precaution...
+  if (process.env.NODE_ENV === 'testing'){
+    var sequelize = require('../backend/plugins/db');
+
+    sequelize.sync({force: true}).then(function(){
+        var importer = require('./../import');
+        importer.all().then(function(){
+            done();
+        });
+    }, done);
+    return;
+  }
 });

@@ -1,46 +1,36 @@
 var Promise = require('bluebird');
 
-var trainingId = 10;
+var accessId = 1;
 var companyId = 2;
+var trainingId = 10;
+var userId = 1;
 
 module.exports.all = function(){
-  return new Promise(function(resolve){
-      module.exports.company().then(function(){
-          module.exports.training().then(function(){
-              module.exports.categories().then(resolve);
-          });
-      });
-  });
-};
-
-module.exports.training = function(){
-    require('./../backend/plugins/db');
-    var Training = require('./../backend/models/training');
     return new Promise(function(resolve){
-        Training.findOrCreate({
-            name: 'Test Course',
-            description: 'Test Description',
-            companyId: companyId, 
-            practiceExamTotal: 5,
-            structuredExamTotal: 50,
-            cost: 20
-        }).then(function(course){
-            trainingId = course.id;
-            resolve();
+        module.exports.company().then(function(){
+            module.exports.training().then(function(){
+                    module.exports.categories().then(function (){
+                        module.exports.user().then(function (){
+                            module.exports.access().then(resolve);
+                        });
+                });
+            });
         });
     });
 };
 
-module.exports.company = function(){
+module.exports.access = function (){
     require('./../backend/plugins/db');
-    return new Promise(function(resolve){
-        var Company = require('./../backend/models/company');
-        Company.findOrCreate({
-            name: 'Trainify',
-            bio: 'Trainify Description'
-        }).then(function(company){
-            companyId = company.id;
-            resolve();
+    var Access = require('./../backend/models/access');
+
+    return new Promise(function (resolve){
+        Access.create({
+            userId: userId,
+            trainingId: trainingId,
+            end: (new Date(2015, 11, 11))
+        }).then(function (access){
+            accessId = access.id;
+            resolve(access);
         });
     });
 };
@@ -168,3 +158,51 @@ module.exports.categories = function(){
         });
     });
 };
+
+module.exports.company = function(){
+    require('./../backend/plugins/db');
+    return new Promise(function(resolve){
+        var Company = require('./../backend/models/company');
+        Company.findOrCreate({
+            name: 'Trainify',
+            bio: 'Trainify Description'
+        }).then(function(company){
+            companyId = company.id;
+            resolve();
+        });
+    });
+};
+
+module.exports.training = function(){
+    require('./../backend/plugins/db');
+    var Training = require('./../backend/models/training');
+    return new Promise(function(resolve){
+        Training.findOrCreate({
+            name: 'Test Course',
+            description: 'Test Description',
+            companyId: companyId, 
+            practiceExamTotal: 5,
+            structuredExamTotal: 50,
+            cost: 20
+        }).then(function(course){
+            trainingId = course.id;
+            resolve(course);
+        });
+    });
+};
+
+module.exports.user = function (){
+    require('./../backend/plugins/db');
+    var User = require('./../backend/models/user');
+
+    return new Promise(function (resolve){
+        User.create({
+            name: 'Test User', 
+            email: 'testuser@trainify.io',
+        }).then(function (user){
+            userId = user.id;
+            resolve(user.values);
+        });
+    });
+};
+
