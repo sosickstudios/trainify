@@ -22,9 +22,24 @@ function mapRowToCategory(keys, row){
     _.each(keys, function(entry, key){
         result[key] = row[entry];
     });
-    result.name = he.unescape(he.decode(result.name));
+    result.name = decodeString(result.name);
     result.name = result.name.replace('&', ' & ');
+    result.parent = decodeString(result.parent);
     return result;
+}
+
+/**
+ * Decodes the specified string, ensuring all instances of special characters get
+ * properly decoded.
+ *
+ * @param {String} value The value to decode.
+ *
+ * @returns {String}
+ */
+function decodeString(value){
+    if (!value) return undefined;
+
+    return he.unescape(he.decode(value));
 }
 
 /**
@@ -107,7 +122,10 @@ function buildAllCategories(root, mappedCategories, existingCategories, training
 function buildCategories(categories, allCategories, mappedCategories, trainingId){
     return new Promise(function(resolve){
         Promise.all(_.map(categories, function(newCategory){
+            // Find all children that have the same parent as the new category we are building.
             var newCategoryChildren = _.filter(mappedCategories, {parent: newCategory.name});
+
+            // Wait until we build all categories of this level, then recurse the children.
             return Promise.all(_.map(newCategoryChildren, function(categoryChild){
                 return createOrUpdateCategory(categoryChild, allCategories, trainingId);
             })).then(function(newCategories){
@@ -181,7 +199,14 @@ function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
                     // Loop through all of the mapped rows from google docs and
                     // create an entry with the updated id.
                     _.each(gdocsMappedRows, function(mappedCategoryRow, index){
-                        var category = _.findWhere(allCategories, {name: mappedCategoryRow.name});
+                        var category = _.findWhere(allCategories, {id: mappedCategoryRow.id});
+
+                        // If we can't get the category by ID, then fall back to the name. This
+                        // happens the first time a category is created.
+                        if (!category){
+                            category = _.findWhere(allCategories, {name: mappedCategoryRow.name});
+                        }
+
                         update[(index + 2).toString()] = {1: category.id};
                     });
 
