@@ -231,83 +231,64 @@ function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
  * Google Docs spreadsheet.
  *
  * @param {Integer} trainingId The ID of the training course to update.
+ * @param {Spreadsheet} spreadsheet The spreadsheet for the categories to update.
  *
  * @returns {Promise}
  */
-module.exports = function(trainingId){
+module.exports = function(trainingId, spreadsheet){
     return new Promise(function(resolve, reject){
-        // Since the spreadsheet name is based on the ID and name of the course we need
-        // to get the course before we can get the corresponding spreadsheet.
-        Training.find(trainingId).then(function(training){
-            // Loads the metadata and creates an object model to interact with
-            // the corresponding docs spreadsheet. We expect that the name of
-            // the course will always correspond to the spreadsheet name and ID.
-            Spreadsheet.load({
-                debug: false,
-                spreadsheetName: training.id + ': ' + training.name,
-                worksheetName: 'Categories',
+        // Get all of the rows now that the spreadsheets metadata has been loaded.
+        spreadsheet.receive(function(err, rows) {
+            // If we can't get the rows then there is no point in proceeding.
+            if (err) return reject(rows);
 
-                username: config.google.email,
-                password: config.google.password,
+            // Get all of the categories to make updating easier.
+            Category.findAll({where: {trainingId: trainingId}})
+                    .then(function(categories){
+                        var keys = {};
+                        // Get the header row
+                        var keysRow = rows['1'];
 
-            }, function sheetReady(err, spreadsheet) {
-                // If we can't get the spreadsheet then fail fast.
-                if (err) return reject(err);
+                        // Create the keys in the map based on the values specified
+                        // in the header row of the spreadsheet. Creates structure like:
+                        //   keys = {
+                        //     id: 'ID',
+                        //     name: 'Name',
+                        //     parent: 'Parent Category'
+                        //   }
+                        _.each(keysRow, function(entry, key){
+                            keys[entry.toLowerCase().replace(' ', '')] = key;
+                        });
 
-                // Get all of the rows now that the spreadsheets metadata has been loaded.
-                spreadsheet.receive(function(err, rows) {
-                    // If we can't get the rows then there is no point in proceeding.
-                    if (err) return reject(rows);
-
-                    // Get all of the categories to make updating easier.
-                    Category.findAll({where: {trainingId: trainingId}})
-                            .then(function(categories){
-                                var keys = {};
-                                // Get the header row
-                                var keysRow = rows['1'];
-
-                                // Create the keys in the map based on the values specified
-                                // in the header row of the spreadsheet. Creates structure like:
-                                //   keys = {
-                                //     id: 'ID',
-                                //     name: 'Name',
-                                //     parent: 'Parent Category'
-                                //   }
-                                _.each(keysRow, function(entry, key){
-                                    keys[entry.toLowerCase().replace(' ', '')] = key;
-                                });
-
-                                // Ensure we filter out the key row first.
-                                var mappedCategories = _.filter(rows, function(row){
-                                    return row[keys['id']] !== 'ID';
-                                });
+                        // Ensure we filter out the key row first.
+                        var mappedCategories = _.filter(rows, function(row){
+                            return row[keys['id']] !== 'ID';
+                        });
 
 
-                                // Map each entry to an easier to use object matching the extracted
-                                // keys.
-                                mappedCategories = _.map(mappedCategories, _.bind(mapRowToCategory, null, keys));
+                        // Map each entry to an easier to use object matching the extracted
+                        // keys.
+                        mappedCategories = _.map(mappedCategories, _.bind(mapRowToCategory, null, keys));
 
-                                // Our sole root category should have an undefined parent property,
-                                // even the key row will have an otherwise defined value.
-                                var rootCategory = _.find(mappedCategories, function(category){
-                                    return category.parent === undefined;
-                                });
+                        // Our sole root category should have an undefined parent property,
+                        // even the key row will have an otherwise defined value.
+                        var rootCategory = _.find(mappedCategories, function(category){
+                            return category.parent === undefined;
+                        });
 
-                                // We've now created the root category, so now we need to build the tree
-                                // of categories to create up, and walk the tree level by level creating
-                                // the child categories. We also need to ensure the prior level completes
-                                // before you perform the next level.
-                                createOrUpdateCategory(rootCategory, categories, trainingId).then(function(category){
-                                    buildAllCategories(category, mappedCategories, categories.concat([category]), trainingId)
-                                            .then(function(){
-                                                syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
-                                                        .then(resolve);
-                                            });
-                                });
-                            });
-                });
-
-            });
+                        // We've now created the root category, so now we need to build the tree
+                        // of categories to create up, and walk the tree level by level creating
+                        // the child categories. We also need to ensure the prior level completes
+                        // before you perform the next level.
+                        createOrUpdateCategory(rootCategory, categories, trainingId).then(function(category){
+                            buildAllCategories(category, mappedCategories, categories.concat([category]), trainingId)
+                                    .then(function(){
+                                        syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
+                                                .then(resolve);
+                                    });
+                        });
+                    });
         });
+
     });
 };

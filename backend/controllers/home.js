@@ -56,6 +56,8 @@ var home = {
                 trainings.forEach(function(training){
                     var access = _.findWhere(user.access, {trainingId: training.id});
 
+                    training.categories = _.sortBy(training.categories, 'id');
+
                     if (access){
                         training.hasPurchased = true;
                         training.isAdmin = access.isAdmin;
@@ -83,10 +85,25 @@ var home = {
      * @param {Express.response} req The express response.
      */
     updateCourse: function(req, res){
-        var docCategories = require('./../gdocs/categories');
+        var gdocs = require('./../gdocs');
+        gdocs.categories(req.params.id).then(function(){
+            res.redirect('/');
+        });
+    },
 
-        docCategories(req.params.id).then(function(){
-            return res.redirect('/');
+    /**
+     * Determines the spreadsheet id and redirects to that doc in the current tab.
+     *
+     * @param {Express.request} req The express request.
+     * @param {Express.response} req The express response.
+     */
+    editCourse: function(req, res){
+        var gdocs = require('./../gdocs');
+        gdocs.spreadsheet(req.params.id, 'Course Overview').then(function(spreadsheet){
+            console.log(spreadsheet.spreadsheetId);
+            var url = 'https://docs.google.com/spreadsheets/d/' +
+                    spreadsheet.spreadsheetId + '/edit';
+            res.redirect(url);
         });
     }
 };
@@ -181,6 +198,7 @@ router.get('/logout', passwordless.logout(), utils.redirect('/'));
 router.get('/buy/:id', buy.get);
 router.post('/buy/:id', buy.post);
 router.get('/updatecourse/:id', home.updateCourse);
+router.get('/editcourse/:id', home.editCourse);
 
 router.route('/signup')
   .get(utils.render('signup'))
