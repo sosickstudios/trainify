@@ -54,9 +54,12 @@ var home = {
             // Ensure we don't throw an error if there is no logged in user.
             if (user && _.any(user.access)){
                 trainings.forEach(function(training){
-                    training.hasPurchased = user.access.some(function(access){
-                        return access.trainingId === training.id;
-                    });
+                    var access = _.findWhere(user.access, {trainingId: training.id});
+
+                    if (access){
+                        training.hasPurchased = true;
+                        training.isAdmin = access.isAdmin;
+                    }
                 });
             }
 
@@ -69,6 +72,21 @@ var home = {
             });
 
             res.render('index', {courses: trainings});
+        });
+    },
+
+    /**
+     * Handles updating a training course for the specified course. Uses a Google Docs
+     * spreadsheet to update the course.
+     *
+     * @param {Express.request} req The express request.
+     * @param {Express.response} req The express response.
+     */
+    updateCourse: function(req, res){
+        var docCategories = require('./../gdocs/categories');
+
+        docCategories(req.params.id).then(function(){
+            return res.redirect('/');
         });
     }
 };
@@ -162,6 +180,7 @@ router.get('/login', passwordless.acceptToken(), utils.redirect('/'));
 router.get('/logout', passwordless.logout(), utils.redirect('/'));
 router.get('/buy/:id', buy.get);
 router.post('/buy/:id', buy.post);
+router.get('/updatecourse/:id', home.updateCourse);
 
 router.route('/signup')
   .get(utils.render('signup'))

@@ -11,6 +11,9 @@
                     {{#if hasPurchased}}
                         <br /><a href="/dash">Access your course</a>
                     {{/if}}
+                    {{#if isAdmin}}
+                        <br /><a href="/updatecourse/{{id}}">Syncronize course</a>
+                    {{/if}}
                 </div>
                 <div class="company-bio">
                     {{company.name}} <br/>
