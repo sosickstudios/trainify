@@ -31,7 +31,8 @@ models.exercise
     .hasMany(models.result);
 
 models.question
-    .hasMany(models.result);
+    .hasMany(models.result)
+    .belongsTo(models.category);
 
 models.result
     .belongsTo(models.exercise)

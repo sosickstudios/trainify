@@ -34,6 +34,15 @@ module.exports.spreadsheet = function(trainingId, worksheetName){
     });
 };
 
+module.exports.questions = function(trainingId){
+    return new Promise(function(resolve){
+        module.exports.spreadsheet(trainingId, 'Questions').then(function(spreadsheet){
+            var categoryGdocs = require('./questions');
+            categoryGdocs(trainingId, spreadsheet).then(resolve);
+        });
+    });
+};
+
 /**
  * Updates all of the categories from the google docs spreadsheet into our database.
  *
@@ -49,3 +58,19 @@ module.exports.categories = function(trainingId){
         });
     });
 };
+
+/**
+ * Updates the entire training course based on the settings specified in
+ * the Google Docs spreadsheet corresponding to this training course.
+ *
+ * @param {Integer} trainingId The ID of the training course to get the spreadsheet for.
+ *
+ * @returns {Promise}
+ */
+module.exports.updateAll = function(trainingId){
+    return new Promise(function(resolve){
+       module.exports.categories(trainingId).then(function(){
+           module.exports.questions(trainingId).then(resolve);
+       }) ;
+    });
+}

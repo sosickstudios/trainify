@@ -86,7 +86,7 @@ var home = {
      */
     updateCourse: function(req, res){
         var gdocs = require('./../gdocs');
-        gdocs.categories(req.params.id).then(function(){
+        gdocs.updateAll(req.params.id).then(function(){
             res.redirect('/');
         });
     },
