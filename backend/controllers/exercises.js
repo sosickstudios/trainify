@@ -421,7 +421,6 @@ var exercise = {
             // The total amount to draw from questions.
             var total = isPractice ? training.practiceExamTotal : training.structuredExamTotal;
 
-            // console.log(path);
             // Parse our categories into a parent-child format.
             var tree = new Tree(categoryId, null /* path */, training.categories, null /* meta */);
 
@@ -441,7 +440,7 @@ var exercise = {
                 training: results[1]
             });
         })
-        .catch(utils.apiError);
+        .catch(utils.apiError());
     },
     put: {
         /**
@@ -497,7 +496,7 @@ var exercise = {
             }).then(function (){
                 res.send(200);
             })
-            .catch(utils.apiError);
+            .catch(utils.apiError());
         }
     }
 };

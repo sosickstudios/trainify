@@ -223,6 +223,10 @@ p a {
     padding: 40px 10% 0 20%;
   }
 
+  > ul:nth-child(1){
+    margin-top: 2.5em;
+  }
+
   li {
     padding-left: 0;
   }
@@ -231,9 +235,39 @@ p a {
     list-style-type: decimal;
     padding-bottom: 30px;
 
+    .question-review-correct {
+      color: $primary-green;
+    }
+
+    .question-review-incorrect {
+      color: red;
+    }
+
+    .question-review-icon {
+      margin-top: 1.5em;
+      img {
+        width: 20%;
+        height: 20%;
+        margin-left: 0.7em;
+      }
+
+      span {
+        &:before {
+          content: '\A';
+        }
+        white-space: pre;
+      }
+
+      text-transform: uppercase;
+      font-weight: 600;
+      float: right;
+    }
+
+
     .question-answers {
       padding: 10px 0 0 0;
       margin-left: 50px;
+      margin-top: 50px;
       list-style-type: lower-alpha;
       color: $primary-violet;
       font-size: 0.9em;
@@ -259,6 +293,40 @@ p a {
           display: block;
           position: absolute;
           left: -30px;
+        }
+      }
+
+      .explanation-hidden {
+        display: none;
+      }
+
+      .question-answer {
+        img {
+          float: left;
+          margin-right: 0.5em;
+          height: 5%;
+          width: 5%;
+        }
+
+      }
+
+      .question-answer-explanation {
+        font-size: $secondary-text-size;
+        color: $secondary-text;
+        max-width: 5em;
+        margin-top: 1.2em;
+      }
+
+      .question-answer-review {
+        list-style-type: none;
+        margin-left: -1.7em;
+        
+        p {
+
+        }
+
+        span {
+
         }
       }
     }

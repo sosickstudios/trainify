@@ -37,6 +37,8 @@
             correct: null
         };
 
+        this.review = false;
+
         /**
          * If we send off an update request for a Question we can put together the request here.
          *
@@ -63,8 +65,11 @@
         }.bind(this);
 
         question.querySelector('.question-answers').addEventListener('click', function (e){
-            this.selectAnswer(e.target);
-            this.sendUpdateRequest();
+            if(!this.review){
+                this.selectAnswer(e.target.parentNode);
+                this.sendUpdateRequest();                
+            }
+
         }.bind(this));
     }
 
@@ -115,7 +120,7 @@
      * Method: PUT
      * Body Expectations: Result Model
      */
-    Question.prototype.sendUpdateRequest = function () {
+    Question.prototype.sendUpdateRequest = function (){
         var request = new XMLHttpRequest();
 
         request.onreadystatechange = function () {
@@ -127,6 +132,76 @@
         request.open('PUT', '/exercise/question/' + this.id, true);
         request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
         request.send(JSON.stringify(this.getRequest()));
+    };
+
+    Question.prototype.setReview = function (){
+        this.review = true;
+
+        // Load icon based on whether user answered question correctly.
+        var questionResult = this.result.correct ? 'Correct' : 'Incorrect';
+        
+        
+        // Reference node to insert icon after.
+        var questionAnswers = this.content.querySelector('.question-answers');
+
+        // Div to hold icon and text.
+        var container = document.createElement('div');
+        container.classList.add('question-review-icon');
+        container.classList.add('question-review-' + questionResult.toLowerCase());
+
+        // Icon element to be inserted.
+        var reviewIcon = document.createElement('img');
+        reviewIcon.setAttribute('src', '/images/answer-' + questionResult.toLowerCase() + '.svg');
+
+        // Text for icon.
+        var textNode = document.createElement('span');
+        textNode.textContent = questionResult;
+
+        // img and span element inside div container.
+        container.appendChild(reviewIcon);
+        container.appendChild(textNode);
+
+        // Inject the element that we created.
+        this.content.insertBefore(container, questionAnswers);
+
+
+        var i = 0;
+        var ii = this.answers.length;
+        for( ; i < ii; i++){
+            var answer = this.answers[i];
+
+            var isCorrect = answer.dataset.isCorrect;
+            var isSelected = answer.dataset.answerId.toString() === this.result.chosen.toString();
+
+            // set the src of the img element
+            var answerIcon = document.createElement('img');
+            if (isCorrect){
+                answerIcon.setAttribute('src', '/images/icon-correct.svg');
+            } else if (!isCorrect && isSelected){
+                answerIcon.setAttribute('src', '/images/icon-incorrect.svg');
+            }
+
+            // show the explanation for the selected and correct answer.
+            if (isCorrect || isSelected){
+                answer.classList.add('question-answer-review');
+
+                var explanation = answer.querySelector('.question-answer-explanation');
+                explanation.classList.toggle('explanation-hidden');
+            }
+
+            // query element as reference to insert new element.
+            var answerText = answer.querySelector('p');
+            answer.insertBefore(answerIcon, answerText);
+
+            // special scenario to add text to indicated selected answer.
+            if (isSelected){
+                var selectionText = document.createElement('span');
+                selectionText.textContent = 'You selected';
+
+                answer.insertBefore(selectionText, answerIcon);
+            }
+            
+        }
     };
 
 
@@ -166,6 +241,12 @@
 
     Exercise.prototype.questionCount = function(){
         return this.questions.length;
+    };
+
+    Exercise.prototype.review = function (){
+        for(var i = 0, ii = this.questions.length; i < ii; i++){
+            this.questions[i].setReview();
+        }
     };
 
     /**
@@ -210,7 +291,7 @@
 
         request.onreadystatechange = function () {
             if(request.readyState === 4 && request.status === 200){
-                // TODO(BRYCE) Set the exercise in review mode.
+                this.review();
             }
         }.bind(this);
 
