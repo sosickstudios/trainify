@@ -147,13 +147,12 @@
 
         // Div to hold icon and text.
         var container = document.createElement('div');
-        container.classList.add('question-review-icon');
 
         // Question result will be correct/incorrect.
         var resultText = questionResult.toLowerCase();
 
-        // Will be correct/incorrect.
-        container.classList.add('question-review-' + resultText);
+        // Add classes for review and correctness.
+        container.classList.add('question-review-icon', resultText);
 
         // Icon element to be inserted.
         var reviewIcon = document.createElement('img');
@@ -179,19 +178,19 @@
             
             // set the src of the img element
             var answerIcon = document.createElement('img');
-            var cssReviewPath = 'question-review-';
+            var correctness = '';
             var imagePath = 'images/icon-';
             if (isCorrect){
-                answer.classList.add(cssReviewPath + 'correct');
-                answerIcon.setAttribute('src', imagePath + 'correct.svg');
+                correctness = 'correct';
+                answerIcon.setAttribute('src', imagePath + correctness + '.svg');
             } else if (isSelected && !isCorrect){
-                answer.classList.add(cssReviewPath + 'incorrect');
-                answerIcon.setAttribute('src', imagePath + 'incorrect.svg');
+                correctness = 'incorrect';
+                answerIcon.setAttribute('src', imagePath + correctness + '.svg');
             }
 
             // show the explanation for the selected and correct answer.
             if (isCorrect || isSelected){
-                answer.classList.add('question-answer-review');
+                answer.classList.add('question-answer-review', correctness);
 
                 // query element as reference to insert new element.
                 var answerText = answer.querySelector('.answer-text');

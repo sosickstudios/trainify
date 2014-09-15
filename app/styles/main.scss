@@ -260,6 +260,13 @@ p a {
       margin-right: 150px;
     }
 
+    .question-review-icon.incorrect {
+      color: $primary-red;
+    }
+
+    .question-review-icon.correct {
+      color: $primary-green;
+    }
 
     .question-answers {
       padding: 10px 0 0 0;
@@ -323,12 +330,12 @@ p a {
         }
       }
 
-      .question-review-incorrect{
-          color: $primary-red !important;
+      .question-answer-review.incorrect {
+        color: $primary-red;
       }
 
-      .question-review-correct{
-        color: $primary-green !important;
+      .question-answer-review.correct {
+        color: $primary-green;
       }
     }
   }
