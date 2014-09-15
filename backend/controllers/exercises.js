@@ -482,7 +482,7 @@ var exercise = {
                     
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
-                        
+                
                 // Each correct answer if flagged by a isCorrect Boolean
                 var result = chosen.isCorrect;
                

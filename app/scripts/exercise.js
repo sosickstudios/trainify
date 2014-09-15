@@ -65,8 +65,9 @@
         }.bind(this);
 
         question.querySelector('.question-answers').addEventListener('click', function (e){
-            if (!this.review){
-                this.selectAnswer(e.target.parentNode);
+            if (!this.review && e.target.tagName !== 'UL'){
+                var target = e.target.tagName === 'LI' ? e.target : e.target.parentNode;
+                this.selectAnswer(target);
                 this.sendUpdateRequest();                
             }
 
