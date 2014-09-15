@@ -188,7 +188,7 @@
                 answer.insertBefore(answerIcon, answerText);
 
                 // Add 'selected' label for chosen answer.
-                if (isSelected) {
+                if (isSelected){
                     var selectionText = document.createElement('span');
                     selectionText.textContent = 'You Selected';
                     selectionText.classList.add('selection-text');
