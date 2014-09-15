@@ -123,7 +123,7 @@ function createOrUpdateQuestion(mappedQuestion){
     return new Promise(function(resolve){
         mappedQuestion.type = Question.TYPE[mappedQuestion.type.toUpperCase()];
 
-        Category.find({where: {name: mappedQuestion.category}}).then(function(category){
+        Category.find(parseInt(mappedQuestion.category, 10)).then(function(category){
             mappedQuestion.path = category.path + category.id + ',';
             mappedQuestion.categoryId = category.id;
 

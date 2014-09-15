@@ -25,6 +25,9 @@ function mapRowToCategory(keys, row){
     result.name = decodeString(result.name);
     result.name = result.name.replace('&', ' & ');
     result.parent = decodeString(result.parent);
+    if (result.parent){
+        result.parent = result.parent.replace('&', ' & ');
+    }
     return result;
 }
 
@@ -42,41 +45,43 @@ function decodeString(value){
     return he.unescape(he.decode(value));
 }
 
+var counter = 0;
+
 /**
  * Either creates or updates the specified category.
  *
  * @param {MappedCategory} item The category to update or create.
- * @param {Array.<Category>} existingCategories All of the current categories in our object model.
  * @param {Integer} trainingId The id of the training course we are updating.
  *
  * @returns {Promise}
  */
-function createOrUpdateCategory(item, existingCategories, trainingId){
+function createOrUpdateCategory(item, trainingId, allCreatedChildren){
     return new Promise(function(resolve){
-        var category = _.findWhere(existingCategories, {id: item.id});
+        Category.findAll({where: {trainingId: trainingId}, include: [{model: Category, as: 'parent'}]})
+                .then(function(existingCategories){
+                    var category = _.findWhere(existingCategories, {id: item.id});
 
-        // If the category doesn't exist, we need to create it.
-        if (!category){
-            var newValues = {
-                trainingId: trainingId
-            };
+                    // If the category doesn't exist, we need to create it.
+                    if (!category){
+                        var newValues = {
+                            trainingId: trainingId
+                        };
 
-            // We need to find the parent and then figure out the path to use.
-            if (item.parent){
-                var parentCategory = _.findWhere(existingCategories, {name: item.parent});
-                item.parentId = parentCategory.id;
-            }
+                        // We need to find the parent and then figure out the path to use.
+                        if (item.parent){
+                            var parentCategory = _.findWhere(existingCategories, {name: item.parent});
+                            item.parentId = parentCategory.id;
+                        }
 
-            return Category.create(_.extend(item, newValues)).then(function(newCategory){
-                resolve(newCategory);
-            });
-        };
+                        console.log('Insert %s with name of %s and parent %s', counter++, item.name, item.parent);
 
-        Category.find(category.id).then(function(dbCategory){
-            dbCategory.updateAttributes(item).success(function(){
-                resolve(item);
-            });
-        });
+                        return Category.create(_.extend(item, newValues)).then(resolve);
+                    };
+
+                    Category.find(category.id).then(function(dbCategory){
+                        dbCategory.updateAttributes(item).success(resolve);
+                    });
+                });
     });
 }
 
@@ -86,24 +91,61 @@ function createOrUpdateCategory(item, existingCategories, trainingId){
  *
  * @param {Category} root The root category of the course.
  * @param {Array.<MappedCategory>} mappedCategories All of the categories, not just the current level.
- * @param {Array.<Category>} existingCategories All of the current categories in our object model.
  * @param {Integer} trainingId The id of the training course we are updating.
  *
  * @returns {Promise}
  */
-function buildAllCategories(root, mappedCategories, existingCategories, trainingId){
+//function buildAllCategories(root, mappedCategories, trainingId, allCreatedChildren){
+//    return new Promise(function(resolve){
+//        // Find all categories with the parent set to the root
+//        var rootChildren = _.filter(mappedCategories, {parent: root.name});
+//
+//        Promise.map(rootChildren, function(rootChild){
+//            return createOrUpdateCategory(rootChild, trainingId, allCreatedChildren);
+//        }, {concurrency: 1}).then(function(newRootCategories){
+//            buildCategories(newRootCategories, mappedCategories, trainingId, allCreatedChildren)
+//                    .then(resolve);
+//        });
+//    });
+//}
+
+function buildAllCategories(mappedCategories, trainingId){
     return new Promise(function(resolve){
-        // Find all categories with the parent set to the root
-        var rootChildren = _.filter(mappedCategories, {parent: root.name});
-
-        Promise.all(_.map(rootChildren, function(rootChild){
-            return createOrUpdateCategory(rootChild, existingCategories, trainingId);
-        })).then(function(newRootCategories){
-            var allCategories = existingCategories.concat(newRootCategories);
-
-            buildCategories(newRootCategories, allCategories, mappedCategories, trainingId)
-                    .then(resolve);
+        _.each(mappedCategories, function(category){
+            category.trainingId = trainingId;
         });
+
+        return Promise.map(mappedCategories, function(category){
+            if (_.isNumber(category.id)){
+                return Category.find(category.id).then(function(dbCategory){
+                    return dbCategory.updateAttributes(category);
+                });
+            }
+
+            return Category.create(category).then(function(newCategory){
+                category.id = newCategory.id;
+                return newCategory;
+            });
+        }).then(resolve);
+    });
+}
+
+function fixStructure(categories, trainingId){
+    return Promise.map(categories, function(category){
+        return Category.find({where: {
+            trainingId: trainingId,
+            name: category.selectedValues.parent
+        }}).then(function(parent){
+            // The root category, doesn't need to update.
+            if (!parent) return category;
+
+            category.parentId = parent.id;
+            category.updateAttributes({parentId: parent.id});
+
+            return category;
+        });
+    }).then(function(updatedCategories){
+        return calculateCategoryPaths(updatedCategories);
     });
 }
 
@@ -113,25 +155,29 @@ function buildAllCategories(root, mappedCategories, existingCategories, training
  * This allows us to recursively create a tree of categories.
  *
  * @param {Array.<MappedCategory>} categories The mapped categories to process.
- * @param {Array.<Category>} allCategories All of the current categories in our object model.
  * @param {Array.<MappedCategory>} mappedCategories All of the categories, not just the current level.
  * @param {Integer} trainingId The id of the training course we are updating.
  *
  * @returns {Promise}
  */
-function buildCategories(categories, allCategories, mappedCategories, trainingId){
+function buildCategories(categories, mappedCategories, trainingId, allCreatedChildren){
     return new Promise(function(resolve){
-        Promise.all(_.map(categories, function(newCategory){
+        if (!categories.length) return resolve();
+
+        Promise.map(categories, function(newCategory){
+            if (newCategory === null) return;
+
             // Find all children that have the same parent as the new category we are building.
             var newCategoryChildren = _.filter(mappedCategories, {parent: newCategory.name});
 
             // Wait until we build all categories of this level, then recurse the children.
-            return Promise.all(_.map(newCategoryChildren, function(categoryChild){
-                return createOrUpdateCategory(categoryChild, allCategories, trainingId);
-            })).then(function(newCategories){
-                return buildCategories(newCategories, allCategories.concat(newCategories), mappedCategories, trainingId);
+            return Promise.map(newCategoryChildren, function(categoryChild){
+                return createOrUpdateCategory(categoryChild, trainingId, allCreatedChildren);
+            }, {concurrency: 1}).then(function(newCategories){
+                buildCategories(newCategories, mappedCategories, trainingId, allCreatedChildren)
+                        .then(resolve)
             });
-        })).then(resolve);
+        }, {concurrency: 1});
     });
 }
 
@@ -190,7 +236,7 @@ function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
     return new Promise(function(resolve){
         // Everything has been updated, now let's update the gdoc
         // with the latest IDs.
-        Category.findAll({where: {trainingId: trainingId}})
+        Category.findAll({where: {trainingId: trainingId}, include: [{model: Category, as: 'parent'}]})
                 .then(function(allCategories){
                     // Spreadsheet.add expects an object in the form of
                     // { rowNumber: { columnIndex: columnValue } }
@@ -204,7 +250,17 @@ function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
                         // If we can't get the category by ID, then fall back to the name. This
                         // happens the first time a category is created.
                         if (!category){
-                            category = _.findWhere(allCategories, {name: mappedCategoryRow.name});
+                            category = _.findWhere(allCategories, function(category){
+                                // We need to match up the parent as well in the case of categories
+                                // that have the same name.
+                                if (mappedCategoryRow.parent){
+                                    return category.parent &&
+                                            category.parent.name === mappedCategoryRow.parent &&
+                                            category.name === mappedCategoryRow.name;
+                                }
+
+                                return category.name === mappedCategoryRow.name;
+                            });
                         }
 
                         update[(index + 2).toString()] = {1: category.id};
@@ -245,6 +301,7 @@ module.exports = function(trainingId, spreadsheet){
             // Get all of the categories to make updating easier.
             Category.findAll({where: {trainingId: trainingId}})
                     .then(function(categories){
+                        var allCreatedChildren = [];
                         var keys = {};
                         // Get the header row
                         var keysRow = rows['1'];
@@ -276,17 +333,31 @@ module.exports = function(trainingId, spreadsheet){
                             return category.parent === undefined;
                         });
 
-                        // We've now created the root category, so now we need to build the tree
-                        // of categories to create up, and walk the tree level by level creating
-                        // the child categories. We also need to ensure the prior level completes
-                        // before you perform the next level.
-                        createOrUpdateCategory(rootCategory, categories, trainingId).then(function(category){
-                            buildAllCategories(category, mappedCategories, categories.concat([category]), trainingId)
-                                    .then(function(){
+                        buildAllCategories(mappedCategories, trainingId)
+                                .then(function(items){
+                                    fixStructure(items, trainingId).then(function(){
+                                        console.log('Finished fixing structure!');
                                         syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
                                                 .then(resolve);
                                     });
-                        });
+                                });
+                        //buildCategory(rootCategory, mappedCategories, trainingId)
+                        //        .then(function(){
+                        //            syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
+                        //                    .then(resolve);
+                        //        });
+
+                        //// We've now created the root category, so now we need to build the tree
+                        //// of categories to create up, and walk the tree level by level creating
+                        //// the child categories. We also need to ensure the prior level completes
+                        //// before you perform the next level.
+                        //createOrUpdateCategory(rootCategory, trainingId, allCreatedChildren).then(function(category){
+                        //    buildAllCategories(category, mappedCategories, trainingId, allCreatedChildren)
+                        //            .then(function(){
+                        //                syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
+                        //                        .then(resolve);
+                        //            });
+                        //});
                     });
         });
 

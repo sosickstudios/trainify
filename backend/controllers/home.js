@@ -69,8 +69,11 @@ var home = {
             // our templates. For now we just want to go 2 levels deep.
             trainings.forEach(function(training){
                 var rootCategory = _.findWhere(training.categories, {parentId: null});
-                constructCategories(rootCategory, training.categories);
-                training.categories = rootCategory.categories;
+
+                if (rootCategory){
+                    constructCategories(rootCategory, training.categories);
+                    training.categories = rootCategory.categories;
+                }
             });
 
             res.render('index', {courses: trainings});
@@ -114,6 +117,8 @@ var home = {
  * @param categories
  */
 function constructCategories(category, categories){
+    if (!category) return;
+
     category.categories = getChildCategories(categories, category.parentId);
 
     category.categories.forEach(function(child){
