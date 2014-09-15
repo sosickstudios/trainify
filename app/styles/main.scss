@@ -58,6 +58,10 @@ p a {
   position: relative;
 }
 
+.hidden {
+  display: none;
+}
+
 .app-bar {
   display: block;
   position: fixed;
@@ -223,6 +227,10 @@ p a {
     padding: 40px 10% 0 20%;
   }
 
+  > ul:first-child{
+    margin-top: 40px;
+  }
+
   li {
     padding-left: 0;
   }
@@ -231,9 +239,39 @@ p a {
     list-style-type: decimal;
     padding-bottom: 30px;
 
+    .question-review-icon {
+      margin-top: 24px;
+      img {
+        width: 75px;
+        height: 75px;
+        margin-left: 11px;
+      }
+
+      span {
+        &:before {
+          content: '\A';
+        }
+        white-space: pre;
+      }
+
+      text-transform: uppercase;
+      font-weight: 600;
+      float: right;
+      margin-right: 150px;
+    }
+
+    .question-review-icon.incorrect {
+      color: $primary-red;
+    }
+
+    .question-review-icon.correct {
+      color: $primary-green;
+    }
+
     .question-answers {
       padding: 10px 0 0 0;
       margin-left: 50px;
+      margin-top: 50px;
       list-style-type: lower-alpha;
       color: $primary-violet;
       font-size: 0.9em;
@@ -245,7 +283,16 @@ p a {
         width: 500px;
       }
 
-      li.answer-selected {
+      .question-answer {
+        img {
+          float: left;
+          margin-right: 8px;
+          height: 25px;
+          width: 25px;
+        }
+      }
+
+      .question-answer.selection {
         color: #000;
         position: relative;
 
@@ -260,6 +307,34 @@ p a {
           position: absolute;
           left: -30px;
         }
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
+
+      .question-answer-review {
+        list-style-type: none;
+        margin-left: -32px;
+
+        span.selection-text {
+          text-transform: uppercase;
+          font-size: $secondary-text-size;
+          margin-left: 33px;
+        }
+
+        span.explanation {
+          font-size: $secondary-text-size;
+          color: $secondary-text;
+          max-width: 80px;
+          margin-top: 19px;
+        }
+      }
+
+      .question-answer-review.incorrect {
+        color: $primary-red;
+      }
+
+      .question-answer-review.correct {
+        color: $primary-green;
       }
     }
   }

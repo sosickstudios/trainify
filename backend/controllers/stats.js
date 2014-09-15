@@ -38,6 +38,35 @@ function leafAverage (leaf, meta) {
     // for a whole number.
     var avg = Math.round((answeredCorrect / answeredTotal).toFixed(2) * 100);
     avg = avg || -1;
+
+    var childrensAverage = 0;
+    var selfPercentage = 1.0;
+    // Get the average of our leaves.
+    if (leaf.children.length){
+        // Filter our categories that have 0 scores.
+        var scoredCategories = _.filter(leaf.children, function (item){
+            return item.stats.leafAverage > 0;
+        });
+
+        // Get the sum of all of our children who have scores.
+        var averageSums = _.reduce(scoredCategories, function (sum, item){
+            return sum + item.stats.leafAverage;
+        }, 0);
+
+        // Get the average of those said children.
+        childrensAverage = Math.round(averageSums / (scoredCategories.length * 100) * 100);
+
+        // Childrens scores will weight for 50%, have the current leafs total average as
+        // .5 * selfAverage + .5 * childrensAverage
+        selfPercentage - 0.5;
+    }
+
+    if (avg > -1){
+        avg = Math.round(avg * selfPercentage) + Math.round(childrensAverage * 0.5);
+    } else if (avg < 0 && childrensAverage > 0){
+        avg = childrensAverage;
+    }
+
     return avg;
 }
 
