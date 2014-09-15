@@ -1,7 +1,7 @@
 (function (){
     var querySelector = document.querySelector.bind(document);
 
-    var examBtn = querySelector('.generate-exam');
+    var examBtn = querySelector('.btn--full-exam');
 
     var trainingName = querySelector('.course-name');
     var trainingDescription = querySelector('.course-description');
@@ -36,7 +36,9 @@
         //providerBio.textContent = data.company.bio;
 
         // Make sure we remove the old data listener, if there is one.
-        //examBtn.removeEventListener('click', examBtnListener);
+        var examLocation = '/exercise?trainingId=' + data.id 
+            + '&path=,&category=' + data.category.id + '&type=Exam Prep';
+        examBtn.setAttribute('href', examLocation);
 
         //examBtnListener = function (){
         //    location.href = '/exercise?trainingId=' + data.id + '&path=,&category=' + data.category.id + '&type=Exam Prep';
