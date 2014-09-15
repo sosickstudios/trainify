@@ -283,7 +283,16 @@ p a {
         width: 500px;
       }
 
-      li.answer-selected {
+      .question-answer {
+        img {
+          float: left;
+          margin-right: 8px;
+          height: 25px;
+          width: 25px;
+        }
+      }
+
+      .question-answer.selection {
         color: #000;
         position: relative;
 
@@ -302,23 +311,6 @@ p a {
         margin-bottom: 16px;
       }
 
-      .question-answer {
-        img {
-          float: left;
-          margin-right: 0.5em;
-          height: 25px;
-          width: 25px;
-        }
-
-      }
-
-      .question-answer-explanation {
-        font-size: $secondary-text-size;
-        color: $secondary-text;
-        max-width: 80px;
-        margin-top: 19px;
-      }
-
       .question-answer-review {
         list-style-type: none;
         margin-left: -32px;
@@ -327,6 +319,13 @@ p a {
           text-transform: uppercase;
           font-size: $secondary-text-size;
           margin-left: 33px;
+        }
+
+        span.explanation {
+          font-size: $secondary-text-size;
+          color: $secondary-text;
+          max-width: 80px;
+          margin-top: 19px;
         }
       }
 

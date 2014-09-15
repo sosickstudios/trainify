@@ -88,7 +88,7 @@
             var item = this.answers[i];
 
             // Highlight the selected answer.
-            item.classList.toggle('answer-selected', item.dataset.answerId === this.result.chosen);
+            item.classList.toggle('selection', item.dataset.answerId === this.result.chosen);
         }
 
         // Set the flag that the question has been answered at least once.
@@ -140,26 +140,18 @@
 
         // Load icon based on whether user answered question correctly.
         var questionResult = this.result.correct ? 'Correct' : 'Incorrect';
-        
+        var resultText = questionResult.toLowerCase();
         
         // Reference node to insert icon after.
         var questionAnswers = this.content.querySelector('.question-answers');
 
-        // Div to hold icon and text.
+        // container that holds icon and text.
         var container = document.createElement('div');
-
-        // Question result will be correct/incorrect.
-        var resultText = questionResult.toLowerCase();
-
-        // Add classes for review and correctness.
-        container.classList.add('question-review-icon', resultText);
-
-        // Icon element to be inserted.
         var reviewIcon = document.createElement('img');
-        reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
-
-        // Text for icon.
         var textNode = document.createElement('span');
+
+        container.classList.add('question-review-icon', resultText);
+        reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
         textNode.textContent = questionResult;
 
         // img and span element inside div container.
@@ -182,34 +174,32 @@
             var imagePath = 'images/icon-';
             if (isCorrect){
                 correctness = 'correct';
-                answerIcon.setAttribute('src', imagePath + correctness + '.svg');
             } else if (isSelected && !isCorrect){
                 correctness = 'incorrect';
-                answerIcon.setAttribute('src', imagePath + correctness + '.svg');
             }
 
             // show the explanation for the selected and correct answer.
             if (isCorrect || isSelected){
+                answerIcon.setAttribute('src', imagePath + correctness + '.svg');
                 answer.classList.add('question-answer-review', correctness);
 
                 // query element as reference to insert new element.
                 var answerText = answer.querySelector('.answer-text');
                 answer.insertBefore(answerIcon, answerText);
 
+                // Add 'selected' label for chosen answer.
+                if (isSelected) {
+                    var selectionText = document.createElement('span');
+                    selectionText.textContent = 'You Selected';
+                    selectionText.classList.add('selection-text');
+
+                    answer.insertBefore(selectionText, answerIcon);   
+                }
+
                 // Show the explanation.
-                var explanation = answer.querySelector('.question-answer-explanation');
-                    explanation.classList.toggle('hidden');
+                var explanation = answer.querySelector('.question-answer .explanation');
+                explanation.classList.toggle('hidden');
             }
-
-            // special scenario to add text to indicated selected answer.
-            if (isSelected){
-                var selectionText = document.createElement('span');
-                selectionText.textContent = 'You Selected';
-                selectionText.classList.add('selection-text')
-
-                answer.insertBefore(selectionText, answerIcon);
-            }
-            
         }
     };
 
