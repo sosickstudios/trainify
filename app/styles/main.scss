@@ -58,6 +58,10 @@ p a {
   position: relative;
 }
 
+.hidden {
+  display: none;
+}
+
 .app-bar {
   display: block;
   position: fixed;
@@ -223,8 +227,8 @@ p a {
     padding: 40px 10% 0 20%;
   }
 
-  > ul:nth-child(1){
-    margin-top: 2.5em;
+  > ul:first-child{
+    margin-top: 40px;
   }
 
   li {
@@ -235,20 +239,12 @@ p a {
     list-style-type: decimal;
     padding-bottom: 30px;
 
-    .question-review-correct {
-      color: $primary-green;
-    }
-
-    .question-review-incorrect {
-      color: red;
-    }
-
     .question-review-icon {
-      margin-top: 1.5em;
+      margin-top: 24px;
       img {
-        width: 20%;
-        height: 20%;
-        margin-left: 0.7em;
+        width: 75px;
+        height: 75px;
+        margin-left: 11px;
       }
 
       span {
@@ -261,6 +257,7 @@ p a {
       text-transform: uppercase;
       font-weight: 600;
       float: right;
+      margin-right: 150px;
     }
 
 
@@ -294,18 +291,16 @@ p a {
           position: absolute;
           left: -30px;
         }
-      }
-
-      .explanation-hidden {
-        display: none;
+        margin-top: 16px;
+        margin-bottom: 16px;
       }
 
       .question-answer {
         img {
           float: left;
           margin-right: 0.5em;
-          height: 5%;
-          width: 5%;
+          height: 25px;
+          width: 25px;
         }
 
       }
@@ -313,21 +308,27 @@ p a {
       .question-answer-explanation {
         font-size: $secondary-text-size;
         color: $secondary-text;
-        max-width: 5em;
-        margin-top: 1.2em;
+        max-width: 80px;
+        margin-top: 19px;
       }
 
       .question-answer-review {
         list-style-type: none;
-        margin-left: -1.7em;
-        
-        p {
+        margin-left: -32px;
 
+        span.selection-text {
+          text-transform: uppercase;
+          font-size: $secondary-text-size;
+          margin-left: 33px;
         }
+      }
 
-        span {
+      .question-review-incorrect{
+          color: $primary-red !important;
+      }
 
-        }
+      .question-review-correct{
+        color: $primary-green !important;
       }
     }
   }

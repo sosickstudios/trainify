@@ -65,7 +65,7 @@
         }.bind(this);
 
         question.querySelector('.question-answers').addEventListener('click', function (e){
-            if(!this.review){
+            if (!this.review){
                 this.selectAnswer(e.target.parentNode);
                 this.sendUpdateRequest();                
             }
@@ -135,6 +135,7 @@
     };
 
     Question.prototype.setReview = function (){
+        // Disable selecting answers
         this.review = true;
 
         // Load icon based on whether user answered question correctly.
@@ -147,11 +148,16 @@
         // Div to hold icon and text.
         var container = document.createElement('div');
         container.classList.add('question-review-icon');
-        container.classList.add('question-review-' + questionResult.toLowerCase());
+
+        // Question result will be correct/incorrect.
+        var resultText = questionResult.toLowerCase();
+
+        // Will be correct/incorrect.
+        container.classList.add('question-review-' + resultText);
 
         // Icon element to be inserted.
         var reviewIcon = document.createElement('img');
-        reviewIcon.setAttribute('src', '/images/answer-' + questionResult.toLowerCase() + '.svg');
+        reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
 
         // Text for icon.
         var textNode = document.createElement('span');
@@ -164,46 +170,49 @@
         // Inject the element that we created.
         this.content.insertBefore(container, questionAnswers);
 
-
-        var i = 0;
-        var ii = this.answers.length;
-        for( ; i < ii; i++){
+        // Add styling to answers for correctness.
+        for(var i = 0; i < this.answers.length; i++){
             var answer = this.answers[i];
 
             var isCorrect = answer.dataset.isCorrect;
             var isSelected = answer.dataset.answerId.toString() === this.result.chosen.toString();
-
+            
             // set the src of the img element
             var answerIcon = document.createElement('img');
+            var cssReviewPath = 'question-review-';
+            var imagePath = 'images/icon-';
             if (isCorrect){
-                answerIcon.setAttribute('src', '/images/icon-correct.svg');
-            } else if (!isCorrect && isSelected){
-                answerIcon.setAttribute('src', '/images/icon-incorrect.svg');
+                answer.classList.add(cssReviewPath + 'correct');
+                answerIcon.setAttribute('src', imagePath + 'correct.svg');
+            } else if (isSelected && !isCorrect){
+                answer.classList.add(cssReviewPath + 'incorrect');
+                answerIcon.setAttribute('src', imagePath + 'incorrect.svg');
             }
 
             // show the explanation for the selected and correct answer.
             if (isCorrect || isSelected){
                 answer.classList.add('question-answer-review');
 
-                var explanation = answer.querySelector('.question-answer-explanation');
-                explanation.classList.toggle('explanation-hidden');
-            }
+                // query element as reference to insert new element.
+                var answerText = answer.querySelector('.answer-text');
+                answer.insertBefore(answerIcon, answerText);
 
-            // query element as reference to insert new element.
-            var answerText = answer.querySelector('p');
-            answer.insertBefore(answerIcon, answerText);
+                // Show the explanation.
+                var explanation = answer.querySelector('.question-answer-explanation');
+                    explanation.classList.toggle('hidden');
+            }
 
             // special scenario to add text to indicated selected answer.
             if (isSelected){
                 var selectionText = document.createElement('span');
-                selectionText.textContent = 'You selected';
+                selectionText.textContent = 'You Selected';
+                selectionText.classList.add('selection-text')
 
                 answer.insertBefore(selectionText, answerIcon);
             }
             
         }
     };
-
 
     /**
      * Prototyped description of the exercise being taken.
@@ -244,7 +253,7 @@
     };
 
     Exercise.prototype.review = function (){
-        for(var i = 0, ii = this.questions.length; i < ii; i++){
+        for(var i = 0; i < this.questions.length; i++){
             this.questions[i].setReview();
         }
     };
