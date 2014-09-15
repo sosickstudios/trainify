@@ -407,6 +407,17 @@ form > button.stripe-button-el {
   }
 }
 
+.btn--full-exam {
+  position: fixed;
+  right: 20px;
+  top: 62px;
+  z-index: 100;
+}
+
+.btn--full-exam.btn-orange:hover {
+  color: #fff;
+}
+
 .description {
   text-align: justify;
 }
