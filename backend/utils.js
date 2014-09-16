@@ -54,7 +54,7 @@ module.exports.error = function renderError(error){
 module.exports.apiError = function apiError(error){
   return (function (e){
     if(process.env.NODE_ENV === 'development'){
-      console.log(e.stack);
+      console.log(e);
     }
   }(error));
 };

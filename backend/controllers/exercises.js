@@ -200,9 +200,9 @@ Leaf.prototype.getQuestions = function (){
 
     // How many questions are we responsible for, and how many did we provide from this leaf.
     var difference = this.leafTotal - questions.length;
-    if (process.env.NODE_ENV === 'development'){
-        console.log('Difference %d', difference);
-    }
+    // if (process.env.NODE_ENV === 'development'){
+    //     console.log('Difference %d', difference);
+    // }
 
     // If there are children that still have questions to make our difference up.
     if (difference && !this.isLeafDry()){
@@ -396,6 +396,7 @@ var exercise = {
 
         // What type of exercise are we generating.
         var isPractice = type === 'Practice';
+        var training;
 
         // Create our exercise, and find the training course that it belongs to.
         Promise.all(promises).then(function (result){
@@ -406,7 +407,7 @@ var exercise = {
             exercise = result[0];
 
             // Training course, loaded with exercises and results.
-            var training = result[1];
+            training = result[1];
 
             if(training.exercises.length){
                 training.exercises = _.filter(training.exercises, {userId: user.id});
@@ -437,10 +438,10 @@ var exercise = {
             res.render('exercise', {
                 exercise: exercise, 
                 questions: questions,
-                training: results[1]
+                training: training
             });
         })
-        .catch(utils.apiError());
+        .catch(utils.apiError);
     },
     put: {
         /**
@@ -482,7 +483,7 @@ var exercise = {
                     
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
-                
+
                 // Each correct answer if flagged by a isCorrect Boolean
                 var result = chosen.isCorrect;
                
@@ -496,7 +497,7 @@ var exercise = {
             }).then(function (){
                 res.send(200);
             })
-            .catch(utils.apiError());
+            .catch(utils.apiError);
         }
     }
 };

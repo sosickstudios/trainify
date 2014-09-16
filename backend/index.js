@@ -80,6 +80,7 @@ app.use(function(req, res, next){
 var db = require('./plugins/db');
 
 require('./plugins/passwordless')(app);
+require('./plugins/logger')(app);
 require('./routes')(app);
 
 // If on DEV then we dont want to limit requests to localhost, in order to allow

@@ -88,8 +88,14 @@
         for (var i = 0; i < this.answers.length; i++){
             var item = this.answers[i];
 
-            // Highlight the selected answer.
-            item.classList.toggle('selection', item.dataset.answerId === this.result.chosen);
+            // Toggle is flimsy in IE.
+            var isSelected = item.dataset.answerId === this.result.chosen;
+
+            if (isSelected){
+                item.classList.add('selection');
+            } else {
+                item.classList.remove('selection');
+            }
         }
 
         // Set the flag that the question has been answered at least once.
@@ -151,7 +157,8 @@
         var reviewIcon = document.createElement('img');
         var textNode = document.createElement('span');
 
-        container.classList.add('question-review-icon', resultText);
+        container.classList.add('question-review-icon');
+        container.classList.add(resultText);
         reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
         textNode.textContent = questionResult;
 
@@ -182,7 +189,8 @@
             // show the explanation for the selected and correct answer.
             if (isCorrect || isSelected){
                 answerIcon.setAttribute('src', imagePath + correctness + '.svg');
-                answer.classList.add('question-answer-review', correctness);
+                answer.classList.add('question-answer-review');
+                answer.classList.add(correctness);
 
                 // query element as reference to insert new element.
                 var answerText = answer.querySelector('.answer-text');

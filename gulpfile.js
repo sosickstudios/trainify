@@ -129,10 +129,11 @@ gulp.task('serve', function () {
 });
 
 gulp.task('develop', function () {
+    process.env.NODE_ENV = 'development';
     $.nodemon({ script: './backend', ext: 'hbs js' })
         .on('restart', function () {
             console.log('restarted!')
-        })
+        });
 });
 
 // Build Production Files, the Default Task
