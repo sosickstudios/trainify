@@ -10,3 +10,4 @@ coverage/
 *.sublime-workspace
 /.idea/
 deployment/roles/
+newrelic_agent.log
