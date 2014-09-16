@@ -90,9 +90,9 @@
 
             // Highlight the selected answer.
             if (item.dataset.answerId === this.result.chosen){
-                item.classList.add('answer-selected');
+                item.classList.add('selection');
             } else {
-                item.classList.remove('answer-selected');
+                item.classList.remove('selection');
             }
         }
 
