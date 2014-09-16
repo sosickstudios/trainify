@@ -88,13 +88,13 @@
         for (var i = 0; i < this.answers.length; i++){
             var item = this.answers[i];
 
-            // Toggle is flimsy in IE.
-            var isSelected = item.dataset.answerId === this.result.chosen;
+            // Highlight the selected answer.
+            if (item.dataset.answerId === this.result.chosen){
 
             if (isSelected){
-                item.classList.add('selection');
+                item.classList.add('answer-selected');
             } else {
-                item.classList.remove('selection');
+                item.classList.remove('answer-selected');
             }
         }
 

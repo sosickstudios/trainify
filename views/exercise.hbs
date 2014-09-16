@@ -22,7 +22,7 @@
     <ul>
     {{#each questions}}
         <li class="exercise-question" data-question-id="{{this.id}}">
-            <p>{{this.text}}</p>
+            <span>{{this.text}}</span>
 
             <ul class="question-answers">
                 {{#each this.answer.values}}
@@ -34,9 +34,10 @@
             </ul>
         </li>
     {{/each}}
-    <ul>
+    </ul>
 </main>
 
 <script src="/scripts/headroom.min.js"></script>
-<script async type="text/javascript" src="scripts/exercise.js"></script>
+<script type="text/javascript" src="scripts/dataset.js"></script>
+<script type="text/javascript" src="scripts/exercise.js"></script>
 {{>footer}}
