@@ -39,13 +39,6 @@
         var examLocation = '/exercise?trainingId=' + data.id 
             + '&path=,&category=' + data.category.id + '&type=Exam Prep';
         examBtn.setAttribute('href', examLocation);
-
-        //examBtnListener = function (){
-        //    location.href = '/exercise?trainingId=' + data.id + '&path=,&category=' + data.category.id + '&type=Exam Prep';
-        //};
-
-        // Attach the new listener, with the new location.href set.
-        //examBtn.addEventListener('click', examBtnListener);
     }
 
     window.Trainify.attachCourseDataListener(dataChange);

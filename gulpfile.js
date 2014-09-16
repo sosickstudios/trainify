@@ -30,7 +30,7 @@ var AUTOPREFIXER_BROWSERS = [
 
 // Lint JavaScript
 gulp.task('jshint', function () {
-  return gulp.src(['app/scripts/**/*.js', '!app/scripts/d3.min.js'])
+  return gulp.src(['app/scripts/**/*.js', '!app/scripts/d3.min.js', '!app/scripts/headroom.min.js'])
     .pipe(reload({stream: true, once: true}))
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
@@ -129,10 +129,11 @@ gulp.task('serve', function () {
 });
 
 gulp.task('develop', function () {
+    process.env.NODE_ENV = 'development';
     $.nodemon({ script: './backend', ext: 'hbs js' })
         .on('restart', function () {
             console.log('restarted!')
-        })
+        });
 });
 
 // Build Production Files, the Default Task

@@ -269,6 +269,11 @@ p a {
     }
 
     .question-answers {
+      ul {
+        margin-left: 0;
+        padding-left: 0;
+      }
+
       padding: 10px 0 0 0;
       margin-left: 50px;
       margin-top: 50px;
