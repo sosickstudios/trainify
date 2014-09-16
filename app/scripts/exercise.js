@@ -1,4 +1,4 @@
-(function (){
+(function(){
 
     var header = document.querySelector('.exercise-status');
     var headroom = new Headroom(header);
@@ -7,7 +7,7 @@
     /**
      * Prototypes representation of each question in an exercise.
      *
-     * @param {Element.<li>} question The element that has been queried which contains 
+     * @param {Element.<li>} question The element that has been queried which contains
      *                                the question.
      * @param {Number} number What number the question falls in the exercise.
      * @param {Exercise} exercise The exercise that the question belongs to.
@@ -16,7 +16,7 @@
 
         // The question itself. /=> Element.<li>
         this.content = question;
-        
+
         // The exercise this question belongs to.
         this.parent = exercise;
 
@@ -68,13 +68,13 @@
             if (!this.review && e.target.tagName.toLowerCase() !== 'ul'){
                 var target = e.target.tagName.toLowerCase() === 'li' ? e.target : e.target.parentNode;
                 this.selectAnswer(target);
-                this.sendUpdateRequest();                
+                this.sendUpdateRequest();
             }
 
         }.bind(this));
     }
 
-    /** 
+    /**
      * The question answer list has been clicked on, we should go through our answers
      * and reflect the selection.
      *
@@ -90,8 +90,6 @@
 
             // Highlight the selected answer.
             if (item.dataset.answerId === this.result.chosen){
-
-            if (isSelected){
                 item.classList.add('answer-selected');
             } else {
                 item.classList.remove('answer-selected');
@@ -117,7 +115,8 @@
      * @return {Boolean}
      */
     Question.prototype.isCorrect = function (){
-        return this.content.dataset.questionResult instanceof Boolean && this.content.dataset.questionResult;
+        return this.content.dataset.questionResult instanceof Boolean &&
+                this.content.dataset.questionResult;
     };
 
     /**
@@ -148,7 +147,7 @@
         // Load icon based on whether user answered question correctly.
         var questionResult = this.result.correct ? 'Correct' : 'Incorrect';
         var resultText = questionResult.toLowerCase();
-        
+
         // Reference node to insert icon after.
         var questionAnswers = this.content.querySelector('.question-answers');
 
@@ -175,7 +174,7 @@
 
             var isCorrect = answer.dataset.isCorrect;
             var isSelected = answer.dataset.answerId.toString() === this.result.chosen.toString();
-            
+
             // set the src of the img element
             var answerIcon = document.createElement('img');
             var correctness = '';
@@ -202,7 +201,7 @@
                     selectionText.textContent = 'You Selected';
                     selectionText.classList.add('selection-text');
 
-                    answer.insertBefore(selectionText, answerIcon);   
+                    answer.insertBefore(selectionText, answerIcon);
                 }
 
                 // Show the explanation.
@@ -235,7 +234,7 @@
         }
     }
 
-    /** 
+    /**
      * Add a question to the array of questions that we are in posession of.
      *
      * @param {Element.<li>} content The list item element that represents the question.
@@ -257,8 +256,8 @@
     };
 
     /**
-     * Check to see if all questions in the exercise are answered. If all 
-     * questions are answered, an update request to the exercise model should 
+     * Check to see if all questions in the exercise are answered. If all
+     * questions are answered, an update request to the exercise model should
      * be sent to score the exercise.
      *
      */
@@ -291,7 +290,7 @@
 
     /**
      * Send update request for exercise, in order to score the exercise and receive a score.
-     * 
+     *
      */
     Exercise.prototype.sendUpdateRequest = function(){
         var request = new XMLHttpRequest();
@@ -321,5 +320,4 @@
         });
     }
     init();
-
-})();
+}());
