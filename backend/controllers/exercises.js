@@ -200,9 +200,6 @@ Leaf.prototype.getQuestions = function (){
 
     // How many questions are we responsible for, and how many did we provide from this leaf.
     var difference = this.leafTotal - questions.length;
-    // if (process.env.NODE_ENV === 'development'){
-    //     console.log('Difference %d', difference);
-    // }
 
     // If there are children that still have questions to make our difference up.
     if (difference && !this.isLeafDry()){
