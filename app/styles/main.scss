@@ -238,6 +238,8 @@ p a {
   li.exercise-question {
     list-style-type: decimal;
     padding-bottom: 30px;
+    padding-top: 0;
+    vertical-align: top;
 
     .question-review-icon {
       margin-top: 24px;

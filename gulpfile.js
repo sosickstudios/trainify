@@ -68,10 +68,11 @@ gulp.task('sass-dev', function(){
 });
 
 gulp.task('sass', function(){
-  gulp.src(['app/styles/*.scss', 'app/styles/components/*.scss'])
+  gulp.src(['app/styles/main.scss'])
     .pipe($.sass())
     .on('error', console.error.bind(console))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+          .pipe($.csso())
       // .pipe($.uncss({
       //   html: [
       //     'views/index.hbs',
