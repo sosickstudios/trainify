@@ -5,8 +5,8 @@ module.exports = {
   },
 
   stripe: {
-      publicKey: 'pk_test_Tg9YdyqBcp1aQsYV7eM4PNNx',
-      secretKey: 'sk_test_abZ1lpj2ylrplGnFMyjwlGSt'
+      publicKey: 'pk_test_JX0R24WmahC1qH6yPRFR6Tjb',
+      secretKey: 'sk_test_PuFGJGdJD5dhcsnqopn0p2pv'
   },
 
   google: {
