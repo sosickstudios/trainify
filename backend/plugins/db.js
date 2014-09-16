@@ -20,7 +20,8 @@ var models = require('require-dir')('../models');
 
 // Give the parent-child structure to the category through association.
 models.category
-    .hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
+    .hasMany(models.category, { as: 'children', foreignKey: 'parentId'})
+    .belongsTo(models.category, { as: 'parent', foreignKey: 'parentId'});
 
 models.company
     .hasMany(models.training)
@@ -31,7 +32,8 @@ models.exercise
     .hasMany(models.result);
 
 models.question
-    .hasMany(models.result);
+    .hasMany(models.result)
+    .belongsTo(models.category);
 
 models.result
     .belongsTo(models.exercise)

@@ -54,9 +54,14 @@ var home = {
             // Ensure we don't throw an error if there is no logged in user.
             if (user && _.any(user.access)){
                 trainings.forEach(function(training){
-                    training.hasPurchased = user.access.some(function(access){
-                        return access.trainingId === training.id;
-                    });
+                    var access = _.findWhere(user.access, {trainingId: training.id});
+
+                    training.categories = _.sortBy(training.categories, 'id');
+
+                    if (access){
+                        training.hasPurchased = true;
+                        training.isAdmin = access.isAdmin;
+                    }
                 });
             }
 
@@ -64,11 +69,44 @@ var home = {
             // our templates. For now we just want to go 2 levels deep.
             trainings.forEach(function(training){
                 var rootCategory = _.findWhere(training.categories, {parentId: null});
-                constructCategories(rootCategory, training.categories);
-                training.categories = rootCategory.categories;
+
+                if (rootCategory){
+                    constructCategories(rootCategory, training.categories);
+                    training.categories = rootCategory.categories;
+                }
             });
 
             res.render('index', {courses: trainings});
+        });
+    },
+
+    /**
+     * Handles updating a training course for the specified course. Uses a Google Docs
+     * spreadsheet to update the course.
+     *
+     * @param {Express.request} req The express request.
+     * @param {Express.response} req The express response.
+     */
+    updateCourse: function(req, res){
+        var gdocs = require('./../gdocs');
+        gdocs.updateAll(req.params.id).then(function(){
+            res.redirect('/');
+        });
+    },
+
+    /**
+     * Determines the spreadsheet id and redirects to that doc in the current tab.
+     *
+     * @param {Express.request} req The express request.
+     * @param {Express.response} req The express response.
+     */
+    editCourse: function(req, res){
+        var gdocs = require('./../gdocs');
+        gdocs.spreadsheet(req.params.id, 'Course Overview').then(function(spreadsheet){
+            console.log(spreadsheet.spreadsheetId);
+            var url = 'https://docs.google.com/spreadsheets/d/' +
+                    spreadsheet.spreadsheetId + '/edit';
+            res.redirect(url);
         });
     }
 };
@@ -79,6 +117,8 @@ var home = {
  * @param categories
  */
 function constructCategories(category, categories){
+    if (!category) return;
+
     category.categories = getChildCategories(categories, category.parentId);
 
     category.categories.forEach(function(child){
@@ -162,6 +202,8 @@ router.get('/login', passwordless.acceptToken(), utils.redirect('/'));
 router.get('/logout', passwordless.logout(), utils.redirect('/'));
 router.get('/buy/:id', buy.get);
 router.post('/buy/:id', buy.post);
+router.get('/updatecourse/:id', home.updateCourse);
+router.get('/editcourse/:id', home.editCourse);
 
 router.route('/signup')
   .get(utils.render('signup'))

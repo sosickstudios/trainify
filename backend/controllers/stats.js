@@ -163,8 +163,13 @@ var stats = {
                 	var trainingCategories = _.where(categories, {trainingId: training.id});
                 	var trainingExercises = _.where(exercises, {trainingId: training.id});
 
+                    if (!trainingCategories.length) return;
+
                 	// Load our category into the parent-child structure.
-                	var tree = new Tree(null /* id */, ',', trainingCategories, { training: training, exercises: trainingExercises });
+                	var tree = new Tree(null /* id */, ',', trainingCategories, {
+                        training: training,
+                        exercises: trainingExercises
+                    });
 
                 	// What functions do we want to run on each leaf of the tree.
                 	tree.treeApply(applyFunctions);

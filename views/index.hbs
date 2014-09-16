@@ -11,6 +11,12 @@
                     {{#if hasPurchased}}
                         <br /><a href="/dash">Access your course</a>
                     {{/if}}
+                    {{#if isAdmin}}
+                        <div class="admin">
+                            <a href="/updatecourse/{{id}}">Syncronize course</a>
+                            <a href="/editcourse/{{id}}" target="_blank">Edit course on Google Docs</a>
+                        </div>
+                    {{/if}}
                 </div>
                 <div class="company-bio">
                     {{company.name}} <br/>

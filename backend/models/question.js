@@ -13,6 +13,7 @@ module.exports = function (){
     id:               { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
     figure:           { type: Sequelize.STRING },
     path:             { type: Sequelize.STRING },
+    explanation:      { type: Sequelize.STRING },
     text:             { type: Sequelize.TEXT },
     type:             { type: Sequelize.ENUM, values: _.values(TYPE),defaultValue: TYPE.MULTIPLE },
     answer: {
