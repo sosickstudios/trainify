@@ -1,8 +1,8 @@
 var Promise = require('bluebird');
 
 var accessId = 1;
-var companyId = 2;
-var trainingId = 10;
+var companyId = 1;
+var trainingId = 1;
 var userId = 1;
 
 module.exports.all = function(){
@@ -39,6 +39,7 @@ module.exports.categories = function(){
     //process.env.NODE_ENV = 'remote';
     return new Promise(function(resolve){
         require('./../backend/plugins/db');
+
         var Category = require('./../backend/models/category');
         var Question = require('./../backend/models/question');
         var categories = require('./categories');
@@ -147,6 +148,7 @@ module.exports.categories = function(){
                 item.path = ',' + item.path + ',';
 
                 return {
+                    explanation: item.explanation,
                     path: item.path,
                     text: item.text,
                     type: item.type,
@@ -154,6 +156,8 @@ module.exports.categories = function(){
                 }
             })).then(function(){
                 resolve();
+            }).catch(function (e){
+                console.log(e);
             });
         });
     });

@@ -49,7 +49,7 @@ models.user
     .hasMany(models.access, {as: 'access'})
     .hasMany(models.exercise, { as: 'exercises' });
 
-// sequelize.sync();
+sequelize.sync();
 
 Object.keys(models).forEach(function(modelName) {
   if ('associate' in models[modelName]) {

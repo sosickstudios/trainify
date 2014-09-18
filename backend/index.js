@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'remote';
 // Start our monitoring platform.
 if (process.env.NODE_ENV === 'production'){
     require('newrelic');
