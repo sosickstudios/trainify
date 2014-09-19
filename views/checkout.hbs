@@ -5,23 +5,25 @@
         <h1>{{error}}</h1>
     {{/if}}
 
-    {{#if training.cost}}
-        Would you like to buy <span class="course">{{training.name}}</span> for ${{training.cost}}?
-    {{/if}}
-    {{#unless training.cost}}
-        Would you like to access <span class="course">{{training.name}}</span>? Don't worry, it's free during our beta period.
-    {{/unless}}
-
     <form action="/buy/{{training.id}}" method="post">
-        <script
-                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key="{{stripe}}"
-                data-image="/images/logo.svg"
-                data-name="Trainify"
-                data-email="{{user.email}}"
-                data-description="1 course (${{training.cost}}.00)"
-                data-amount="{{total}}00">
-        </script>
+        {{#if training.cost}}
+            Would you like to buy <span class="course">{{training.name}}</span> for ${{training.cost}}?
+
+            <script
+                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key="{{stripe}}"
+                    data-image="/images/logo.svg"
+                    data-name="Trainify"
+                    data-email="{{user.email}}"
+                    data-description="1 course (${{training.cost}}.00)"
+                    data-amount="{{total}}00">
+            </script>
+        {{/if}}
+        {{#unless training.cost}}
+            Would you like to access <span class="course">{{training.name}}</span>? Don't worry, it's free during our beta period.
+            <br/>
+            <button type="submit" class="stripe-button-el">Access the course</button>
+        {{/unless}}
     </form>
 </main>
 
