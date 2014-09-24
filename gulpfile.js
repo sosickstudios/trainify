@@ -6,7 +6,7 @@ var $ = require('gulp-load-plugins')();
 var del = require('del');
 var browserSync = require('browser-sync');
 var pagespeed = require('psi');
-var reload = browserSync.reload;
+var reload = browserSync.reload({stream: true});
 
 var plumber = require('gulp-plumber');
 

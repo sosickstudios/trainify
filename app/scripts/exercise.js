@@ -115,8 +115,7 @@
      * @return {Boolean}
      */
     Question.prototype.isCorrect = function (){
-        return this.content.dataset.questionResult instanceof Boolean &&
-                this.content.dataset.questionResult;
+        return this.result.correct; 
     };
 
     /**
@@ -219,11 +218,11 @@
      */
     function Exercise (content, id) {
         this.content = content;
+        this.complete = false;
         this.id = id;
 
         // Array of question elements. /=> Array.<Element.<li>>
         this.questions = [];
-
 
         // Questions in the exercise /=> NodeList.<Element.<li>>
         var questionsList = this.content.querySelectorAll('.exercise-question');
@@ -249,7 +248,48 @@
         return this.questions.length;
     };
 
+    /**
+     * Called when all questions in the exercise are believed to be completed. Triggers all
+     * questions to review mode and shows review box at the top of the exercise.
+     *
+     */
     Exercise.prototype.review = function (){
+        // Must be set for scoring to be done!!
+        this.complete = true;
+
+        // Show the review box.
+        this.content.querySelector('.review').classList.remove('hidden');
+
+        // Score the exercise
+        var scoreBox = this.score();
+        var percent = scoreBox.percentage;
+        var score = (100 - percent) / 100 * -250;
+
+        // Retrieve the svg path for updating stroke offset.
+        document.getElementById('p-score').setAttribute('stroke-dashoffset', score);
+            
+        // Retrieve all elements for the review box that need content change.
+        var progressPath = this.content.querySelector('.score-meter');
+        var ratioCorrect = this.content.querySelector('.ratio .correct');
+        var scoreText = this.content.querySelector('.score-percent');
+
+        // Change the content of the elements.
+        ratioCorrect.textContent = scoreBox.correct + ' / ' + scoreBox.total;
+        scoreText.textContent = percent.toFixed() + '%';
+
+        // Find out which context to apply to our svg.
+        var contextClass;
+        if (percent > 80){
+            contextClass = 'passing';
+        } else if (percent < 80 && percent > 65){
+            contextClass = 'caution';
+        } else {
+            contextClass = 'failing';
+        }   
+        scoreText.classList.add(contextClass);
+        progressPath.classList.add(contextClass);
+
+        // Trigger all questions for review.
         for(var i = 0; i < this.questions.length; i++){
             this.questions[i].setReview();
         }
@@ -304,6 +344,31 @@
         request.open('PUT', '/exercise', true);
         request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
         request.send(JSON.stringify({id: this.id}));
+    };
+
+    /**
+     * Score the exercise if it is complete.
+     *
+     * @return {Object.<Percentage, Correct, Incorrect, Total>}
+     */
+    Exercise.prototype.score = function(){
+        if(!this.complete) return {};
+
+        // Find the score for the exercise
+        var correctCount = 0;
+        var total = this.questions.length;
+        for(var i = 0; i < this.questions.length; i++){
+            if(this.questions[i].isCorrect()){
+                correctCount++;
+            }
+        }
+        
+        return {
+            percentage: Math.round((correctCount / this.questions.length).toFixed(2) * 100),
+            correct: correctCount,
+            incorrect: (this.questions.length - correctCount),
+            total: this.questions.length
+        };
     };
 
     var querySelector = document.querySelector.bind(document);
