@@ -4,11 +4,12 @@ module.exports = {
     port: 6379
   },
 
-  mandrill: 'QhbawI-EVGiLprizwN3i0A',
-
-  server: {
-    port: 6158
+  stripe: {
+      publicKey: 'pk_live_dFbrMBrnZ6wFz9N3BY4PnbSO',
+      secretKey: 'sk_live_M0NdxZIiEIoR3H4aQwRvQP3O'
   },
+
+  mandrill: 'QhbawI-EVGiLprizwN3i0A',
 
   db: {
     port: 5432,
