@@ -345,6 +345,12 @@ p a {
       }
     }
   }
+
+  p.legal {
+    font-size: $secondary-text-size;
+    color:$secondary-text;
+    padding: 40px 10% 0 20%;
+  }
 }
 
 .btn-green {
