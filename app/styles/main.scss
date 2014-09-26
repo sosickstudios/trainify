@@ -15,6 +15,8 @@ $secondary-text: #676767;
 $primary-text-size: 1.5em;
 $secondary-text-size: 0.9em;
 
+$question-text-size: 1.0em;
+
 html,
 body {
   width: 100%;
@@ -326,37 +328,64 @@ p a {
 
   li.exercise-question {
     list-style-type: decimal;
-    padding-bottom: 30px;
+    margin-bottom: 50px;
     padding-top: 0;
     vertical-align: top;
 
-    .question-review-icon {
-      margin-top: 24px;
-      img {
-        width: 75px;
-        height: 75px;
-        margin-left: 11px;
-      }
+    div.question-review {
+      margin-top: 25px;
 
-      span {
-        &:before {
-          content: '\A';
+      .explanation {
+        width: 80%;
+        display: block;
+
+        h5 {
+          text-transform: uppercase;
+          color: $primary-orange;
         }
-        white-space: pre;
+
+        p {
+          font-size: $secondary-text-size;
+          color: $secondary-text;       
+        }
       }
 
-      text-transform: uppercase;
-      font-weight: 600;
-      float: right;
-      margin-right: 150px;
+      .review-icon {
+        width: 29%;
+        margin-top: 35px;
+
+        img {
+          width: 75px;
+          height: 75px;
+          margin-left: 11px;
+        }
+
+        span {
+          &:before {
+            content: '\A';
+          }
+          white-space: pre;
+        }
+
+        text-transform: uppercase;
+        font-weight: 600;
+        float: right;
+        // margin-right: 150px;
+      }
+
+      .review-icon.incorrect {
+        color: $primary-red;
+      }
+
+      .review-icon.correct {
+        color: $primary-green;
+      }
     }
 
-    .question-review-icon.incorrect {
-      color: $primary-red;
-    }
-
-    .question-review-icon.correct {
-      color: $primary-green;
+    span.question-text {
+      width: 100%;
+      font-size: $question-text-size;
+      display: block;
     }
 
     .question-answers {
@@ -415,13 +444,6 @@ p a {
           text-transform: uppercase;
           font-size: $secondary-text-size;
           margin-left: 33px;
-        }
-
-        span.explanation {
-          font-size: $secondary-text-size;
-          color: $secondary-text;
-          max-width: 80px;
-          margin-top: 19px;
         }
       }
 
