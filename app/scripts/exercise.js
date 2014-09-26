@@ -156,7 +156,6 @@
         var questionAnswers = this.content.querySelector('.question-answers');
 
         // container that holds icon and text.
-        // var container = document.createElement('div');
         var container = this.content.querySelector('.question-review .review-icon');
         var reviewIcon = document.createElement('img');
         var textNode = document.createElement('span');
@@ -169,9 +168,6 @@
         // img and span element inside div container.
         container.appendChild(reviewIcon);
         container.appendChild(textNode);
-
-        // // Inject the element that we created.
-        // this.content.insertBefore(container, questionAnswers);
 
         // Add styling to answers for correctness.
         for(var i = 0; i < this.answers.length; i++){
