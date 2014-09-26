@@ -19,7 +19,31 @@
 </div>
 
 <main class="exercise" data-exercise-id="{{this.exercise.id}}">
-    <ul>
+    <div class="review hidden">
+        <div class="help-text">
+            <span>Results</span>
+            <p class="results-text"></p>
+        </div>
+
+
+        <div class="score">
+            <span class="score-percent">0%</span>
+            <svg class="score-meter" version="1.1" x="0px" y="0px">
+                <path id='p-score' fill="none"
+                      stroke-dashoffset="-260"
+                      stroke-dasharray="282 282"
+                      stroke-width="8"
+                      d="M45,4C22.392,4,4,22.393,4,45c0,22.608,18.392,41,41,41s41-18.392,41-41S67.608,4,45,4z"></path>
+             </svg>
+             <h5>SCORE</h5>
+             <div class="ratio">
+                 <span class="correct"></span><br/>
+                 ANSWERED CORRECTLY
+             </div>
+        </div>
+    </div>
+
+    <ul class="exercise-questions">
     {{#each questions}}
         <li class="exercise-question" data-question-id="{{this.id}}">
             <span>{{this.text}}</span>
