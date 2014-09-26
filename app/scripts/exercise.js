@@ -254,6 +254,11 @@
      *
      */
     Exercise.prototype.review = function (){
+        // TODO(Bryce) Would be nice if these could be loaded from the server so they can change.
+        var cautionText = 'We can do better! Don\'t be discouraged by your score!';
+        var failText = 'Not satisfied with your score? Don\'t Panic! Stay the course!';
+        var passText = 'Good Start! Remember to keep in mind there is still work to be done.';
+        
         // Must be set for scoring to be done!!
         this.complete = true;
 
@@ -271,23 +276,29 @@
         // Retrieve all elements for the review box that need content change.
         var progressPath = this.content.querySelector('.score-meter');
         var ratioCorrect = this.content.querySelector('.ratio .correct');
+        var resultsText = this.content.querySelector('.help-text .results-text');
         var scoreText = this.content.querySelector('.score-percent');
-
-        // Change the content of the elements.
-        ratioCorrect.textContent = scoreBox.correct + ' / ' + scoreBox.total;
-        scoreText.textContent = percent.toFixed() + '%';
 
         // Find out which context to apply to our svg.
         var contextClass;
+        var contextText;
         if (percent > 80){
             contextClass = 'passing';
+            contextText = passText;
         } else if (percent < 80 && percent > 65){
             contextClass = 'caution';
+            contextText = cautionText;
         } else {
+            contextText = failText;
             contextClass = 'failing';
-        }   
+        }
         scoreText.classList.add(contextClass);
         progressPath.classList.add(contextClass);
+
+        // Change the content of the elements.
+        ratioCorrect.textContent = scoreBox.correct + ' / ' + scoreBox.total;
+        resultsText.textContent = contextText;
+        scoreText.textContent = percent.toFixed() + '%';
 
         // Trigger all questions for review.
         for(var i = 0; i < this.questions.length; i++){
@@ -349,7 +360,7 @@
     /**
      * Score the exercise if it is complete.
      *
-     * @return {Object.<Percentage, Correct, Incorrect, Total>}
+     * @return {Object.<Number, Number, Number, Number>}
      */
     Exercise.prototype.score = function(){
         if(!this.complete) return {};
