@@ -47,15 +47,7 @@
     {{#each questions}}
         <li class="exercise-question" data-question-id="{{this.id}}">
             <span class="question-text">{{this.text}}</span>
-            <div class="question-review hidden">
-                <div class="explanation">
-                    <h5>But Why?</h5>
-                    <p>{{this.explanation}}</p>
-                </div>
-                <div class="review-icon"></div>
-            </div>
-            
-
+            <div class="review-icon"></div>
             <ul class="question-answers">
                 {{#each this.answer.values}}
                 <li data-answer-id="{{id}}" data-is-correct="{{isCorrect}}" class="question-answer">
@@ -63,6 +55,10 @@
                 </li>
                 {{/each}}
             </ul>
+            <div class="explanation hidden">
+                <h5>But Why?</h5>
+                <p>{{this.explanation}}</p>
+            </div>
         </li>
     {{/each}}
     </ul>

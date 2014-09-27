@@ -10,6 +10,8 @@ $primary-blue: #31c5f1;
 $primary-yellow: #fdd53c;
 $primary-beige: #c2b59b;
 
+$secondary-blue: #ECF8FF;
+
 $secondary-text: #676767;
 
 $primary-text-size: 1.5em;
@@ -332,54 +334,56 @@ p a {
     padding-top: 0;
     vertical-align: top;
 
-    div.question-review {
-      margin-top: 25px;
-
-      .explanation {
-        width: 80%;
-        display: block;
-
-        h5 {
-          text-transform: uppercase;
-          color: $primary-orange;
-        }
-
-        p {
-          font-size: $secondary-text-size;
-          color: $secondary-text;       
-        }
-      }
-
-      .review-icon {
-        width: 29%;
-        margin-top: 35px;
-
-        img {
-          width: 75px;
-          height: 75px;
-          margin-left: 11px;
-        }
-
-        span {
-          &:before {
-            content: '\A';
-          }
-          white-space: pre;
-        }
-
+    .explanation {
+      background-color: $secondary-blue;
+      border: 1px solid $primary-blue;
+      display: block;
+      line-height: 19px;
+      margin: 25px 0 0 -12px;
+      padding: 20px;
+      width: 80%;
+      
+      h5 {
         text-transform: uppercase;
-        font-weight: 600;
-        float: right;
-        // margin-right: 150px;
+        color: $primary-orange;
       }
 
-      .review-icon.incorrect {
-        color: $primary-red;
+      p {
+        font-size: $secondary-text-size;
+        font-weight: 575;
+        color: $secondary-text;
+        text-align: left;     
+      }
+    }
+
+    .review-icon {
+      width: 29%;
+      margin-top: 35px;
+
+      img {
+        width: 75px;
+        height: 75px;
+        margin-left: 11px;
       }
 
-      .review-icon.correct {
-        color: $primary-green;
+      span {
+        &:before {
+          content: '\A';
+        }
+        white-space: pre;
       }
+
+      text-transform: uppercase;
+      font-weight: 600;
+      float: right;
+    }
+
+    .review-icon.incorrect {
+      color: $primary-red;
+    }
+
+    .review-icon.correct {
+      color: $primary-green;
     }
 
     span.question-text {
@@ -395,11 +399,10 @@ p a {
       }
 
       padding: 10px 0 0 0;
-      margin-left: 50px;
-      margin-top: 50px;
+      margin: 15px 0 0 50px;
       list-style-type: lower-alpha;
       color: $primary-violet;
-      font-size: 0.9em;
+      font-size: $secondary-text-size;
       font-weight: 700;
 
       li {

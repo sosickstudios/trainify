@@ -156,11 +156,11 @@
         var questionAnswers = this.content.querySelector('.question-answers');
 
         // container that holds icon and text.
-        var container = this.content.querySelector('.question-review .review-icon');
+        var container = this.content.querySelector('.review-icon');
+        var explanation = this.content.querySelector('.explanation');
         var reviewIcon = document.createElement('img');
         var textNode = document.createElement('span');
 
-        container.classList.add('review-icon');
         container.classList.add(resultText);
         reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
         textNode.textContent = questionResult;
@@ -208,7 +208,8 @@
         }
 
         // Show the explanation.
-        this.content.querySelector('.question-review').classList.remove('hidden');
+        container.classList.remove('hidden');
+        explanation.classList.remove('hidden');
     };
 
     /**
