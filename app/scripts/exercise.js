@@ -139,6 +139,11 @@
         request.send(JSON.stringify(this.getRequest()));
     };
 
+    /**
+     * Transform the question to review mode by adding contextual classes to display the correctness
+     * of the question.
+     * 
+     */
     Question.prototype.setReview = function (){
         // Disable selecting answers
         this.review = true;
@@ -151,11 +156,11 @@
         var questionAnswers = this.content.querySelector('.question-answers');
 
         // container that holds icon and text.
-        var container = document.createElement('div');
+        var container = this.content.querySelector('.review-icon');
+        var explanation = this.content.querySelector('.explanation');
         var reviewIcon = document.createElement('img');
         var textNode = document.createElement('span');
 
-        container.classList.add('question-review-icon');
         container.classList.add(resultText);
         reviewIcon.setAttribute('src', '/images/answer-' + resultText + '.svg');
         textNode.textContent = questionResult;
@@ -163,9 +168,6 @@
         // img and span element inside div container.
         container.appendChild(reviewIcon);
         container.appendChild(textNode);
-
-        // Inject the element that we created.
-        this.content.insertBefore(container, questionAnswers);
 
         // Add styling to answers for correctness.
         for(var i = 0; i < this.answers.length; i++){
@@ -202,12 +204,12 @@
 
                     answer.insertBefore(selectionText, answerIcon);
                 }
-
-                // Show the explanation.
-                var explanation = answer.querySelector('.question-answer .explanation');
-                explanation.classList.toggle('hidden');
             }
         }
+
+        // Show the explanation.
+        container.classList.remove('hidden');
+        explanation.classList.remove('hidden');
     };
 
     /**
