@@ -33,7 +33,6 @@ describe('question model', function(){
   it('should save all fields for the model', function(done){
     var baseQuestion = {
       figure: 'This is the figure url',
-      path: 'Fake Path',
       text: 'This is the question text',
       answer: {
         type: 'multiple',
@@ -55,7 +54,6 @@ describe('question model', function(){
   it('should update a questions answer', function(done){
     var baseQuestion = {
       figure: 'This is the figure url',
-      path: 'Fake Path',
       text: 'This is the question text',
       answer: {
         type: 'multiple',

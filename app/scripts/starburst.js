@@ -30,7 +30,7 @@
     var partition = d3.layout.partition()
         .size([2 * Math.PI, radius * radius])
         .value(function(d){
-            // HACK(BRYCE) We should scale this according to how the d.stats.leafaverage is.
+            // HACK(BRYCE) We should scale this according to how the d.data.stats.average is.
             return 100;
         });
 
@@ -44,21 +44,21 @@
     var currentCategory;
 
     /**
-     * Determine the fill color for a node on the starburst based on the stats.leafAverage
+     * Determine the fill color for a node on the starburst based on the data.stats.average
      *
      * @param {Category} d The category that has a stats object attached.
      * @return {String}	   Should return the string of the color to be used for filling.
      */
     function determineFillColor (d){
-        var leafAverage = d.stats.leafAverage;
+        var average = d.data.stats.average;
 
-        if(leafAverage === -1){
+        if(average === -1){
             return colors.standard;
-        } else if(leafAverage <= 50){
+        } else if(average <= 50){
             return colors.failing;
-        } else if(50 < leafAverage && leafAverage <= 80){
+        } else if(50 < average && average <= 80){
             return colors.caution;
-        } else if(leafAverage > 80){
+        } else if(average > 80){
             return colors.passing;
         }
     }
@@ -67,7 +67,7 @@
      * Responsible for rendering the starburst based on the data tree that is
      * passed in.
      *
-     * @param {Category} json Data tree sent in to be rendered, should have the parent-  * child format.
+     * @param {Category} json Data tree sent in to be rendered, should have the parent-child format.
      */
     function createVisualization(json) {
         // Basic setup of page elements.
@@ -113,7 +113,7 @@
     // Attach a listener for when the data is loaded or changed/refreshed.
     window.Trainify.attachCourseDataListener(function (data){
         courseData = data;
-        createVisualization(data.category);
+        createVisualization(data.stats.trees['matrix']);
     });
 
     /**
@@ -131,8 +131,8 @@
 
         currentCategory = d;
         var percentageString;
-        if(currentCategory.stats.leafAverage !== -1) {
-            percentageString = currentCategory.stats.leafAverage + '%';
+        if(currentCategory.data.stats.average !== -1) {
+            percentageString = currentCategory.data.stats.average + '%';
         } else {
             percentageString = 'N/A';
         }
@@ -147,9 +147,9 @@
 
         d3.select('#practiceButton')
             .on('click', function () {
-                var path = currentCategory.path + currentCategory.id + ',';
-
-                location.href = '/exercise?type=Practice&path=' + path + '&category=' + currentCategory.id + '&trainingId=' + courseData.id;
+                var constPath = '/exercise?type=Practice&tree=matrix&';
+                var path = 'category=' + currentCategory.id + '&trainingId=' + courseData.id;
+                location.href = constPath + path;
             });
 
         d3.select('#explanation')

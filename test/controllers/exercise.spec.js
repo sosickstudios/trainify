@@ -27,7 +27,7 @@ describe('exercise controller', function(){
 
     it('should get the exercise view', function(done){
       var view = new RegExp('<div class=\"exercise\">');
-      var urlString = '/exercise?trainingId=' + training.id + '&type=Exam%20Prep&path=,&category='+ training.categories[0].id;
+      var urlString = '/exercise?trainingId=' + training.id + '&type=Exam%20Prep&tree=matrix';
       
 
       testutils.setUser().then(function(){

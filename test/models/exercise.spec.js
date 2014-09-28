@@ -35,7 +35,6 @@ describe('exercise model', function(){
       completed: (new Date()),
       index: 1,
       score: 100,
-      path: 'Fake Path',
       trainingId: 5,
       userId: 6
     };
