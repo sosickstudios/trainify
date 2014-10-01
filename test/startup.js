@@ -59,5 +59,7 @@ beforeEach(function(done){
         });
     }, done);
     return;
+  } else {
+    done();
   }
 });

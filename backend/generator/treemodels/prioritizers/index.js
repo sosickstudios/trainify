@@ -1,0 +1,50 @@
+var _ = require('lodash');
+
+/**
+ * Prioritize a set of questions tossed in by calculating with our prioritizers.
+ *
+ * @param {Array.<Question>} questions Array of questions to sort.
+ * @param {Object} options Options to configure which prioritizers to use.
+ *
+ * @return {Array.<Question>} Array of questions that have been sorted by prioritizers.
+ */
+function Prioritizer (questions, options){
+    // Load our given prioritizers that were specified in options.
+    var fns = _.map(options.prioritizers, function (type){
+        var path = './' + type;
+        return require(path);
+    });
+
+    // Calculate some data data that can be used in prioritizers.
+    var data = {
+        highestExposureCount: _.max(questions, function (question){
+            return question.results.length;
+        })
+    };
+
+    // Map, then sort our questions.
+    questions = _(questions)
+        .map(function (question){
+            question = question.values;
+
+            // Calculate total from our loaded prioritizers.
+            var receivedTotal = fns.reduce(function (sum, fn){
+                return sum + fn(question, data);
+            }, 0);
+
+            return {
+                weight: receivedTotal,
+                question: question
+            };
+        })
+        .sortBy(function (item){
+            // Sort lowest to highest.
+            return -item.weight;
+        })
+        .pluck('question')
+        .value();
+
+    return questions;
+}
+
+module.exports = exports = Prioritizer;

@@ -14,20 +14,21 @@
     var failCount = querySelector('.exam-failcount .dash-text');
     var examAverage = querySelector('.exam-average .dash-text');
 
-    var examBtnListener;
     function dataChange (data){
+        var course = data;
         //courseCount.textContent = data.stats.courseCount;
-        passCount.textContent = data.stats.passCount;
-        failCount.textContent = data.stats.failCount;
-        if (data.stats.examAverage){
-            examAverage.textContent = data.stats.examAverage + '%';
+        passCount.textContent = course.stats.general.passCount;
+        failCount.textContent = course.stats.general.failCount;
+        
+        if (course.stats.general.examAverage){
+            examAverage.textContent = course.stats.general.examAverage + '%';
         } else {
             examAverage.textContent = 'N/A';
         }
 
 
-        trainingName.textContent = data.name;
-        trainingDescription.textContent = data.description;
+        trainingName.textContent = course.name;
+        trainingDescription.textContent = course.description;
 
         // TODO(darius): Determine how much of this should be enabled
         // and how.
@@ -36,8 +37,8 @@
         //providerBio.textContent = data.company.bio;
 
         // Make sure we remove the old data listener, if there is one.
-        var examLocation = '/exercise?trainingId=' + data.id 
-            + '&path=,&category=' + data.category.id + '&type=Exam Prep';
+        var examLocation = '/exercise?trainingId=' + course.id 
+            + '&tree=matrix&type=Exam Prep';
         examBtn.setAttribute('href', examLocation);
     }
 

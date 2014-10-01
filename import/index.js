@@ -2,7 +2,7 @@ var Promise = require('bluebird');
 
 var accessId = 1;
 var companyId = 2;
-var trainingId = 10;
+var trainingId = 1;
 var userId = 1;
 
 module.exports.all = function(){
@@ -41,6 +41,7 @@ module.exports.categories = function(){
         require('./../backend/plugins/db');
         var Category = require('./../backend/models/category');
         var Question = require('./../backend/models/question');
+        var CategoryQuestion = require('./../backend/models/categoryquestions');
         var categories = require('./categories');
         var questions = require('./questions');
         var _ = require('lodash');
@@ -54,6 +55,7 @@ module.exports.categories = function(){
         Promise.all(_.map(categories, function (item){
 
             return Category.create({
+                identifier: Category.TYPES.MATRIX,
                 trainingId: trainingId,
                 name: item.name,
                 weight: item.weight,
@@ -147,14 +149,34 @@ module.exports.categories = function(){
                 item.path = ',' + item.path + ',';
 
                 return {
+                    explanation: String(item.explanation),
                     path: item.path,
                     text: item.text,
                     type: item.type,
                     answer: answer
                 }
             })).then(function(){
+                var promises = [
+                    Category.findAll(),
+                    Question.findAll()
+                ];
+
+                return Promise.all(promises);
+            }).then(function (results){
+                var joins = [];
+                _.each(results[0], function (item){
+                    var questions = _.where(results[1], {path: item.path + item.id + ','});
+                    if(questions.length){
+                        _.each(questions, function (question){
+                            joins.push(CategoryQuestion.create({questionId: question.id, categoryId: item.id}));
+                        });
+                    }
+                });
+
+                return Promise.all(joins);
+            }).then(function (){
                 resolve();
-            });
+            })
         });
     });
 };
