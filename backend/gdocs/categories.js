@@ -160,53 +160,55 @@ function processCategoryPath(categories, parent, allCategories){
  * @returns {Promise}
  */
 function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
-    return new Promise(function(resolve){
-        // Everything has been updated, now let's update the gdoc
-        // with the latest IDs.
-        Category.findAll({where: {trainingId: trainingId}, include: [{model: Category, as: 'parent'}]})
-                .then(function(allCategories){
-                    // Spreadsheet.add expects an object in the form of
-                    // { rowNumber: { columnIndex: columnValue } }
-                    var update = {};
+    // Everything has been updated, now let's update the gdoc
+    // with the latest IDs.
+    return Category.findAll({where: {trainingId: trainingId}, include: [{model: Category, as: 'parent'}]})
+        .then(function(allCategories){
+            console.log(allCategories);
+            // Spreadsheet.add expects an object in the form of
+            // { rowNumber: { columnIndex: columnValue } }
+            var update = {};
 
-                    // Loop through all of the mapped rows from google docs and
-                    // create an entry with the updated id.
-                    _.each(gdocsMappedRows, function(mappedCategoryRow, index){
-                        var category = _.findWhere(allCategories, {id: mappedCategoryRow.id});
+            // Loop through all of the mapped rows from google docs and
+            // create an entry with the updated id.
+            _.each(gdocsMappedRows, function(mappedCategoryRow, index){
+                var category = _.findWhere(allCategories, {id: mappedCategoryRow.id});
 
-                        // If we can't get the category by ID, then fall back to the name. This
-                        // happens the first time a category is created.
-                        if (!category){
-                            category = _.findWhere(allCategories, function(category){
-                                // We need to match up the parent as well in the case of categories
-                                // that have the same name.
-                                if (mappedCategoryRow.parent){
-                                    return category.parent &&
-                                            category.parent.name === mappedCategoryRow.parent &&
-                                            category.name === mappedCategoryRow.name;
-                                }
-
-                                return category.name === mappedCategoryRow.name;
-                            });
+                // If we can't get the category by ID, then fall back to the name. This
+                // happens the first time a category is created.
+                if (!category){
+                    category = _.findWhere(allCategories, function(category){
+                        // We need to match up the parent as well in the case of categories
+                        // that have the same name.
+                        if (mappedCategoryRow.parent){
+                            return category.parent &&
+                                    category.parent.name === mappedCategoryRow.parent &&
+                                    category.name === mappedCategoryRow.name;
                         }
 
-                        update[(index + 2).toString()] = {1: category.id};
+                        return category.name === mappedCategoryRow.name;
                     });
+                }
 
-                    // We have to add our updated rows, even if we are just updating it.
-                    spreadsheet.add(update);
+                update[(index + 2).toString()] = {1: category.id};
+            });
 
-                    // Add calls are batched, but we can go ahead and send the update now
-                    // since our object contains all of the updates already.
-                    spreadsheet.send(function() {
-                        // Integrate logs at some point.
-                    });
+            // We have to add our updated rows, even if we are just updating it.
+            spreadsheet.add(update);
 
-                    // Ensure we update the paths of the categories to be accurate
-                    // after we do any updates.
-                    calculateCategoryPaths(allCategories).then(resolve);
-                });
-    });
+            // Add calls are batched, but we can go ahead and send the update now
+            // since our object contains all of the updates already.
+            spreadsheet.send(function() {
+                // Integrate logs at some point.
+            });
+
+            // Ensure we update the paths of the categories to be accurate
+            // after we do any updates.
+            return calculateCategoryPaths(allCategories);
+        })
+        .catch(function (e){
+            console.log(e);
+        });
 }
 
 /**
@@ -219,52 +221,56 @@ function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
  * @returns {Promise}
  */
 module.exports = function(trainingId, spreadsheet){
-    return new Promise(function(resolve, reject){
-        // Get all of the rows now that the spreadsheets metadata has been loaded.
-        spreadsheet.receive(function(err, rows) {
-            // If we can't get the rows then there is no point in proceeding.
-            if (err) return reject(rows);
+    var promises = [
+        (new Promise(function (resolve, reject){
+            spreadsheet.receive(function(err, rows){
+                if(err) reject(err);
 
-            // Get all of the categories to make updating easier.
-            Category.findAll({where: {trainingId: trainingId}})
-                    .then(function(categories){
-                        var allCreatedChildren = [];
-                        var keys = {};
-                        // Get the header row
-                        var keysRow = rows['1'];
+                resolve(rows);
+            });
+        })),
+        Category.findAll({where: {trainingId: trainingId}})
+    ];
 
-                        // Create the keys in the map based on the values specified
-                        // in the header row of the spreadsheet. Creates structure like:
-                        //   keys = {
-                        //     id: 'ID',
-                        //     name: 'Name',
-                        //     parent: 'Parent Category'
-                        //   }
-                        _.each(keysRow, function(entry, key){
-                            keys[entry.toLowerCase().replace(' ', '')] = key;
-                        });
+    var mappedCategories;
+    return Promise.all(promises)
+        .then(function (results){
+            var rows = results[0];
+            var categories = results[1];
 
-                        // Ensure we filter out the key row first.
-                        var mappedCategories = _.filter(rows, function(row){
-                            return row[keys['id']] !== 'ID';
-                        });
+            var allCreatedChildren = [];
+            var keys = {};
+            // Get the header row
+            var keysRow = rows['1'];
 
+            // Create the keys in the map based on the values specified
+            // in the header row of the spreadsheet. Creates structure like:
+            //   keys = {
+            //     id: 'ID',
+            //     name: 'Name',
+            //     parent: 'Parent Category'
+            //   }
+            _.each(keysRow, function(entry, key){
+                keys[entry.toLowerCase().replace(' ', '')] = key;
+            });
 
-                        // Map each entry to an easier to use object matching the extracted
-                        // keys.
-                        mappedCategories = _.map(mappedCategories, _.bind(mapRowToCategory, null, keys));
+            mappedCategories = _(rows)
+                .filter(function (row){
+                    return row[keys['id']] !== 'ID';
+                })
+                .map(_.bind(mapRowToCategory, null, keys))
+                .value();
 
-                        // We build all of our categories out first, then fix their parent structure
-                        // after that.
-                        buildAllCategories(mappedCategories, trainingId)
-                                .then(function(items){
-                                    fixParentStructure(items, trainingId).then(function(){
-                                        syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId)
-                                                .then(resolve);
-                                    });
-                                });
-                    });
+            return buildAllCategories(mappedCategories, trainingId);
+        })
+        .then(function (categories){
+            return fixParentStructure(categories, trainingId);
+        })
+        .then(function (){
+            // MOVE THIS UP A LEVEL IF IT DOESNT HAVE TO BE IN ORDER
+            return syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId);
+        })
+        .catch(function (e){
+            console.log(e);
         });
-
-    });
 };
