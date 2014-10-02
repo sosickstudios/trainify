@@ -57,6 +57,7 @@ var home = {
                     var access = _.findWhere(user.access, {trainingId: training.id});
 
                     training.categories = _.sortBy(training.categories, 'id');
+                    training.slug = training.name.replace(/\s/g, '-');
 
                     if (access){
                         training.hasPurchased = true;

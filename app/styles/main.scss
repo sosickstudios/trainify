@@ -175,11 +175,12 @@ p a {
 @mixin button($color){
   font-size: 0.9em;
   width: auto;
-  color: $color;
+  color: $color !important;
   border: 1px solid $color;
   white-space: nowrap;
   padding: 5px 25px;
   background-color: transparent;
+  cursor: pointer;
 
   &:link,
   &:visited {
@@ -189,7 +190,7 @@ p a {
 
   &:hover {
     background: $color;
-    color: #fcfcfc;
+    color: #fcfcfc !important;
   }
 }
 
@@ -222,6 +223,89 @@ p a {
   .progress {
     text-align: right;
     padding: 0 20px 0 0;
+  }
+}
+
+#chart {
+  float: right;
+}
+
+.grid-course-description {
+  float: left;
+  padding-left: 20px;
+  width: 50%;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+    font-size: 29px;
+  }
+
+  ul {
+    padding: 10px 0 0 0;
+    margin: 0;
+
+    li {
+      padding: 10px 0 0 0;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 2px;
+        margin: 10px 0;
+        background-color: $primary-beige;
+      }
+    }
+  }
+
+  .about h2 {
+    font-size: 1em;
+
+    & a {
+      color: lighten(#000, 30);
+    }
+  }
+
+  .stats {
+    position: relative;
+  }
+
+  @mixin progress($color) {
+    background-color: $color;
+    border: 1px solid darken($color, 10);
+  }
+
+  .average-indicator {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.7em;
+    padding: 0 0 0 10px;
+    display: block;
+    margin: 5px 0 10px 0;
+
+    &.standard {
+      @include progress(#31c5f1);
+    }
+
+    &.caution {
+      @include progress(#fdd53c);
+    }
+
+    &.passing {
+      @include progress(#9fcc46);
+    }
+
+    &.failing {
+      @include progress(#f68421);
+    }
+  }
+
+  .no-data {
+    font-size: 0.8em;
+    color: lighten(#000, 50);
+    font-style: italic;
   }
 }
 
@@ -1329,7 +1413,7 @@ main.dash {
   .exam-passcount {
     @extend .dash-statsbar;
     color: $primary-green;
-  } 
+  }
 }
 
 #sequence {
