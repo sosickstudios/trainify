@@ -1,5 +1,7 @@
 var _ = require('lodash');
 var config = require('config');
+var Category = require('./../models/category');
+var Question = require('./../models/question');
 var Promise = require('bluebird');
 var Spreadsheet = require('edit-google-spreadsheet');
 var Training = require('./../models/training');
@@ -18,7 +20,7 @@ module.exports.spreadsheet = function(trainingId, worksheetName){
         .then(function (training){
             return (new Promise(function (resolve, reject){
                 Spreadsheet.load({
-                    debug:         true,
+                    debug:         false,
                     spreadsheetName: training.id + ': ' + training.name,
                     worksheetName: worksheetName,
 
@@ -39,11 +41,12 @@ module.exports.spreadsheet = function(trainingId, worksheetName){
 module.exports.questions = function(trainingId){
     return module.exports.spreadsheet(trainingId, 'Questions')
         .then(function(spreadsheet){
-            var categoryGdocs = require('./questions');
+            var questionsGdocs = require('./questions');
             
-            return categoryGdocs(trainingId, spreadsheet);
+            return questionsGdocs(trainingId, spreadsheet);
         })
         .catch(function (e){
+            
             console.log(e);
         })
 };
@@ -57,7 +60,7 @@ module.exports.questions = function(trainingId){
  */
 module.exports.categories = function(trainingId){
     return module.exports.spreadsheet(trainingId)
-        .then(function (){
+        .then(function (spreadsheet){
             var categoryGdocs = require('./categories');
 
             return categoryGdocs(trainingId, spreadsheet);
@@ -81,11 +84,10 @@ module.exports.updateAll = function(trainingId){
         })
         .catch(function (e){
             console.log(e);
-        });
+        })
+
 };
 
-var Category = require('./../models/category');
-var Question = require('./../models/question');
 module.exports.reload = function (trainingId){
     var cats;
     var sheet;
@@ -120,7 +122,7 @@ module.exports.reload = function (trainingId){
             cats = cats.map(function (category){
                 return category.values;
             });
-            console.log(cats);
+
             var questions = _(cats)
                 .pluck('questions')
                 .flatten()
@@ -155,13 +157,17 @@ module.exports.reload = function (trainingId){
                     result.push('DO NOT MODIFY');
                 }
 
-                var chapter = _.find(question.categories, {identifier: 'chapter'}) || '';
-                var legend = _.find(question.categories, {identifier: 'legend'}) || '';
-                var matrix = _.find(question.categories, {identifier: 'matrix'}) || '';
+                var chapter = _.find(question.categories, {identifier: 'chapter'});
+                var legend = _.find(question.categories, {identifier: 'legend'});
+                var matrix = _.find(question.categories, {identifier: 'matrix'});
                 
-                result.push('(' + chapter.id + ') ' + chapter.name);
-                result.push('(' + legend.id + ') ' + legend.name);
-                result.push('(' + matrix.id + ') ' + matrix.name);
+                var chapterLabel = chapter ? '(' + chapter.id + ') ' + chapter.name : '';
+                var legendLabel = legend ? '(' + legend.id + ') ' + legend.name : '';
+                var matrixLabel = matrix ? '(' + matrix.id + ') ' + matrix.name : '';
+                
+                result.push(chapterLabel);
+                result.push(legendLabel);
+                result.push(matrixLabel);
                 
                 return result;
             });
@@ -180,6 +186,7 @@ module.exports.reload = function (trainingId){
             ];
             questions.unshift(header);
             sheet.add(questions);
+
             sheet.send(function (e){
                 console.log(e);
                 return;

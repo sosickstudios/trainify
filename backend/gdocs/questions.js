@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var Category = require('./../models/category');
+var CategoryQuestion = require('./../models/categoryquestions');
 var config = require('config');
 var he = require('he');
 var Promise = require('bluebird');
@@ -19,6 +20,7 @@ var Training = require('./../models/training');
  * @returns {MappedQuestion}
  */
 function mapRowToQuestion(keys, row){
+
     var result = {};
     _.each(keys, function(entry, key){
         var val = row[entry]
@@ -28,6 +30,7 @@ function mapRowToQuestion(keys, row){
         }
         result[key] = val;
     });
+
     return result;
 }
 
@@ -45,37 +48,20 @@ function decodeString(value){
     return he.unescape(he.decode(value));
 }
 
-/**
- * Syncronizes all question ids back to google docs.
- *
- * @param {Array.Object} questions The mapped rows of the spreadsheet.
- * @param {edit-google-spreadsheet.Spreadsheet} spreadsheet The spreadsheet object model.
- *
- * @returns {Promise}
- */
-function syncronizeIdsToGdocs(questions, spreadsheet){
-    return new Promise(function(resolve){
-        // Spreadsheet.add expects an object in the form of
-        // { rowNumber: { columnIndex: columnValue } }
-        var update = {};
+function purgeOldData(ids){
+    return Question.findAll({where: {id: ids}, include: [Category]})
+        .then(function (questions){
+            var badQuestions = _.filter(questions, function (question){
+                return !question.categories.length;
+            });
 
-        // Loop through all of the mapped rows from google docs and
-        // create an entry with the updated id.
-        _.each(questions, function(question, index){
-            update[(index + 2).toString()] = {1: question.id};
+            if(badQuestions.length){
+              return Question.destroy({where: {id: badQuestions}});  
+            }
+
+            return;
+            
         });
-
-        // We have to add our updated rows, even if we are just updating it.
-        spreadsheet.add(update);
-
-        // Add calls are batched, but we can go ahead and send the update now
-        // since our object contains all of the updates already.
-        spreadsheet.send(function() {
-            // Integrate logs at some point.
-        });
-
-        resolve()
-    });
 }
 
 /**
@@ -84,7 +70,7 @@ function syncronizeIdsToGdocs(questions, spreadsheet){
  *
  * @param {MappedQuestion} mappedQuestion The question to extract the answer from.
  */
-function extractAnswer(mappedQuestion){
+function extractAnswer(mappedQuestion, keys){
     var answer = {
         type: mappedQuestion.type,
         values: []
@@ -94,7 +80,7 @@ function extractAnswer(mappedQuestion){
         var valTrue = {id: 1, value: true, isCorrect: false};
         var valFalse = {id: 2, value: false, isCorrect: false};
 
-        if (mappedQuestion.correctanswer === 'YES'){
+        if (mappedQuestion['correct'] === 'YES'){
             valTrue.isCorrect = true;
         } else {
             valFalse.isCorrect = true;
@@ -102,16 +88,62 @@ function extractAnswer(mappedQuestion){
 
         answer.values.push(valTrue, valFalse);
     } else if (answer.type === Question.TYPE.MULTIPLE){
-        answer.values.push({id: 1, text: mappedQuestion.correctanswer, isCorrect: true});
+        answer.values.push({id: 1, text: mappedQuestion['correct'], isCorrect: true});
 
-        if (mappedQuestion.answerb) answer.values.push({id: 2, text: mappedQuestion.answerb, isCorrect: false});
-        if (mappedQuestion.answerc) answer.values.push({id: 3, text: mappedQuestion.answerc, isCorrect: false});
-        if (mappedQuestion.answerd) answer.values.push({id: 4, text: mappedQuestion.answerd, isCorrect: false});
+        if (mappedQuestion['incorrect b']) answer.values.push({id: 2, text: mappedQuestion['incorrect b'], isCorrect: false});
+        if (mappedQuestion['incorrect c']) answer.values.push({id: 3, text: mappedQuestion['incorrect c'], isCorrect: false});
+        if (mappedQuestion['incorrect d']) answer.values.push({id: 4, text: mappedQuestion['incorrect d'], isCorrect: false});
     }
 
-    mappedQuestion.answer = answer;
+    return answer;
 }
 
+function fixCategoryQuestionJoins(parentKeys, id, question){
+    id = parseInt(id, 10);
+
+    var promises = [];
+    parentKeys.forEach(function (key){
+        var parent = question[key];
+
+        if(parent){
+             var parentId = parseInt(parent.match(/(\()(\d*)(\))/)[2], 10);
+             var joinFields = {
+                categoryId: parentId, 
+                questionId: id
+            };
+             promises.push(CategoryQuestion.findOrCreate(joinFields, joinFields));           
+        }
+
+    });
+
+    var relevantJoins;
+    return Promise.all(promises)
+        .then(function (results){
+            relevantJoins = results;
+
+            return CategoryQuestion.findAll({where: {questionId: id}});
+        })
+        .then(function (results){
+            // Purge all old attachments
+            var irrelevantJoins = [];
+            results.forEach(function (join){
+                var foundRelevantJoin = _.find(relevantJoins, {id: join.id});
+
+                if(!foundRelevantJoin){
+                    irrelevantJoins.push(join.id);
+                }
+            });
+
+            if(irrelevantJoins.length){
+                CategoryQuestion.destroy({id: irrelevantJoins});
+            } 
+
+            return id; 
+        })
+        .catch(function (e){
+            // console.log(e);
+        });  
+}
 /**
  * Creates or updates the question specified to our database.
  *
@@ -120,28 +152,44 @@ function extractAnswer(mappedQuestion){
  * @returns {Promise}
  */
 function createOrUpdateQuestion(mappedQuestion){
-    return new Promise(function(resolve){
-        mappedQuestion.type = Question.TYPE[mappedQuestion.type.toUpperCase()];
+    var answerKeys = [
+        'correct',
+        'incorrect b',
+        'incorrect c',
+        'incorrect d'
+    ];
 
-        Category.find(parseInt(mappedQuestion.category, 10)).then(function(category){
-            mappedQuestion.path = category.path + category.id + ',';
-            mappedQuestion.categoryId = category.id;
+    var parentKeys = [
+        'chapter parent',
+        'legend parent',
+        'matrix parent'        
+    ];
+    var omitted = ['id'];  
+    omitted = omitted.concat(answerKeys); 
+    omitted = omitted.concat(parentKeys);
 
-            extractAnswer(mappedQuestion);
+    var question = _.omit(mappedQuestion, omitted);
+    
+    // Get our new answer object.
+    question.answer = extractAnswer(mappedQuestion, answerKeys);
 
-            if (!mappedQuestion.id){
-                return Question.create(mappedQuestion).then(function(newQuestion){
-                    resolve(newQuestion);
-                });
-            }
-
-            Question.find(mappedQuestion.id).then(function(dbQuestion){
-                dbQuestion.updateAttributes(mappedQuestion).success(function(question){
-                    resolve(question);
-                });
+    var promise;
+    if (mappedQuestion.id){
+        promise = Question.find(mappedQuestion.id)
+            .then(function(result){
+                return result.updateAttributes(question);
             });
+    } else {
+        promise = Question.create(question);
+    }
+
+    return promise
+        .then(function (question){
+            return fixCategoryQuestionJoins(parentKeys, question.id, mappedQuestion);
+        })
+        .catch(function (e){
+            console.log(e);
         });
-    });
 }
 
 /**
@@ -154,42 +202,45 @@ function createOrUpdateQuestion(mappedQuestion){
  * @returns {Promise}
  */
 module.exports = function(trainingId, spreadsheet){
-    return new Promise(function(resolve, reject){
+    return (new Promise(function(resolve, reject){
+
         // Get all of the rows now that the spreadsheets metadata has been loaded.
         spreadsheet.receive(function(err, rows) {
             // If we can't get the rows then there is no point in proceeding.
             if (err) return reject(rows);
 
-            var keys = {};
-            // Get the header row
-            var keysRow = rows['1'];
+            resolve(rows);
+        });
+    })).then(function (rows){
+        var keys = {};
+        // Get the header row
+        var keysRow = rows['1'];
 
-            // Create the keys in the map based on the values specified
-            // in the header row of the spreadsheet. Creates structure like:
-            //   keys = {
-            //     id: 'ID',
-            //     text: 'Text of the question',
-            //     category: 'Some category'
-            //   }
-            _.each(keysRow, function(entry, key){
-                keys[entry.toLowerCase().replace(' ', '')] = key;
-            });
-
-            // Ensure we filter out the key row first.
-            var mappedQuestions = _.filter(rows, function(row){
-                return row[keys['id']] !== 'ID';
-            });
-
-
-            // Map each entry to an easier to use object matching the extracted
-            // keys.
-            mappedQuestions = _.map(mappedQuestions, _.bind(mapRowToQuestion, null, keys));
-
-            Promise.all(_.map(mappedQuestions, createOrUpdateQuestion))
-                    .then(function(questions){
-                        syncronizeIdsToGdocs(questions, spreadsheet).then(resolve);
-                    });
+        // Create the keys in the map based on the values specified
+        // in the header row of the spreadsheet. Creates structure like:
+        //   keys = {
+        //     id: 'ID',
+        //     text: 'Text of the question',
+        //     category: 'Some category'
+        //   }
+        _.each(keysRow, function(entry, key){
+            keys[entry.toLowerCase()] = key;
         });
 
-    });
+        var mappedQuestions = _(rows)
+            .filter(function (row){
+                return row[keys['id']] !== 'ID';
+            })
+            .map(_.bind(mapRowToQuestion, null, keys))
+            .map(_.bind(createOrUpdateQuestion, null))
+            .value();
+
+        return Promise.all(mappedQuestions);
+    })
+    .then(function (results){
+        return purgeOldData(results);
+    })
+    .catch(function (e){
+        console.log(e);
+    })
 };

@@ -5,6 +5,7 @@ var he = require('he');
 var Promise = require('bluebird');
 var Spreadsheet = require('edit-google-spreadsheet');
 var Training = require('./../models/training');
+var gdocs = require('./index');
 
 /**
  * Maps the specified row using the keys to create an object that is more intuitive
@@ -24,10 +25,17 @@ function mapRowToCategory(keys, row){
     });
     result.name = decodeString(result.name);
     result.name = result.name.replace('&', ' & ');
-    result.parent = decodeString(result.parent);
-    if (result.parent){
-        result.parent = result.parent.replace('&', ' & ');
+    
+    result.parentId = decodeString(result.parentId);
+    if (result.parentId){
+        result.parentId = result.parentId.replace('&', ' & ');
+
+        // Extract the id from the parent string that's in format (id) name
+        var index = result.parentId.search(/\)/);
+        var id = result.parentId.slice(1, index);
+        result.parentId = parseInt(id, 10);
     }
+
     return result;
 }
 
@@ -54,161 +62,28 @@ function decodeString(value){
  * @returns {Promise}
  */
 function buildAllCategories(mappedCategories, trainingId){
-    return new Promise(function(resolve){
-        // Ensure each category gets the correct parent training course.
-        _.each(mappedCategories, function(category){
-            category.trainingId = trainingId;
-        });
-
-        return Promise.map(mappedCategories, function(category){
-            // If the row has an ID that's a number then it already exists, so just
-            // update its attributes to ensure it is syncronized.
-            if (_.isNumber(category.id)){
-                return Category.find(category.id).then(function(dbCategory){
-                    return dbCategory.updateAttributes(category);
-                });
-            }
-
-            // Once we create the category go ahead and update the id of the
-            // mapped row from gdocs to make syncronizing easier later.
-            return Category.create(category).then(function(newCategory){
-                category.id = newCategory.id;
-                return newCategory;
-            });
-        }).then(resolve);
+    // Ensure each category gets the correct parent training course.
+    _.each(mappedCategories, function(category){
+        category.trainingId = trainingId;
     });
-}
 
-/**
- * Corrects the parent structure of categories.
- *
- * @param {Array.<Category>} categories The categories to fix.
- * @param {Integer} trainingId The id of the training course we are updating.
- *
- * @returns {Promise}
- */
-function fixParentStructure(categories, trainingId){
-    return Promise.map(categories, function(category){
-        return Category.find({where: {
-            trainingId: trainingId,
-            name: category.selectedValues.parent
-        }}).then(function(parent){
-            // The root category, doesn't need to update.
-            if (!parent) return category;
+    return Promise.map(mappedCategories, function (category){
+        // If the row has an ID that's a number then it already exists, so just
+        // update its attributes to ensure it is syncronized.
+        if (_.isNumber(category.id)){
+            return Category.update(_.omit(category, 'id'), {id: category.id}, {validate: true});
+        }
 
-            category.parentId = parent.id;
-            category.updateAttributes({parentId: parent.id});
-
-            return category;
+        // Once we create the category go ahead and update the id of the
+        // mapped row from gdocs to make syncronizing easier later.
+        return Category.create(category).then(function(newCategory){
+            category.id = newCategory.id;
+            return newCategory;
         });
-    }).then(function(updatedCategories){
-        // Now that we've fixed the parent structures we can go ahead
-        // and update the paths.
-        return calculateCategoryPaths(updatedCategories);
+    })
+    .catch(function (e){
+        console.log(e);
     });
-}
-
-/**
- * Ensures that all of the specified categories have the correct path based on their
- * parentId relationship.
- *
- * @param {Array.<Category>} categories The categories that should have their paths updated.
- *
- * @returns {Promise}
- */
-function calculateCategoryPaths(categories){
-    return new Promise(function(resolve){
-        // Since we are coming from the DB, we should look for null as the root category.
-        var root = _.find(categories, {parentId: null});
-        root.path = ',';
-
-        // Update the path of the root category.
-        root.updateAttributes({path: root.path}).success(function(){
-            // Update all direct children of the root category.
-            processCategoryPath(_.filter(categories, {parentId: root.id}), root, categories)
-                    .then(resolve);
-        });
-    });
-}
-
-/**
- * Updates the path of the specified categories, and then recursively
- * updates all of the direct children of the specified categories.
- *
- * @param {Array.<Category>} categories The categories to update.
- * @param {Category} parent The parent of the specified categories.
- * @param {Array.<Category>} allCategories All of the categories, not just the current level.
- *
- * @returns {Promise}
- */
-function processCategoryPath(categories, parent, allCategories){
-    return Promise.all(_.map(categories, function(category){
-        category.path = parent.path + parent.id + ',';
-        category.updateAttributes({path: category.path});
-
-        return processCategoryPath(_.filter(allCategories, {parentId: category.id}), category, allCategories);
-    }));
-}
-
-/**
- * Syncronizes all category ids back to google docs.
- *
- * @param {Array.Object} gdocsMappedRows The mapped rows of the spreadsheet.
- * @param {edit-google-spreadsheet.Spreadsheet} spreadsheet The spreadsheet object model.
- * @param {Integer} trainingId The id of the training course we are updating.
- *
- * @returns {Promise}
- */
-function syncronizeIdsToGdocs(gdocsMappedRows, spreadsheet, trainingId){
-    // Everything has been updated, now let's update the gdoc
-    // with the latest IDs.
-    return Category.findAll({where: {trainingId: trainingId}, include: [{model: Category, as: 'parent'}]})
-        .then(function(allCategories){
-            console.log(allCategories);
-            // Spreadsheet.add expects an object in the form of
-            // { rowNumber: { columnIndex: columnValue } }
-            var update = {};
-
-            // Loop through all of the mapped rows from google docs and
-            // create an entry with the updated id.
-            _.each(gdocsMappedRows, function(mappedCategoryRow, index){
-                var category = _.findWhere(allCategories, {id: mappedCategoryRow.id});
-
-                // If we can't get the category by ID, then fall back to the name. This
-                // happens the first time a category is created.
-                if (!category){
-                    category = _.findWhere(allCategories, function(category){
-                        // We need to match up the parent as well in the case of categories
-                        // that have the same name.
-                        if (mappedCategoryRow.parent){
-                            return category.parent &&
-                                    category.parent.name === mappedCategoryRow.parent &&
-                                    category.name === mappedCategoryRow.name;
-                        }
-
-                        return category.name === mappedCategoryRow.name;
-                    });
-                }
-
-                update[(index + 2).toString()] = {1: category.id};
-            });
-
-            // We have to add our updated rows, even if we are just updating it.
-            spreadsheet.add(update);
-
-            // Add calls are batched, but we can go ahead and send the update now
-            // since our object contains all of the updates already.
-            spreadsheet.send(function() {
-                // Integrate logs at some point.
-            });
-
-            // Ensure we update the paths of the categories to be accurate
-            // after we do any updates.
-            return calculateCategoryPaths(allCategories);
-        })
-        .catch(function (e){
-            console.log(e);
-        });
 }
 
 /**
@@ -238,7 +113,6 @@ module.exports = function(trainingId, spreadsheet){
             var rows = results[0];
             var categories = results[1];
 
-            var allCreatedChildren = [];
             var keys = {};
             // Get the header row
             var keysRow = rows['1'];
@@ -246,16 +120,25 @@ module.exports = function(trainingId, spreadsheet){
             // Create the keys in the map based on the values specified
             // in the header row of the spreadsheet. Creates structure like:
             //   keys = {
-            //     id: 'ID',
-            //     name: 'Name',
-            //     parent: 'Parent Category'
+            //     id: '1',
+            //     name: '2',
+            //     parent: '3',
+            //     weight: '4',
+            //     identifier: '5',
+            //     (id) name: '6'
             //   }
             _.each(keysRow, function(entry, key){
-                keys[entry.toLowerCase().replace(' ', '')] = key;
+                keys[decodeString(entry.toLowerCase())] = key;
             });
+            // Remove the unnecessary combination column
+            // HACK(BRYCE)
+            delete keys['(id) name']
+            delete keys['parent'];
+            keys['parentId'] = '3';
 
             mappedCategories = _(rows)
                 .filter(function (row){
+                    // Filter out the header row;
                     return row[keys['id']] !== 'ID';
                 })
                 .map(_.bind(mapRowToCategory, null, keys))
@@ -264,13 +147,24 @@ module.exports = function(trainingId, spreadsheet){
             return buildAllCategories(mappedCategories, trainingId);
         })
         .then(function (categories){
-            return fixParentStructure(categories, trainingId);
+            mappedCategories = categories;
+
+            return Category.findAll({trainingId: trainingId});
         })
-        .then(function (){
-            // MOVE THIS UP A LEVEL IF IT DOESNT HAVE TO BE IN ORDER
-            return syncronizeIdsToGdocs(mappedCategories, spreadsheet, trainingId);
+        .then(function (categories){
+            // Purge categories that are no longer relevant;
+            var mappedList = _.pluck(mappedCategories, 'id');
+            var masterList = _.pluck(categories, 'id');
+
+            if (masterList.length > mappedList.length){
+                var needsPurging = _.difference(masterList, mappedList);
+                return Category.destroy({where: {id: needsPurging}});
+            }
+
+            return;
         })
         .catch(function (e){
+            // One catch net for all calls.
             console.log(e);
         });
 };
