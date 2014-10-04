@@ -147,6 +147,11 @@
 
         d3.select('#practiceButton')
             .on('click', function () {
+                    if (!document.querySelector('.dash-stats')){
+                        location.href = '/buy/' + courseData.id;
+                        return;
+                    }
+
                 var constPath = '/exercise?type=Practice&tree=matrix&';
                 var path = 'category=' + currentCategory.id + '&trainingId=' + courseData.id;
                 location.href = constPath + path;

@@ -54,8 +54,8 @@ var stats = {
     get:{
         data: function(training, user){
             return new Promise(function(resolve){
-                if (!user || !_.any(user.access)){
-                    return res.send(200, '');
+                if (!user){
+                    return training;
                 }
 
                 var promises = [
@@ -105,13 +105,13 @@ var stats = {
         tree: function (req, res){
             var user = res.locals.user;
             
-            if (!user || !_.any(user.access)){
+            if (!user){
                 return res.send(200, '');
             }
 
-            var trainingId = _.pluck(user.access, 'trainingId')[0];
+            var trainingId = 1;
             var promises = [
-                Category.findAll({where: {trainingId: trainingId}, 
+                Category.findAll({where: {trainingId: trainingId},
                     include: [{model: Question, include: [Result]}]}),
                 Exercise.findAll({where: {userId: user.id, trainingId: trainingId}}),
             	Training.find({where: {id: trainingId}})
@@ -130,9 +130,9 @@ var stats = {
                 var training = result[2].values;
 
                 // Data for the trees.
-                var data = { 
-                    categories: result[0], 
-                    exercises: exercises, 
+                var data = {
+                    categories: result[0],
+                    exercises: exercises,
                     training: training
                 };
 
@@ -140,7 +140,7 @@ var stats = {
                     trees: generator(data).stats(),
                     general: examStats(exercises)
                 };
-                
+
                 //Send the data as a script, to be executed on the DOM.
                 res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
             }).catch(utils.apiError);

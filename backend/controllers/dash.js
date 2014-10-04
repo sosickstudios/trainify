@@ -43,7 +43,8 @@ var dash = {
                 res.render('dash', {
                     training: decoratedTraining,
                     stats: generatedStats.general,
-                    categories: legendTree.children
+                    categories: legendTree.children,
+                    hasAccess: _.any(res.locals.user.access)
                 });
             });
         });

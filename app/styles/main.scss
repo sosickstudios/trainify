@@ -698,11 +698,11 @@ form > button.stripe-button-el {
 
   &:link,
   &:visited {
-    color: $primary-orange;
+    color: $primary-orange !important;
   }
 
   &:hover {
-    color: lighten($primary-orange, 10);
+    color: lighten($primary-orange, 10) !important;
   }
 }
 
@@ -1148,7 +1148,6 @@ div.admin {
   color: white;
   -webkit-transition: background-color 0.2s ease-out;
           transition: background-color 0.2s ease-out;
-  white-space: nowrap;
 }
 
 .navdrawer-container ul li {
@@ -1518,6 +1517,11 @@ main.dash {
   }
 }
 
+.course-description {
+  font-size: 1em;
+  margin-top: 5px;
+}
+
 #buttonText {
   &.active::after {
     content: 'Take Exam';
@@ -1526,6 +1530,10 @@ main.dash {
     color: $primary-violet;
     text-decoration: underline;
     font-size: 0.75em;
+  }
+
+  &.purchase.active::after {
+    content: 'Get Access';
   }
 }
 

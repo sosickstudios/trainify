@@ -1,16 +1,17 @@
 {{>header}}
 
 <main class="dash">
-    <ul class="dash-stats">
-        <li class="exam-passcount">
-            <span class="dash-text">{{stats.passCount}}</span>
-            <span class="dash-explanation">Tests Passed</span>
-        </li>
-        <li class="exam-failcount">
-            <span class="dash-text">{{stats.failCount}}</span>
-            <span class="dash-explanation">Tests Failed</span>
-        </li>
-        <li class="exam-average">
+    {{#if hasAccess}}
+        <ul class="dash-stats">
+            <li class="exam-passcount">
+                <span class="dash-text">{{stats.passCount}}</span>
+                <span class="dash-explanation">Tests Passed</span>
+            </li>
+            <li class="exam-failcount">
+                <span class="dash-text">{{stats.failCount}}</span>
+                <span class="dash-explanation">Tests Failed</span>
+            </li>
+            <li class="exam-average">
             <span class="dash-text">
                 {{#if stats.examAverage}}
                     {{stats.examAverage}}
@@ -19,35 +20,45 @@
                     N/A
                 {{/unless}}
             </span>
-            <span class="dash-explanation">Test Average</span>
-        </li>
-    </ul>
+                <span class="dash-explanation">Test Average</span>
+            </li>
+        </ul>
+    {{/if}}
 
 	<div class="dash-overview clear">
         <div class="g-wide--8 g-wide--4">
-            <a class="btn-orange btn--full-exam" href="/exercise?trainingId={{training.id}}&tree=matrix&type=Exam Prep">Take Full Exam</a>
-
+            {{#if hasAccess}}
+                <a class="btn-orange btn--full-exam" href="/exercise?trainingId={{training.id}}&tree=matrix&type=Exam Prep">Take Full Exam</a>
+            {{/if}}
             {{! Starburst }}
             <div id="starburst">
                 <div id="sequence"></div>
                 <div class="grid-course">
                     <div class="grid-course-description">
                         <h1>{{training.name}}</h1>
+                        {{#unless hasAccess}}
+                            <p class="course-description">
+                                <a class="btn--buy" href="/buy/{{training.id}}">Purchase</a>
+                                {{training.description}}
+                            </p>
+                        {{/unless}}
                         <ul>
                         {{#each categories}}
                             <li data-id="{{id}}" data-path="{{path}}" data-weight="{{weight}}">
                                 <div class="about">
-                                    <h2><a href="/exercise?type=Practice&tree=matrix&category={{id}}&trainingId={{../training.id}}">{{name}}</a></h2>
-                                    <div class="stats">
-                                        {{#if hasAverages}}
-                                            <span class="average-indicator {{data.stats.status}}" style="width:{{data.stats.average}}%">
+                                    <h2><a {{#if hasAccess}}href="/exercise?type=Practice&tree=matrix&category={{id}}&trainingId={{../training.id}}"{{/if}}>{{name}}</a></h2>
+                                    {{#if ../hasAccess}}
+                                        <div class="stats">
+                                            {{#if hasAverages}}
+                                                <span class="average-indicator {{data.stats.status}}" style="width:{{data.stats.average}}%">
                                                 {{data.stats.average}}%
                                             </span>
-                                        {{/if}}
-                                        {{#unless hasAverages}}
-                                        <span class="no-data">Take a practice exam to see stats for this category.</span>
-                                        {{/unless}}
-                                    </div>
+                                            {{/if}}
+                                            {{#unless hasAverages}}
+                                                <span class="no-data">Take a practice exam to see stats for this category.</span>
+                                            {{/unless}}
+                                        </div>
+                                    {{/if}}
                                 </div>
                             </li>
                         {{/each}}
@@ -55,7 +66,7 @@
                     </div>
                     <div id="chart">
                         <div id="explanation">
-                            <button id="practiceButton"><span id="percentage"></span><span id="buttonText"><br />Select one of the categories</span></button>
+                            <button id="practiceButton"><span id="percentage"></span><span id="buttonText" {{#unless hasAccess}}class="purchase"{{/unless}}><br />Select one of the categories</span></button>
                         </div>
                     </div>
                 </div>
