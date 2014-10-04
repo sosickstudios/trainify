@@ -28,7 +28,7 @@ var dash = {
 
                 _.forEach(legendTree.children, function(category){
                     category.hasAverages = category.data.stats.average !== -1;
-                    
+
                     if (category.data.stats.average === -1){
                         category.data.stats.status = 'standard';
                     } else if (category.data.stats.average <= 50){
