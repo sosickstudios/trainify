@@ -60,6 +60,7 @@ var exercise = {
 
             // Render handlebars template.
             res.render('exercise', {
+                dashlink: '/course/' + training.name.replace(/\s/g, '-'),
                 exercise: exercise, 
                 questions: questions,
                 training: training
