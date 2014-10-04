@@ -63,7 +63,8 @@ var exercise = {
                 dashlink: '/course/' + training.name.replace(/\s/g, '-'),
                 exercise: exercise, 
                 questions: questions,
-                training: training
+                training: training,
+                category: _.find(data.categories, {id: categoryId})
             });
         })
         .catch(utils.apiError);

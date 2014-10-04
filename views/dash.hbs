@@ -37,7 +37,7 @@
                         {{#each categories}}
                             <li data-id="{{id}}" data-path="{{path}}" data-weight="{{weight}}">
                                 <div class="about">
-                                    <h2><a href="/exercise?type=Practice&tree=matrix&&category={{id}}&trainingId={{../training.id}}">{{name}}</a></h2>
+                                    <h2><a href="/exercise?type=Practice&tree=matrix&category={{id}}&trainingId={{../training.id}}">{{name}}</a></h2>
                                     <div class="stats">
                                         {{#if hasAverages}}
                                             <span class="average-indicator {{data.stats.status}}" style="width:{{data.stats.average}}%">

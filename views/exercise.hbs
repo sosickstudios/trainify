@@ -2,7 +2,14 @@
 
 <div class="exercise-status">
     <div class="start-over"><button>Start Over</button></div>
-    <h2>{{training.name}}</h2>
+    <h2>
+        {{#if category}}
+            {{category.name}}
+        {{/if}}
+        {{#unless category}}
+            {{training.name}}
+        {{/unless}}
+    </h2>
     <div class="progress">
         <span class="progress-percent">0%</span>
         <svg class="progress-meter" version="1.1" x="0px" y="0px">

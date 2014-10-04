@@ -269,6 +269,10 @@ p a {
       &:visited {
         color: lighten(#000, 30);
       }
+
+      &:hover {
+        color: $primary-blue;
+      }
     }
   }
 
@@ -315,10 +319,12 @@ p a {
 
 .exercise {
   div.review {
-    width: 60%;
-    border: 4px solid $primary-blue;
-    margin: 60px auto 0 auto;
-    padding: 60px;
+    width: 650px;
+    border-bottom: 2px solid $primary-blue;
+    margin: 80px auto 0 auto;
+    padding: 30px 30px 40px 30px;
+    position: relative;
+    left: -10px;
 
     div.help-text {
       width: 50%;
@@ -346,8 +352,8 @@ p a {
 
       .score-percent {
         position: absolute;
-        top: 40px;
-        left: 27px;
+        top: 48px;
+        left: 33px;
         font-size: $primary-text-size;
       }
 
@@ -382,7 +388,7 @@ p a {
 
       > h5 {
         position: relative;
-        top: 18px;
+        top: 30px;
         left: 30px;
 
       } 
@@ -390,7 +396,7 @@ p a {
       div.ratio {
         position: absolute;
         font-size: $secondary-text-size;
-        top: 5px;
+        top: 25px;
         left: 125px;
         color: $primary-orange;
         
@@ -405,7 +411,8 @@ p a {
 
   > ul {
     margin: 0 auto;
-    padding: 40px 10% 0 20%;
+    padding: 40px 0 0 40px;
+    width: 700px;
   }
 
   > ul:first-child{
@@ -429,7 +436,7 @@ p a {
       line-height: 19px;
       margin: 25px 0 0 -12px;
       padding: 20px;
-      width: 80%;
+      width: 100%;
       
       h5 {
         text-transform: uppercase;
@@ -445,8 +452,8 @@ p a {
     }
 
     .review-icon {
-      width: 29%;
       margin-top: 35px;
+      margin-right: 0px;
 
       img {
         width: 75px;
@@ -516,15 +523,15 @@ p a {
           background: rgba(#000, 0.1);
           border: 1px solid rgba(#000, 0.2);
           width: 550px;
-          height: 120%;
-          top: -10%;
+          height: 110%;
+          top: -5%;
           content: ' ';
           display: block;
           position: absolute;
           left: -30px;
         }
-        margin-top: 16px;
-        margin-bottom: 16px;
+//        margin-top: 16px;
+//        margin-bottom: 16px;
       }
 
       .question-answer-review {
@@ -566,7 +573,8 @@ form > button.stripe-button-el {
   box-shadow: none;
   padding: 0 25px;
   font-family: inherit;
-  margin: 25px 0 0 0;
+  margin: 25px auto 0 auto;
+  display: block;
 
   &:not(:disabled):active {
     background-color: $primary-green;
@@ -675,6 +683,7 @@ form > button.stripe-button-el {
   text-transform: uppercase;
   font-size: 0.7em;
   top: 3px;
+  margin-left: 30px;
 
   &::before {
     content: '';
@@ -706,10 +715,14 @@ form > button.stripe-button-el {
 
 a.btn-orange.btn--full-exam {
   color: $primary-orange;
-}
 
-.btn--full-exam.btn-orange:hover {
-  color: #fff;
+  &:visited {
+    color: $primary-orange;
+  }
+
+  &:hover {
+    color: #fff;
+  }
 }
 
 .description {
@@ -1248,6 +1261,40 @@ main.dash {
   }
 }
 
+@media only screen and (max-width: 760px) {
+  #chart {
+    display: none;
+  }
+
+  .grid-course-description {
+    width: 100%;
+    padding-top: 20px;
+  }
+
+  #percentage {
+    font-size: 1.8em;
+  }
+
+  #sequence {
+    display: none;
+  }
+
+  #explanation {
+    top: 70px !important;
+    left: 75px !important;
+  }
+
+  #practiceButton {
+    top: -6px;
+  }
+
+  #buttonText {
+    font-size: 0.9em;
+    max-width: 100px;
+    display: inline-block;
+  }
+}
+
 /** Larger Screens - desktops and tablets **/
 @media all and (min-width: 1600px) {
   $fixed-width: 1400px;
@@ -1374,7 +1421,7 @@ main.dash {
         background: $primary-violet;
         color: #fcfcfc;
       }
-      }
+    }
   }
 
   .provider-name {
@@ -1393,9 +1440,12 @@ main.dash {
 
 .dash-stats {
   text-align: center;
+  padding-left: 0;
+  white-space: nowrap;
 
   > li {
     display: inline-block;
+    padding-left: 0;
     width: 33%;
   }
 
@@ -1441,7 +1491,7 @@ main.dash {
 
 #chart {
   position: relative;
-  width: 450px;
+  width: 50%;
   margin: 0 auto;
 }
 
@@ -1486,4 +1536,100 @@ main.dash {
 
 #chart path {
   stroke: #fff;
+}
+
+@media only screen and (max-width: 580px) {
+  #chart {
+    display: none;
+  }
+
+  main.signup {
+    h2 {
+      padding-top: 0;
+    }
+
+    padding-top: 100px;
+  }
+
+  footer li {
+    padding-left: 0;
+  }
+
+  .dash-stats {
+    padding-top: 5px;
+    white-space: normal;
+  }
+
+  .dash-overview {
+    padding-top: 0;
+  }
+
+  #sequence {
+    display: none;
+  }
+
+  .grid-course-description {
+    padding-top: 20px;
+    width: 100%;
+
+    > ul {
+      padding-top: 5px;
+
+      > li:first-child {
+        padding-top: 0;
+      }
+    }
+  }
+
+  .dash-stats > li {
+    display: inline-block;
+    width: 180px;
+    text-align: center;
+    margin: 10px auto;
+  }
+}
+
+@media only screen and (max-width: 715px) {
+  .exercise {
+    div.review {
+      width: 95%;
+      left: 0;
+      height: 175px;
+
+      div.help-text {
+        display: none;
+      }
+
+      div.ratio {
+        white-space: nowrap;
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    > ul {
+      width: 100%;
+    }
+  }
+
+  .review-icon {
+    display: none;
+  }
+
+  .exercise-status h2 {
+    display: none;
+  }
+
+  .exercise li.exercise-question .explanation {
+    width: 100%;
+  }
+
+  .exercise li.exercise-question .question-answers li {
+    width: 100%;
+  }
+
+  .exercise li.exercise-question .question-answers .question-answer.selection:before {
+    width: 100%;
+    left: -10px;
+  }
 }

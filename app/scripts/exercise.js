@@ -210,7 +210,37 @@
         // Show the explanation.
         container.classList.remove('hidden');
         explanation.classList.remove('hidden');
+
+        scrollTo(document.body, 0, 1000);
     };
+
+    function easeInOutQuad(t, b, c, d) {
+        t /= d/2;
+        if (t < 1) return c/2*t*t + b;
+        t--;
+        return -c/2 * (t*(t-2) - 1) + b;
+    }
+
+    function scrollTo(element, to, duration) {
+        var start = element.scrollTop,
+            change = to - start,
+            currentTime = 0,
+            increment = 20;
+
+        var animateScroll = function(){
+            currentTime += increment;
+            var val = easeInOutQuad(currentTime, start, change, duration);
+            element.scrollTop = val;
+            if(currentTime < duration) {
+                var timer = requestAnimationFrame || setTimeout;
+                timer(animateScroll, increment);
+            } else {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        };
+        animateScroll();
+    }
 
     /**
      * Prototyped description of the exercise being taken.
@@ -284,10 +314,11 @@
         // Find out which context to apply to our svg.
         var contextClass;
         var contextText;
-        if (percent > 80){
+
+        if (percent >= 80){
             contextClass = 'passing';
             contextText = passText;
-        } else if (percent < 80 && percent > 65){
+        } else if (percent >= 50){
             contextClass = 'caution';
             contextText = cautionText;
         } else {

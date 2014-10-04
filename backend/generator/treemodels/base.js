@@ -248,22 +248,28 @@ base.relativePuller = function (category, total, type){
          *
          */
         case this.EXERCISE_TYPES.PRACTICE:
-                // Parse the tree based on the category passed in.
-                var tree = this.parseTree(category, {replaceRoot: false});
+            // Parse the tree based on the category passed in.
+            var tree = this.parseTree(category, {replaceRoot: false});
 
-                // Reduce all child categories of category passed in to list.
-                var questions = _(this.treeReducer(tree))
-                    .pluck('questions')
-                    .flatten()
-                    .value();
+            // Reduce all child categories of category passed in to list.
+            var questions = _(this.treeReducer(tree))
+                .pluck('questions')
+                .flatten()
+                .value();
 
-                // Prioritize all of questions for category passed in as well as children.
-                questions = prioritizer(questions, {prioritizers: this.config.prioritizers});
+            // Prioritize all of questions for category passed in as well as children.
+            questions = prioritizer(questions, {prioritizers: this.config.prioritizers});
 
-                // Check to see if there are enough questions to fulfill total.
-                total = total > questions.length ? questions.length : total;
+            // Check to see if there are enough questions to fulfill total.
+            total = total > questions.length ? questions.length : total;
 
-                questions = _.take(questions, total);
+            questions = _.take(questions, total);
+
+            _.forEach(questions, function(question){
+                // TODO(darius): We want this but it makes for a shitty demo.
+                //question.answer.values = _.shuffle(question.answer.values);
+            });
+
             break;
         default:
             throw new Error('Relative Puller - Hit Invalid Case');
