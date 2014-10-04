@@ -8,12 +8,12 @@ var _ = require('lodash');
  * @return {Object.<Integer, Integer, Integer} Object containing ran statistics.
  */
 function Completion (node){
-    var total = node.questions.length;
+    var runningTotal = node.questions.length;
 
     // Find count of questions that havent been answered.
     var remaining = node.questions.reduce(function (sum, question){
         if(!question.results.length){
-            return sum++;
+            return sum + 1;
         }
     }, 0);
 
@@ -26,11 +26,11 @@ function Completion (node){
         });
     } 
 
-    var percentage = Math.round((remaining/total).toFixed(2) * 100);
-    return = {
+    var percentage = Math.round((remaining/runningTotal).toFixed(2) * 100);
+    return {
         remaining: remaining,
         percentage: percentage,
-        total: total
+        total: runningTotal
     };
 }
 
