@@ -71,7 +71,10 @@ function buildAllCategories(mappedCategories, trainingId){
         // If the row has an ID that's a number then it already exists, so just
         // update its attributes to ensure it is syncronized.
         if (_.isNumber(category.id)){
-            return Category.update(_.omit(category, 'id'), {id: category.id}, {validate: true});
+            return Category.find(category.id)
+                .then(function (result){
+                    return result.updateAttributes(category);
+                });
         }
 
         // Once we create the category go ahead and update the id of the
@@ -83,6 +86,49 @@ function buildAllCategories(mappedCategories, trainingId){
     })
     .catch(function (e){
         console.log(e);
+    });
+}
+
+function synchronizeGDocs (mapped, allCategories, keys, spreadsheet) {
+    keys = _.omit(keys, 'parentId');
+
+    // Keys parent
+    var update = {};
+    _.each(mapped, function (row, key, index){
+        var local = {};
+        var category = _.find(allCategories, {id: row.id});
+
+        if(!category){
+            category = _.find(allCategories, {name: row[keys.name], identifier: row[keys.identifier]});
+        }
+
+        if(!category){
+            throw new Error('Failed to find proper category');
+        }
+
+        var parent;
+        if(category.parentId) {
+            parent = _.find(allCategories, {id: category.parentId});
+
+            local['3'] = '(' + parent.id + ') ' + parent.name; 
+        }
+
+        _.forEach(keys, function (item, index){
+            local[item] = category[index];
+        });
+
+        local['6'] = '(' + category.id + ') ' + category.name;
+        update[(parseInt(key, 10) + 2).toString()] = local;
+    });
+
+    return new Promise(function (resolve, reject){
+        spreadsheet.add(update);
+
+        spreadsheet.send(function (err){
+            if(err) return reject(err);
+            
+            resolve();
+        });
     });
 }
 
@@ -108,12 +154,14 @@ module.exports = function(trainingId, spreadsheet){
     ];
 
     var mappedCategories;
+    var currentCategories;
+    var rows;
+    var keys = {};
     return Promise.all(promises)
         .then(function (results){
-            var rows = results[0];
+            rows = results[0];
             var categories = results[1];
 
-            var keys = {};
             // Get the header row
             var keysRow = rows['1'];
 
@@ -147,23 +195,23 @@ module.exports = function(trainingId, spreadsheet){
             return buildAllCategories(mappedCategories, trainingId);
         })
         .then(function (categories){
-            mappedCategories = categories;
-
-            return Category.findAll({trainingId: trainingId});
+            currentCategories = categories;
+            return Promise.all([
+                synchronizeGDocs(mappedCategories, categories, keys, spreadsheet),
+                Category.findAll({trainingId: trainingId})
+            ]);
         })
-        // .then(function (categories){
-        //     // // Purge categories that are no longer relevant;
-        //     // var mappedList = _.pluck(mappedCategories, 'id');
-        //     // var masterList = _.pluck(categories, 'id');
+        .then(function (results){
+            // Purge categories that are no longer relevant;
+            var mappedList = _.pluck(currentCategories, 'id');
+            var masterList = _.pluck(results[1], 'id');
 
-        //     // if (masterList.length > mappedList.length){
-        //     //     var needsPurging = _.difference(masterList, mappedList);
-        //     //     return Category.destroy({where: {id: needsPurging}});
-        //     // }
-
-        //     // return;
-            
-        // })
+            if (masterList.length > mappedList.length){
+                var needsPurging = _.difference(masterList, mappedList);
+                return Category.destroy({id: needsPurging});  
+            }
+            return;
+        })
         .catch(function (e){
             // One catch net for all calls.
             console.log(e);
