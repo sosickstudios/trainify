@@ -102,6 +102,7 @@ var exercise = {
          */
         result: function (req, res){
             var questionId = req.params.id;
+            var user = res.locals.user;
 
             // Find the question, make sure to load the answer associated with it.
             Question.find(questionId).then(function (question){
@@ -118,6 +119,7 @@ var exercise = {
                     return Result.update({result: result, chosen: chosen.id}, {id: update.id}, {returning: true});
                 } else {
                     update.result = result;
+                    update.userId = user.id;
                     return question.createResult(update);
                 }
             }).then(function (){

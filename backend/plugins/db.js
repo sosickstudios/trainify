@@ -49,7 +49,8 @@ models.training
 
 models.user
     .hasMany(models.access, {as: 'access'})
-    .hasMany(models.exercise, { as: 'exercises' });
+    .hasMany(models.exercise, { as: 'exercises' })
+    .hasMany(models.result);
 
 // sequelize.sync();
 

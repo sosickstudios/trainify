@@ -60,7 +60,7 @@ var stats = {
 
                 var promises = [
                     Category.findAll({where: {trainingId: training.id},
-                        include: [{model: Question, include: [Result]}]}),
+                        include: [{model: Question, include: [{model: Result, where: {userId: user.id}, required: false}]}]}),
                     Exercise.findAll({where: {userId: user.id, trainingId: training.id}})
                 ];
 
@@ -112,7 +112,7 @@ var stats = {
             var trainingId = 1;
             var promises = [
                 Category.findAll({where: {trainingId: trainingId},
-                    include: [{model: Question, include: [Result]}]}),
+                    include: [{model: Question, include: [{model: Result, where: {userId: user.id}, required: false}]}]}),
                 Exercise.findAll({where: {userId: user.id, trainingId: trainingId}}),
             	Training.find({where: {id: trainingId}})
             ];
