@@ -109,6 +109,13 @@ var home = {
                     spreadsheet.spreadsheetId + '/edit';
             res.redirect(url);
         });
+    },
+
+    reloadCourse: function (req, res){
+        var gdocs = require('./../gdocs');
+        gdocs.reload(req.params.id).then(function (){
+            res.redirect('/');
+        });
     }
 };
 
@@ -203,6 +210,7 @@ router.get('/login', passwordless.acceptToken(), utils.redirect('/'));
 router.get('/logout', passwordless.logout(), utils.redirect('/'));
 router.get('/buy/:id', buy.get);
 router.post('/buy/:id', buy.post);
+router.get('/reloadcourse/:id', home.reloadCourse);
 router.get('/updatecourse/:id', home.updateCourse);
 router.get('/editcourse/:id', home.editCourse);
 
