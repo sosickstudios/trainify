@@ -24,7 +24,10 @@ if (process.env.NODE_ENV === 'production'){
   // If in production, only use secure cookies.
   app.set('trust proxy', 1);
   app.enable('trust proxy');
-  sessionConfig.cookie = {secure: true};
+  sessionConfig.cookie = {
+      secure: true,
+      maxAge: 1000*60*60*24*60
+  };
   sessionConfig.proxy = true;
   sessionConfig.key = 'session.sid';
 }
