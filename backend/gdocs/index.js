@@ -94,7 +94,6 @@ module.exports.reload = function (trainingId){
     return module.exports.spreadsheet(trainingId, 'Categories')
         .then(function (spreadsheet){
             sheet = spreadsheet;
-
             return Category.findAll({where: {trainingId: trainingId}, include: [Question, {model: Category, as: 'parent'}]});
         })
         .then(function (categories){

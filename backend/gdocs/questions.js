@@ -237,9 +237,9 @@ module.exports = function(trainingId, spreadsheet){
 
         return Promise.all(mappedQuestions);
     })
-    .then(function (results){
-        return purgeOldData(results);
-    })
+    // .then(function (results){
+    //     return purgeOldData(results);
+    // })
     .catch(function (e){
         console.log(e);
     })

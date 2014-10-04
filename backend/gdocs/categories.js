@@ -151,18 +151,19 @@ module.exports = function(trainingId, spreadsheet){
 
             return Category.findAll({trainingId: trainingId});
         })
-        .then(function (categories){
-            // Purge categories that are no longer relevant;
-            var mappedList = _.pluck(mappedCategories, 'id');
-            var masterList = _.pluck(categories, 'id');
+        // .then(function (categories){
+        //     // // Purge categories that are no longer relevant;
+        //     // var mappedList = _.pluck(mappedCategories, 'id');
+        //     // var masterList = _.pluck(categories, 'id');
 
-            if (masterList.length > mappedList.length){
-                var needsPurging = _.difference(masterList, mappedList);
-                return Category.destroy({where: {id: needsPurging}});
-            }
+        //     // if (masterList.length > mappedList.length){
+        //     //     var needsPurging = _.difference(masterList, mappedList);
+        //     //     return Category.destroy({where: {id: needsPurging}});
+        //     // }
 
-            return;
-        })
+        //     // return;
+            
+        // })
         .catch(function (e){
             // One catch net for all calls.
             console.log(e);
