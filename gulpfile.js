@@ -137,6 +137,11 @@ gulp.task('develop', function () {
         });
 });
 
+gulp.task('import', function(){
+    var importer = require('./import');
+    importer.all();
+});
+
 // Build Production Files, the Default Task
 gulp.task('default', ['develop', 'serve'], function (cb) {
   //var runSequence = require('run-sequence');

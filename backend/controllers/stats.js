@@ -1,6 +1,5 @@
 var _ = require('lodash');
 var Category = require('./../models/category');
-var Company = require('./../models/company');
 var Exercise = require('./../models/exercise');
 var generator = require('./../generator');
 var express = require('express');
@@ -38,7 +37,7 @@ function examStats (exercises){
     
     // Calculate the average of all exams that have been completed.
     var totalEarnedPoints = _.reduce(all, function (sum, exercise){
-        return sum += exercise.score; 
+        return sum + exercise.score;
     }, 0);
 
     // Get the exam average by doing totalEarnedPoints / totalPossiblePoints
@@ -53,6 +52,46 @@ function examStats (exercises){
  */
 var stats = {
     get:{
+        data: function(training, user){
+            return new Promise(function(resolve){
+                if (!user || !_.any(user.access)){
+                    return res.send(200, '');
+                }
+
+                var promises = [
+                    Category.findAll({where: {trainingId: training.id},
+                        include: [{model: Question, include: [Result]}]}),
+                    Exercise.findAll({where: {userId: user.id, trainingId: training.id}})
+                ];
+
+                Promise.all(promises).then(function (result){
+                    /**
+                     * Results is the resolves promises above, broken apart from eager loading to
+                     * optimize the time of the query.
+                     *
+                     * results[0]: Categories for all trainings the user has access to.
+                     * results[1]: Exercises for all trainings the user has access to.
+                     */
+                    var exercises = result[1];
+
+                    // Data for the trees.
+                    var data = {
+                        categories: result[0],
+                        exercises: exercises,
+                        training: training
+                    };
+
+                    training.stats = {
+                        trees: generator(data).stats(),
+                        general: examStats(exercises)
+                    };
+
+                    //Send the data as a script, to be executed on the DOM.
+                    resolve(training);
+                });
+            })
+        },
+
         /**
          * Api call intended to provide a summary of data for a training course,
          * returning a tree of data based on the categories for that training course.
@@ -115,3 +154,4 @@ router.route('/tree')
 
 module.exports = router;
 module.exports.tree = stats.get.tree;
+module.exports.data = stats.get.data;

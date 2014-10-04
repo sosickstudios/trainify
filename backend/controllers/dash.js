@@ -1,6 +1,9 @@
+var _ = require('lodash');
 var express = require('express');
 var router = express.Router();
 var stats = require('./stats');
+var Category = require('./../models/category');
+var Question = require('./../models/question');
 var Training = require('./../models/training');
 
 var dash = {
@@ -14,12 +17,41 @@ var dash = {
 	 * @param {Express.response} res Express application response object.
 	 */
 	get: function (req, res){
-		res.render('dash');
+        var trainingPromise = Training.find({
+            where: {name: req.params.id.replace(/-/g, ' ')}
+        });
+
+        trainingPromise.then(function(training){
+            stats.data(training, res.locals.user).then(function(decoratedTraining){
+                var generatedStats = decoratedTraining.stats;
+                var legendTree = generatedStats.trees.legend;
+
+                _.forEach(legendTree.children, function(category){
+                    category.hasAverages = category.data.stats.average !== -1;
+
+                    if (category.data.stats.average === -1){
+                        category.data.stats.status = 'standard';
+                    } else if (category.data.stats.average <= 50){
+                        category.data.stats.status = 'failing';
+                    } else if (category.data.stats.average <= 80){
+                        category.data.stats.status = 'caution';
+                    } else {
+                        category.data.stats.status = 'passing';
+                    }
+                });
+
+                res.render('dash', {
+                    training: decoratedTraining,
+                    stats: generatedStats.general,
+                    categories: legendTree.children
+                });
+            });
+        });
 	}
 };
 
 // Express route '/api/dash'
-router.route('/')
+router.route('/:id')
 	.get(dash.get);
 
 module.exports = router;

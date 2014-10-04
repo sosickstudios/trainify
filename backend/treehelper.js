@@ -15,6 +15,11 @@ function Tree (id, path, cats, meta){
     this.categories = cats;
     this.path = path;
 
+    if (!id){
+        var root = _.find(cats, {parentId: null});
+        this.id = id = root.id;
+    }
+
     // Find the tree by the id firstly, and the path secondly.
     // There are times when we need to find the tree by path (Root) and id (Non-Root) exercise.
     var searchTerm = this.id ? {id: this.id} : {path: this.path};
@@ -54,8 +59,6 @@ Tree.prototype.parseTree = function(category) {
 
     // Set our children.
     category.children = cats;
-    
-    return;
 };
 
 /**

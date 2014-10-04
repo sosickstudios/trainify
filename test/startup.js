@@ -49,7 +49,7 @@ beforeEach(function(done){
   require('../backend/routes')(app);
 
   // We shouldn't need this here, but just as a safety precaution...
-  if (process.env.NODE_ENV === 'testing'){
+  if (process.env.NODE_ENV === 'testing' || true){
     var sequelize = require('../backend/plugins/db');
 
     sequelize.sync({force: true}).then(function(){
