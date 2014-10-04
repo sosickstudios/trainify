@@ -11,7 +11,14 @@
             <span class="dash-explanation">Tests Failed</span>
         </li>
         <li class="exam-average">
-            <span class="dash-text">{{stats.examAverage}}</span>
+            <span class="dash-text">
+                {{#if stats.examAverage}}
+                    {{stats.examAverage}}
+                {{/if}}
+                {{#unless stats.examAverage}}
+                    N/A
+                {{/unless}}
+            </span>
             <span class="dash-explanation">Test Average</span>
         </li>
     </ul>
@@ -32,12 +39,12 @@
                                 <div class="about">
                                     <h2><a href="/exercise?type=Practice&path={{path}}&category={{id}}&trainingId={{../../training.id}}">{{name}}</a></h2>
                                     <div class="stats">
-                                        {{#if stats.hasCourses}}
+                                        {{#if stats.average}}
                                             <span class="average-indicator {{stats.status}}" style="width:{{stats.leafAverage}}%">
-                                                {{stats.leafAverage}}%
+                                                {{stats.average}}%
                                             </span>
                                         {{/if}}
-                                        {{#unless stats.hasCourses}}
+                                        {{#unless stats.average}}
                                         <span class="no-data">Take a practice exam to see stats for this category.</span>
                                         {{/unless}}
                                     </div>

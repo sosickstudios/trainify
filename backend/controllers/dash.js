@@ -3,9 +3,7 @@ var express = require('express');
 var router = express.Router();
 var stats = require('./stats');
 var Category = require('./../models/category');
-var Exercise = require('./../models/exercise');
 var Question = require('./../models/question');
-var Result = require('./../models/result');
 var Training = require('./../models/training');
 
 var dash = {
@@ -27,40 +25,26 @@ var dash = {
         });
 
         trainingPromise.then(function(training){
-            Exercise.findAll({
-                where: {userId: user.id, trainingId: training.id},
-                include: [{
-                    model: Result,
-                    include: [Question]
-                }]
-            }).then(function(exercises){
-                var tree = stats.statTree(training, exercises);
+            stats.data(training, res.locals.user).then(function(decoratedTraining){
+                var generatedStats = decoratedTraining.stats;
+                var legendTree = generatedStats.trees.legend;
 
-                var childCategories = _(tree.category.children)
-                        .pluck('children')
-                        .flatten()
-                        .value();
-
-                var allCategories = tree.category.children.concat(childCategories);
-
-                _.forEach(allCategories, function(category){
-                    if (category.stats.hasCourses){
-                        if (category.stats.leafAverage === -1){
-                            category.stats.status = 'standard';
-                        } else if (category.stats.leafAverage <= 50){
-                            category.stats.status = 'failing';
-                        } else if (category.stats.leafAverage <= 80){
-                            category.stats.status = 'caution';
-                        } else {
-                            category.stats.status = 'passing';
-                        }
+                _.forEach(legendTree.children, function(category){
+                    if (category.data.stats.average === -1){
+                        category.data.stats.status = 'standard';
+                    } else if (category.data.stats.average <= 50){
+                        category.data.stats.status = 'failing';
+                    } else if (category.data.stats.average <= 80){
+                        category.data.stats.status = 'caution';
+                    } else {
+                        category.data.stats.status = 'passing';
                     }
                 });
 
                 res.render('dash', {
-                    training: training,
-                    stats: tree.stats,
-                    categories: allCategories
+                    training: decoratedTraining,
+                    stats: generatedStats.general,
+                    categories: legendTree.children
                 });
             });
         });
