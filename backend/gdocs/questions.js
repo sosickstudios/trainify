@@ -206,31 +206,32 @@ function synchronizeGDocs (mapped, questions, keys, spreadsheet){
 
         local['1'] = question.id;
         local['2'] = question.type;
-        local['3'] = question.explanation;
+        local['3'] = question.text;
+        local['4'] = question.explanation;
 
         if (question.type === Question.TYPE.MULTIPLE){
             var correct = _.find(question.answer.values, {isCorrect: true});
             var incorrect = _.where(question.answer.values, {isCorrect: false});
-            local['4'] = correct.text;
+            local['5'] = correct.text;
             _.each(incorrect, function(answer, index){
-                local[index + 5] = answer.text;
+                local[index + 6] = answer.text;
             });
         } else {
             var correct = _.find(question.answer.values, {isCorrect: true});
             var incorrect = _.find(question.answer.values, {isCorrect: false});
-            local['4'] = correct.text;
-            local['5'] = incorrect.text;
-            local['6'] = 'DO NOT MODIFY';
+            local['5'] = correct.text;
+            local['6'] = incorrect.text;
             local['7'] = 'DO NOT MODIFY';
+            local['8'] = 'DO NOT MODIFY';
         }
 
         var parentChapter = _.find(question.categories, {identifier: 'chapter'});
         var parentLegend = _.find(question.categories, {identifier: 'legend'});
         var parentMatrix = _.find(question.categories, {identifier: 'matrix'});
 
-        local['8'] = parentChapter ? '(' + parentChapter.id + ') ' + parentChapter.name : '';
-        local['9'] = parentLegend ? '(' + parentLegend.id + ') ' + parentLegend.name : '';
-        local['10'] = parentMatrix ? '(' + parentMatrix.id + ') ' + parentMatrix.name : '';
+        local['9'] = parentChapter ? '(' + parentChapter.id + ') ' + parentChapter.name : '';
+        local['10'] = parentLegend ? '(' + parentLegend.id + ') ' + parentLegend.name : '';
+        local['11'] = parentMatrix ? '(' + parentMatrix.id + ') ' + parentMatrix.name : '';
 
         update[(parseInt(key, 10) + 2).toString()] = local;
     });
@@ -320,12 +321,10 @@ module.exports = function(trainingId, spreadsheet){
         return synchronizeGDocs(mappedQuestions, questions, null, spreadsheet);
     })
     .then(function (){
-        console.log('here');
         // Purge the old and unneeded
         return Category.findAll({where: {trainingId: trainingId}, include: [Question]})
             .then(function (categories){
                 var masterList = _.flatten(_.pluck(categories, 'questions'));
-                console.log(masterList);
                 
                 if(masterList.length > currentQuestions.length){
                     masterList = _.pluck(masterList, 'id');
