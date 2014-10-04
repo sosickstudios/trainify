@@ -80,8 +80,7 @@ module.exports.categories = function(trainingId){
 module.exports.updateAll = function(trainingId){
     return module.exports.categories(trainingId)
         .then(function (){
-            return;
-            //return module.exports.questions(trainingId);
+            return module.exports.questions(trainingId);
         })
         .catch(function (e){
             console.log(e);

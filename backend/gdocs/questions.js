@@ -48,7 +48,8 @@ function decodeString(value){
     return he.unescape(he.decode(value));
 }
 
-function purgeOldData(ids){
+function purgeOldData(){
+
     return Question.findAll({where: {id: ids}, include: [Category]})
         .then(function (questions){
             var badQuestions = _.filter(questions, function (question){
@@ -140,6 +141,9 @@ function fixCategoryQuestionJoins(parentKeys, id, question){
 
             return id; 
         })
+        .then(function (joins){
+            return joins;
+        })
         .catch(function (e){
             // console.log(e);
         });  
@@ -175,21 +179,71 @@ function createOrUpdateQuestion(mappedQuestion){
 
     var promise;
     if (mappedQuestion.id){
-        promise = Question.find(mappedQuestion.id)
+        return Question.find(mappedQuestion.id)
             .then(function(result){
                 return result.updateAttributes(question);
             });
     } else {
-        promise = Question.create(question);
+        return Question.create(question);
     }
+}
 
-    return promise
-        .then(function (question){
-            return fixCategoryQuestionJoins(parentKeys, question.id, mappedQuestion);
-        })
-        .catch(function (e){
-            console.log(e);
+function synchronizeGDocs (mapped, questions, keys, spreadsheet){
+
+    var update = {};
+    _.each(mapped, function (row, key){
+        var local = {};
+
+        var question = _.find(questions, {id: row.id});
+
+        if(!question){
+            question = _.find(questions, {text: row.text});
+        }
+
+        if(!question){
+            throw new Error('Failed to find Question for update.');
+        }
+
+        local['1'] = question.id;
+        local['2'] = question.type;
+        local['3'] = question.explanation;
+
+        if (question.type === Question.TYPE.MULTIPLE){
+            var correct = _.find(question.answer.values, {isCorrect: true});
+            var incorrect = _.where(question.answer.values, {isCorrect: false});
+            local['4'] = correct.text;
+            _.each(incorrect, function(answer, index){
+                local[index + 5] = answer.text;
+            });
+        } else {
+            var correct = _.find(question.answer.values, {isCorrect: true});
+            var incorrect = _.find(question.answer.values, {isCorrect: false});
+            local['4'] = correct.text;
+            local['5'] = incorrect.text;
+            local['6'] = 'DO NOT MODIFY';
+            local['7'] = 'DO NOT MODIFY';
+        }
+
+        var parentChapter = _.find(question.categories, {identifier: 'chapter'});
+        var parentLegend = _.find(question.categories, {identifier: 'legend'});
+        var parentMatrix = _.find(question.categories, {identifier: 'matrix'});
+
+        local['8'] = parentChapter ? '(' + parentChapter.id + ') ' + parentChapter.name : '';
+        local['9'] = parentLegend ? '(' + parentLegend.id + ') ' + parentLegend.name : '';
+        local['10'] = parentMatrix ? '(' + parentMatrix.id + ') ' + parentMatrix.name : '';
+
+        update[(parseInt(key, 10) + 2).toString()] = local;
+    });
+    
+    return new Promise(function (resolve, reject){
+        spreadsheet.add(update);
+
+        spreadsheet.send(function (e){
+            if(e) return reject(e);
+
+            resolve();
         });
+    });  
 }
 
 /**
@@ -202,6 +256,10 @@ function createOrUpdateQuestion(mappedQuestion){
  * @returns {Promise}
  */
 module.exports = function(trainingId, spreadsheet){
+
+    var keys = {};
+    var mappedQuestions;
+    var currentQuestions;
     return (new Promise(function(resolve, reject){
 
         // Get all of the rows now that the spreadsheets metadata has been loaded.
@@ -212,7 +270,6 @@ module.exports = function(trainingId, spreadsheet){
             resolve(rows);
         });
     })).then(function (rows){
-        var keys = {};
         // Get the header row
         var keysRow = rows['1'];
 
@@ -227,19 +284,64 @@ module.exports = function(trainingId, spreadsheet){
             keys[entry.toLowerCase()] = key;
         });
 
-        var mappedQuestions = _(rows)
+        mappedQuestions = _(rows)
             .filter(function (row){
                 return row[keys['id']] !== 'ID';
             })
             .map(_.bind(mapRowToQuestion, null, keys))
-            .map(_.bind(createOrUpdateQuestion, null))
             .value();
 
-        return Promise.all(mappedQuestions);
+        return Promise.all(_.map(mappedQuestions, createOrUpdateQuestion));
     })
-    // .then(function (results){
-    //     return purgeOldData(results);
-    // })
+    .then(function (results){
+        currentQuestions = results;
+        var parentKeys = [
+            'chapter parent',
+            'legend parent',
+            'matrix parent'        
+        ];
+
+        return Promise.map(results, function (question){
+            var mapped = _.find(mappedQuestions, {id: question.id});
+
+            if(!mapped){
+                mapped = _.find(mappedQuestions, {text: question.text});
+            }
+            return fixCategoryQuestionJoins(parentKeys, question.id, mapped);
+        });
+    })
+    .then(function (results){
+        return Promise.map(currentQuestions, function (question){
+            return Question.find({where: {id: question.id}, include: [Category]});
+        });
+    })
+    .then(function (questions){
+        currentQuestions = questions;
+        return synchronizeGDocs(mappedQuestions, questions, null, spreadsheet);
+    })
+    .then(function (){
+        console.log('here');
+        // Purge the old and unneeded
+        return Category.findAll({where: {trainingId: trainingId}, include: [Question]})
+            .then(function (categories){
+                var masterList = _.flatten(_.pluck(categories, 'questions'));
+                console.log(masterList);
+                
+                if(masterList.length > currentQuestions.length){
+                    masterList = _.pluck(masterList, 'id');
+                    var currentList = _.pluck(currentQuestions, 'id');
+
+                    var difference = _.difference(masterList, currentList);
+
+                    return Promise.all([
+                        Question.destroy({id: difference}),
+                        CategoryQuestion.destroy({questionId: difference})
+                    ]);                    
+                }
+
+                return;
+            });
+    })
     .catch(function (e){
         console.log(e);
     })

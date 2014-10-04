@@ -210,6 +210,7 @@ module.exports = function(trainingId, spreadsheet){
                 var needsPurging = _.difference(masterList, mappedList);
                 return Category.destroy({id: needsPurging});  
             }
+            
             return;
         })
         .catch(function (e){
