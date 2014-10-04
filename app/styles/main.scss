@@ -175,7 +175,7 @@ p a {
 @mixin button($color){
   font-size: 0.9em;
   width: auto;
-  color: $color !important;
+  color: $color;
   border: 1px solid $color;
   white-space: nowrap;
   padding: 5px 25px;
@@ -190,7 +190,7 @@ p a {
 
   &:hover {
     background: $color;
-    color: #fcfcfc !important;
+    color: #fcfcfc;
   }
 }
 
@@ -265,6 +265,10 @@ p a {
 
     & a {
       color: lighten(#000, 30);
+
+      &:visited {
+        color: lighten(#000, 30);
+      }
     }
   }
 
@@ -698,6 +702,10 @@ form > button.stripe-button-el {
   right: 20px;
   top: 62px;
   z-index: 100;
+}
+
+a.btn-orange.btn--full-exam {
+  color: $primary-orange;
 }
 
 .btn--full-exam.btn-orange:hover {
