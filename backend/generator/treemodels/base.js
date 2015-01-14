@@ -265,11 +265,6 @@ base.relativePuller = function (category, total, type){
 
             questions = _.take(questions, total);
 
-            _.forEach(questions, function(question){
-                // TODO(darius): We want this but it makes for a shitty demo.
-                //question.answer.values = _.shuffle(question.answer.values);
-            });
-
             break;
         default:
             throw new Error('Relative Puller - Hit Invalid Case');
@@ -282,6 +277,10 @@ base.relativePuller = function (category, total, type){
         var addAmount = difference > leftOvers.length ? leftOvers.length : difference;
         questions = questions.concat(_.first(leftOvers, addAmount));
     }
+
+    _.forEach(questions, function(question){
+        question.answer.values = _.shuffle(question.answer.values);
+    });
 
     return _.shuffle(questions);
 }
