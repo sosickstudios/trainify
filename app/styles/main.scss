@@ -729,11 +729,15 @@ a.btn-orange.btn--full-exam {
   text-align: justify;
 }
 
+.trainify-description > div {
+  width: 50%;
+}
+
 .trainify-description {
   margin: 20px 0 0 0;
-  // padding-top: 100px;
-  // padding-bottom: 130px;
-  position:relative;
+  // padding-top: 75px;
+  padding-bottom: 75px;
+  display: inline-block;
 
   h3 {
       font-size: 30px;
@@ -750,12 +754,24 @@ a.btn-orange.btn--full-exam {
       font-weight:500;
   }
 
+  .column {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
+  }
+
   .info {
+      display: inline-block;
       font-size: 14px;
       margin-top: 40px;
       @media (max-width: 767px) {
           margin-top: 20px;
       }
+  }
+
+  .pic {
+    padding-top: 50px;
+    padding-left: 50px;
   }
 }
 
