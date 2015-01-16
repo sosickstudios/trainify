@@ -33,9 +33,7 @@ function Exposure (question, data){
     */
 
     if (exposureCount){
-
         var granularity = (5 / data.highestExposureCount).toFixed(2);
-
         // Range [0,5]
         priorityWeight = (Math.abs(exposureCount - data.highestExposureCount) * granularity);  
     }

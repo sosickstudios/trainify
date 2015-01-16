@@ -9,18 +9,19 @@ var _ = require('lodash');
  * @return {Array.<Question>} Array of questions that have been sorted by prioritizers.
  */
 function Prioritizer (questions, options){
+    var data = {};
+
     // Load our given prioritizers that were specified in options.
     var fns = _.map(options.prioritizers, function (type){
         var path = './' + type;
         return require(path);
     });
 
-    // Calculate some data data that can be used in prioritizers.
-    var data = {
-        highestExposureCount: _.max(questions, function (question){
+    // What question has been answered the most amount of times.
+    var highestExposureCount = _.max(questions, function (question){
             return question.results.length;
-        })
-    };
+        });
+    data.highestExposureCount = highestExposureCount.results.length;
 
     // Map, then sort our questions.
     questions = _(questions)

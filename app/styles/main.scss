@@ -729,6 +729,36 @@ a.btn-orange.btn--full-exam {
   text-align: justify;
 }
 
+.trainify-description {
+  margin: 20px 0 0 0;
+  // padding-top: 100px;
+  // padding-bottom: 130px;
+  position:relative;
+
+  h3 {
+      font-size: 30px;
+      margin-bottom: 24px;
+      font-weight: 300;
+  }
+  p {
+      font-size: 16px;
+      line-height: 30px;
+  }
+  h6 {
+      text-transform: none;
+      font-size: 18px;
+      font-weight:500;
+  }
+
+  .info {
+      font-size: 14px;
+      margin-top: 40px;
+      @media (max-width: 767px) {
+          margin-top: 20px;
+      }
+  }
+}
+
 .courses {
   padding: 0;
   margin: 20px 0 0 0;

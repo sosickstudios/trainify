@@ -65,7 +65,7 @@ app.exercise = function (tree, category, total, type, puller) {
         var structuredTotal = this.data.training.structuredExamTotal;
         total = type === tree.EXERCISE_TYPES.EXAMPREP ? structuredTotal : practiceTotal; 
     }
-
+    
     return tree.exercise(category, total, type, puller);
 };
 

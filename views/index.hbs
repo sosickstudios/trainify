@@ -1,13 +1,36 @@
 {{> header }}
 
 <main>
+    <div class="trainify-description">
+        <div class="g--half column">
+            <h3>Learning Done Right.</h3>
+
+            <p>Trainify is a smarter approach to e-Learning. Instead of taking the generic one size fits all approach, our system tailors the content to the student based on prior performance. 
+            </p>
+
+            <div>
+                <div class="g--half info">
+                    <h6>SmartGEN System</h6>
+                    No more guessing on how to approach e-content. The SmartGEN system tailors each and every exercise to the individual student while providing them with an in depth realization of the content.
+                </div>
+                <div class="g--half info">
+                    <h6>Mobile Friendly Platform</h6>
+                    The world is moving fast and with our platform there is no slowing down. Trainify is fully compatible in a mobile friendly setting.
+                </div>
+            </div>
+        </div>
+        <div class="g--half column">
+            <img src="images/browser-iphone@2x.png" width="300" height="300" alt="">
+        </div>
+    </div>
     <ul class="courses">
     {{#courses}}
         <li class="clear">
             <div class="g-wide--2 g-wide--1">
                 <h4>{{name}} {{#unless hasPurchased}}<a class="btn--buy" href="/buy/{{id}}">Purchase</a>{{/unless}} {{#if hasPurchased}}<span class="purchased">Purchased</span>{{/if}}</h4>
                 <div class="description">
-                    {{description}}
+{{!--                     {{description}} --}}
+                    PMI’s Project Management Professional (PMP)® credential is the most important industry-recognized certification for project managers. Globally recognized and demanded, the PMP® demonstrates that you have the experience, education and competency to lead and direct projects. Trainify’s PMP® Preparation is a state of the art dynamic platform that tailors each exercise to the student based on previous performance. The Trainify SmartGEN system constantly adapts to help the student overcome problem areas that come to light through practice. The Trainify system takes the guessing work away from the student, leaving them with a comfortable environment that helps achieve mastery in any subject. 
                     {{#if hasPurchased}}
                         <br /><a href="/course/{{slug}}">Access your course</a>
                     {{/if}}
@@ -19,18 +42,26 @@
                         </div>
                     {{/if}}
                 </div>
-                <div class="company-bio">
+{{!--                 <div class="company-bio">
                     {{company.name}} <br/>
                     {{company.bio}} <br />
-                </div>
+                </div> --}}
             </div>
             <div class="g-wide--2 g-wide--1">
                 <ul class="outline">
-                {{#categories}}
+                    <li>5 PMBOK Process Groups</li>
+                    <li>10 PMBOK Knowledge Areas</li>
+                    <li>Chapters 1-13 PMBOK 5th Edition</li>
+                    <li>Mock Exam Preparation</li>
+                    <li>350+ Test Bank Questions</li>
+                    <li>Trainify SmartGEN System</li>
+                    <li>Mobile Friendly</li>
+                    <li>60 Days Unlimited Access</li>
+{{!--                 {{#categories}}
                     <li>
                         {{name}}
                     </li>
-                {{/categories}}
+                {{/categories}} --}}
                 </ul>
             </div>
         </li>
