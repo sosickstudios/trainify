@@ -772,7 +772,7 @@ main.home {
 
   .divider {
     margin: 0;
-    height: 50px;
+    height: 75px;
     background-color: $primary-green;
 
     h3 {
@@ -781,6 +781,7 @@ main.home {
       text-transform: uppercase;
       color: #fff;
       vertical-align: middle;
+      padding: 25px;
     }
   }
 }

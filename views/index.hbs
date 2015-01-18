@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="divider">
-        <h3>Purchase Trainify Supplementary Courses</h3>
+        <h3>Purchase Supplementary Course</h3>
     </div>
     <ul class="courses">
     {{#courses}}
@@ -33,7 +33,10 @@
                 <h4>{{name}} {{#unless hasPurchased}}<a class="btn--buy" href="/buy/{{id}}">Purchase</a>{{/unless}} {{#if hasPurchased}}<span class="purchased">Purchased</span>{{/if}}</h4>
                 <div class="description">
 {{!--                     {{description}} --}}
-                    PMI’s Project Management Professional (PMP)® credential is the most important industry-recognized certification for project managers. Globally recognized and demanded, the PMP® demonstrates that you have the experience, education and competency to lead and direct projects. Trainify’s PMP® Preparation is a state of the art dynamic platform that tailors each exercise to the student based on previous performance. The Trainify SmartGEN system constantly adapts to help the student overcome problem areas that come to light through practice. The Trainify system takes the guessing work away from the student, leaving them with a comfortable environment that helps achieve mastery in any subject. 
+                    PMI’s Project Management Professional (PMP)® credential is the most important industry-recognized certification for project managers. Globally recognized and demanded, the PMP® demonstrates that you have the experience, education and competency to lead and direct projects. 
+                    <br/>
+                    <br/>
+                    Trainify’s PMP® Preparation is a state of the art dynamic platform that tailors each exercise to the student based on previous performance. The Trainify SmartGEN system constantly adapts to help the student overcome problem areas that come to light through practice. The Trainify system takes the guessing work away from the student, leaving them with a comfortable environment that helps achieve mastery in any subject. 
                     {{#if hasPurchased}}
                         <br /><a href="/course/{{slug}}">Access your course</a>
                     {{/if}}
