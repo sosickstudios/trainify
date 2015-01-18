@@ -83,7 +83,7 @@
   .g--half,
   .g-wide--half {
     @include rule--col(wide);
-    width: 50% - $wideGutterWidth/2;
+    width: 50% - $wideGutterWidth;
   }
 
   .g--pull-half { margin-right: 50% + $wideGutterWidth/2; }
