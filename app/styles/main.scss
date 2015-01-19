@@ -801,7 +801,7 @@ main.home {
   }
 
   .description--course {
-    flex-direction: column;
+    display: block;
     margin-top: 0;
 
     p {
