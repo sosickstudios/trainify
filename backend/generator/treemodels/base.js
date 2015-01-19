@@ -212,30 +212,30 @@ base.relativePuller = function (category, total, type){
             // category weight.
             questions = tree.children.map(function (child){
                 // Make a list of all the children that fall below the Level 1 category.
-                var questions = _(this.treeReducer(child))
+                var childQuestions = _(this.treeReducer(child))
                     .pluck('questions')
                     .flatten()
                     .value();
 
                 // Run all the questions through the prioritizer.
-                questions = prioritizer(questions, {prioritizers: this.config.prioritizers});
+                childQuestions = prioritizer(childQuestions, {prioritizers: this.config.prioritizers});
 
                 // Determine how many questions the child category passed in is responsible for.
                 var childTake = Math.round((child.weight / 100).toFixed(2) * total);
                 
                 // Make sure that we have enough questions, if not change our total and add to the 
                 // sum difference of all Level 1.
-                if (childTake > questions.length){
-                    difference += (childTake - questions.length);
-                    childTake = questions.length;
+                if (childTake > childQuestions.length){
+                    difference += (childTake - childQuestions.length);
+                    childTake = childQuestions.length;
                 } else {
                     // Add all leftOver questions in case another Level 1 cannot meet it's
                     // obligation for questions.
-                    var leftOver = questions.length - childTake;
-                    leftOvers = leftOvers.concat(_.last(questions, leftOver));
+                    var leftOver = childQuestions.length - childTake;
+                    leftOvers = leftOvers.concat(_.last(childQuestions, leftOver));
                 }
 
-                return _.first(questions, childTake);
+                return _.first(childQuestions, childTake);
             }, this);
     
             // Combine all Level 1 child questions together.

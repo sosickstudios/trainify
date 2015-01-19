@@ -97,6 +97,39 @@ p a {
   border-bottom: 1px solid #e1e1e1;
 }
 
+.info img {
+  display: block;
+  margin: 0 auto;
+}
+
+.info {
+  padding-bottom: 10px;
+}
+
+.pic img {
+  margin: 70px auto 0 auto;
+}
+
+.info h6 {
+  font-family: "foco", sans-serif;
+  text-align: center;
+  font-weight: 800;
+  margin: 10px 5px 5px 5px;
+}
+
+hr {
+  height: 2px;
+  border: 0;
+  background-image: linear-gradient(90deg,
+    #fdd53c 0, #fdd53c 17%,
+    #cfdd28 17%, #cfdd28 34%,
+    #c2b59b 34%, #c2b59b 51%,
+    #9fcc46 51%, #9fcc46 67%,
+    #f68421 67%, #f68421 84%,
+    #31c5f1 84%, #31c5f1 100%);
+  width: 100%;
+}
+
 .exercise-status .exercise-overview {
   display: none;
   background: $primary-blue;
@@ -329,7 +362,7 @@ p a {
     div.help-text {
       width: 50%;
       display: inline-block;
-      
+
       > span {
         color: $primary-orange;
         font-size: $primary-text-size;
@@ -342,7 +375,7 @@ p a {
       margin-left: 15px;
       position: absolute;
       width: 50%;
-      
+
       // Score Review Circular Indicator
       .score-meter {
         width: 120px;
@@ -391,7 +424,7 @@ p a {
         top: 30px;
         left: 30px;
 
-      } 
+      }
 
       div.ratio {
         position: absolute;
@@ -399,12 +432,12 @@ p a {
         top: 25px;
         left: 125px;
         color: $primary-orange;
-        
+
         span.correct {
           margin-left: 55px;
           font-size: $primary-text-size;
         }
-      }  
+      }
     }
 
   }
@@ -437,7 +470,7 @@ p a {
       margin: 25px 0 0 -12px;
       padding: 20px;
       width: 100%;
-      
+
       h5 {
         text-transform: uppercase;
         color: $primary-orange;
@@ -447,7 +480,7 @@ p a {
         font-size: $secondary-text-size;
         font-weight: 575;
         color: $secondary-text;
-        text-align: left;     
+        text-align: left;
       }
     }
 
@@ -726,7 +759,70 @@ a.btn-orange.btn--full-exam {
 }
 
 .description {
-  text-align: justify;
+  text-align: left;
+}
+
+main.home {
+
+  .row {
+    margin: 0;
+  }
+
+  .description,
+  .description--course {
+    margin: 20px 0 0 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    display: inline-flex;
+
+    h3 {
+        font-size: 30px;
+        margin-bottom: 10px;
+        font-family: "foco",sans-serif;
+        font-weight: 500;
+    }
+    p {
+        font-size: 16px;
+        line-height: 30px;
+    }
+    h6 {
+        text-transform: none;
+        font-size: 18px;
+        font-weight:500;
+    }
+
+    .info {
+        font-size: 14px;
+        margin-top: 40px;
+        @media (max-width: 767px) {
+            margin-top: 20px;
+        }
+    }
+  }
+
+  .description--course {
+    flex-direction: column;
+    margin-top: 0;
+
+    p {
+      margin-bottom: 15px;
+    }
+  }
+
+  .divider {
+    margin: 0;
+    height: 75px;
+    background-color: $primary-green;
+
+    h3 {
+      font-weight: 400;
+      text-align: center;
+      text-transform: uppercase;
+      color: #fff;
+      vertical-align: middle;
+      padding: 25px;
+    }
+  }
 }
 
 .courses {
@@ -744,21 +840,22 @@ a.btn-orange.btn--full-exam {
 
   > li {
     position: relative;
-    padding: 0 0 0 10px;
+    padding: 0 0 0 0;
 
-    &::before{
-      content: ' ';
-      position: absolute;
-      left: -5px;
-      height: 100%;
-      display: block;
-      background: $primary-orange;
-      width: 6px;
-    }
+    // &::before{
+    //   content: ' ';
+    //   position: absolute;
+    //   left: -5px;
+    //   height: 100%;
+    //   display: block;
+    //   background: $primary-orange;
+    //   width: 6px;
+    // }
   }
 
   h4 {
     padding: 0;
+    font-family: "foco",sans-serif;
   }
 }
 
