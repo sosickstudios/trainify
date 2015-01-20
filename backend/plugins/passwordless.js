@@ -9,10 +9,6 @@ var mandrill = new Mandrill.Mandrill(config.mandrill);
 var RedisStore = require('passwordless-redisstore');
 var User = require('../models/user');
 
-// Get our email login/signup template ready.
-var deliveryTemplate = fs.readFileSync(path.resolve(__dirname + '/../emails/login.html'), 'utf-8');
-var deliveryCompiled = hbs.handlebars.compile(deliveryTemplate);
-
 // Ensure we use a database to back up our tokens.
 passwordless.init(new RedisStore(config.port, config.host, {redisstore: {database: 15}}),
     {allowTokenReuse: true});
@@ -36,22 +32,43 @@ function handlePerformDelivery(token, uid, recipient, callback){
   // Ex: http://localhost:6158/login?token=00f3e5a9-9e80-4834-bd8e-ea0ff6bb660d&uid=59
   var link = host + '/login?token=' + token + '&uid=' + encodeURIComponent(uid);
 
-  var body = deliveryCompiled({
-    login: link,
-    email: encodeURIComponent(recipient)
-  });
-
-  var message = {
-    html: body,
-    subject: 'Login to Trainify',
-    from_email: 'support@trainify.io',
-    to: [{email: recipient, type: 'to'}]
+  var options = {
+    'template_name': 'login',
+    'template_content': [],
+    message: {
+      to: [
+        {
+          email: recipient,
+          type: 'to'
+        }
+      ],
+      'track_clicks': true,
+      'track_opens': true,
+      'merge_vars': [
+        {
+          rcpt: recipient,
+          vars: [
+            {
+              name: 'login',
+              content: link
+            }, 
+            {
+              name: 'email',
+              content: recipient
+            }
+          ]
+        }
+      ]
+    },
+    tags: [
+      'login'
+    ],
+    async: true
   };
-
   // Send the email to the user, we are binding callback as we want to ensure it is called with
   // no parameters.
-  mandrill.messages.send(
-      {message: message, async: true},
+  mandrill.messages.sendTemplate(
+      options,
       callback.bind(callback, null),
       callback,
       {ttl: 1000*60*60*24*60});
