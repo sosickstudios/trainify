@@ -11,13 +11,18 @@
         {{/unless}}
     </h2>
     <div class="progress">
-        <span class="progress-percent">0%</span>
-        <svg class="progress-meter" version="1.1" x="0px" y="0px">
-            <path id='p' fill="none"
+{{!--         <span class="progress-percent">0%</span> --}}
+        <svg class="progress-meter" version="1.1" x="0px" y="0px" xmlns="http://www.w3.org/2000/svg">
+            <path id='p' 
+                  d="M45,4C22.392,4,4,22.393,4,45c0,22.608,18.392,41,41,41s41-18.392,41-41S67.608,4,45,4z"
+                  fill="none"
                   stroke-dashoffset="-260"
-                  stroke-dasharray="282 282"
+                  stroke-dasharray="282, 282"
                   stroke-width="8"
-                  d="M45,4C22.392,4,4,22.393,4,45c0,22.608,18.392,41,41,41s41-18.392,41-41S67.608,4,45,4z"></path>
+                  ></path>
+            <text id='progress-percent' x="5" y="21">
+            0%
+            </text>
          </svg>
     </div>
     <div class="exercise-overview">
