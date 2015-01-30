@@ -326,7 +326,10 @@
             contextClass = 'failing';
         }
         scoreText.classList.add(contextClass);
-        progressPath.classList.add(contextClass);
+
+        // IE 11 Fix, cannot add class, must set attribute with oldclass newclass.
+        // TODO(BRYCE) Have all svg queried with id, set additional classes with setAttribute method
+        progressPath.setAttribute('class', 'score-meter ' + contextClass);
 
         // Change the content of the elements.
         ratioCorrect.textContent = scoreBox.correct + ' / ' + scoreBox.total;
@@ -360,7 +363,9 @@
         var percent = totalAnswered / this.questions.length * 100;
         var progress = (100 - percent) / 100 * -250;
         document.getElementById('p').setAttribute('stroke-dashoffset', progress);
-        document.querySelector('.progress-percent').textContent = percent.toFixed() + '%';
+        // document.querySelector('.progress-percent').textContent = percent.toFixed() + '%';
+        var progressText = document.getElementById('progress-percent');
+        progressText.textContent = percent.toFixed() + '%';
 
         if (!hasEmptyQuestion){
             headroom.destroy();

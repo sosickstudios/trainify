@@ -189,18 +189,25 @@ hr {
   right: -34px;
 }
 
-.progress-percent {
-  letter-spacing: -0.1em;
-  font-size: 0.7em;
-  position: absolute;
-  right: 30px;
-  top: 12px;
-}
+// .progress-percent {
+//   letter-spacing: -0.1em;
+//   font-size: 0.7em;
+//   position: absolute;
+//   right: 30px;
+//   top: 12px;
+// }
 
 .progress-meter path {
   stroke: #fff;
   transition: all 1s;
   transform: scale(0.4);
+}
+
+#progress-percent {
+  font-family: "foco", sans-serif;
+  font-size  : 0.6em;
+  stroke     : #fff;
+  fill       : #fff;
 }
 
 // Allow our buttons to have a uniform look, regardless of color. This is intended to be used
@@ -517,7 +524,7 @@ hr {
     span.question-text {
       width: 100%;
       font-size: $question-text-size;
-      display: block;
+      display: inline;
     }
 
     .question-answers {
@@ -545,6 +552,10 @@ hr {
           margin-right: 8px;
           height: 25px;
           width: 25px;
+        }
+
+        .answer-text {
+          display: inline;
         }
       }
 
@@ -576,6 +587,12 @@ hr {
           font-size: $secondary-text-size;
           margin-left: 33px;
         }
+
+        span.selection-text:after{
+          content: "\a";
+          white-space: pre;
+        }
+
       }
 
       .question-answer-review.incorrect {
