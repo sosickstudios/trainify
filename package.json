@@ -42,7 +42,7 @@
     "lodash": "2.4.1",
     "mandrill-api": "^1.0.40",
     "morgan": "^1.3.1",
-    "newrelic": "1.50.0",
+    "newrelic": "^1.15.0",
     "passwordless": "1.0.8",
     "passwordless-redisstore": "0.0.1",
     "pg": "3.3.0",
