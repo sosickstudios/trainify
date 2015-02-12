@@ -1,69 +1,29 @@
 {{> header }}
 
 <main class="home">
-    <div class="description">
-        <div class="g-wide--half">
-            <h3>New Approach to E-Learning</h3>
-            <p>Say hello to Trainify, a fresh new approach to E-Learning that focuses on helping students through guided course content. Trainify is a dynamic learning platform that tailors each exercise to the student, mimicking the hands on approach experience seen in the classroom. Our system gives the student a direct path to the end goal, concentrating all efforts on achieving mastery of the course content. Eleminate any confusion when learning, let Trainify be the guide on your path to success!</p>
-
-            <div class="row">
-                <div class="g--half info">
-                    <img src="images/overview-1.png" height="175" />
-                    <h6>SmartGEN System</h6>
-                    No more guessing on how to approach e-content. The SmartGEN system tailors each and every exercise to the individual student while providing them with an in depth realization of the content. Let our proprietary algorithms determine the best course of action, feel at ease in our easy to use environment.
-                </div>
-                <div class="g--half info">
-                    <img src="images/mobile-1.png" height="175" />
-                    <h6>Mobile Friendly Platform</h6>
-                    The world is moving fast and with our platform there is no slowing down. Trainify is fully compatible in a mobile friendly setting. Wherever you are, we have you covered.
-                </div>
-            </div>
+    <section class="promo">
+        <h3>Meet Trainify</h3>
+        <img src="images/ipad-vertical.png" width="450" />
+        <p>A dynamic education platform that tailors each exercise directly to you, elimating the guesswork from learning new content.</p>
+        <a href="/store"class="btn--courses">View Courses</a>
+    </section>
+    <section class="features container">
+        <div class="feature g--third">
+            <img src="images/overview-1.png" height="175" />
+            <h5>Performance-Based Analytics</h5>
+            Trainify provides focused feedback & advanced analytics to help you easily conceptualize areas of mastery and weakness. This allows you to pinpoint exactly which areas of study require the most emphasis and allocate study time accordingly.
         </div>
-        <div class="g-wide--half pic">
-            <img src="images/ipad-vertical.png" width="450" />
+        <div class="feature g--third">
+            <img src="images/mobile-1.png" height="175" />
+            <h5>Mobile Friendly Platform</h5>
+            The world is moving fast and with our platform there is no slowing down. Trainify is fully compatible in a mobile friendly setting. Wherever you are, we have you covered.
         </div>
-    </div>
-    <hr />
-    <ul class="courses">
-    {{#courses}}
-        <li class="clear">
-            <div class="g-wide--2 g-wide--1">
-                <h4>{{name}} {{#unless hasPurchased}}<a class="btn--buy" href="/buy/{{id}}">Purchase</a>{{/unless}} {{#if hasPurchased}}<span class="purchased">Purchased</span>{{/if}}</h4>
-                {{#if hasPurchased}}
-                    <div class="course--access"><a href="/course/{{slug}}">Access your course</a></div>
-                {{/if}}
-                <div class="description--course">
-                    <p>PMI’s Project Management Professional (PMP)® credential is the most important industry-recognized certification for project managers. Globally recognized and demanded, the PMP® demonstrates that you have the experience, education and competency to lead and direct projects.</p>
-                    <p>Trainify’s PMP® Preparation is a state of the art dynamic platform that tailors each exercise to the student based on previous performance. The Trainify SmartGEN system constantly adapts to help the student overcome problem areas that come to light through practice. The Trainify system takes the guessing work away from the student, leaving them with a comfortable environment that helps achieve mastery in any subject.</p>
-                    {{#if isAdmin}}
-                        <div class="admin">
-                            <a href="/reloadcourse/{{id}}" target="_blank">Reload Course</a>
-                            <a href="/updatecourse/{{id}}">Syncronize course</a>
-                            <a href="/editcourse/{{id}}" target="_blank">Edit course on Google Docs</a>
-                        </div>
-                    {{/if}}
-                </div>
-            </div>
-            <div class="g-wide--2 g-wide--1">
-                <ul class="outline">
-                    <li>5 PMBOK Process Groups</li>
-                    <li>10 PMBOK Knowledge Areas</li>
-                    <li>Chapters 1-13 PMBOK 5th Edition</li>
-                    <li>Mock Exam Preparation</li>
-                    <li>350+ Test Bank Questions</li>
-                    <li>Trainify SmartGEN System</li>
-                    <li>Mobile Friendly</li>
-                    <li>60 Days Unlimited Access</li>
-{{!--                 {{#categories}}
-                    <li>
-                        {{name}}
-                    </li>
-                {{/categories}} --}}
-                </ul>
-            </div>
-        </li>
-    {{/courses}}
-    </ul>
+        <div class="feature g--third">
+            <img src="images/ipad-vertical.png" height="175" />
+            <h5>Top-Quality Content</h5>
+            We pride ourselves in having content that most closely matches the questions you will see on exam day. Our question banks are developed by industry practitioners with years of experience teaching their respective certifications. Content is promptly updated to match any curriculum changes.
+        </div>
+    </section>
 </main>
 
 {{> footer }}
