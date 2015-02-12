@@ -785,10 +785,11 @@ main.home {
   padding-left: 0;
   
   section.promo {
-    height: 550px;
     background-color: #f5f5f5;
     padding-right: 0;
+    padding-bottom: 25px;
     text-align: center;
+    display: block;
     
     h3 {
       color: $primary-green;
@@ -803,11 +804,15 @@ main.home {
     }
 
     img {
+      @media (max-width: 450px) {
+          display: none;
+      }
       display: block;
       margin: 20px auto;
     }
 
     a.btn--courses {
+      word-wrap: break-word;
       display: block;
       margin: 15px auto;
       @include button($primary-orange);
@@ -817,16 +822,13 @@ main.home {
   }
 
   section.features {
+    position: relative;
     width: 100%;
-    height: 500px;
     background-color: #fcfcfc;
-    box-sizing: border-box;
     display: block;
     margin-top: 50px;
 
-    div.feature {
-      height: inherit;
-      display: block;  
+    div.feature { 
       text-align: middle;
 
       img {
@@ -839,6 +841,14 @@ main.home {
         margin-top: 10px;
       }  
     }
+  }
+
+  // Clearfix for floats that exist;
+  section.features:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    clear: both;
   }
 }
 
