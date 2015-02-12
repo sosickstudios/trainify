@@ -785,7 +785,6 @@ main.home {
   padding-left: 0;
   
   section.promo {
-    background-color: #f5f5f5;
     padding-right: 0;
     padding-bottom: 25px;
     text-align: center;
@@ -853,6 +852,7 @@ main.home {
 }
 
 main.store {
+  padding: 20px 0;
   section.help--store {
     box-sizing: border-box;
     padding: 20px;
@@ -1510,7 +1510,8 @@ main.dash {
   }
 
   main {
-    max-width: 864px;
+    // max-width: 864px;
+    max-width: $fixed-width;
     padding-top: 0;
     min-height: initial;
     padding-left: 90px;
