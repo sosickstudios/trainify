@@ -11,6 +11,16 @@ var User = require('./../models/user');
 var utils = require('../utils');
 
 /**
+ * Contains the routes that handle the home routes, so the default / route.
+ * @type {Object}
+ */
+var home = {
+  get: function (req, res){
+    res.render('index', {});
+  }
+};
+
+/**
  * Contains the routes that have custom handling logic.
  * @type {Object}
  */
@@ -36,10 +46,10 @@ var signup = {
 };
 
 /**
- * Contains the routes that handle the home routes, so the default / route.
+ * Contains the routes that handle the store routes.
  * @type {Object}
  */
-var home = {
+var store = {
     /**
      * Handles getting the training courses and related information for use
      * on the home route.
@@ -77,7 +87,7 @@ var home = {
                 }
             });
 
-            res.render('index', {courses: trainings});
+            res.render('store', {courses: trainings});
         });
     },
 
@@ -210,9 +220,10 @@ router.get('/login', passwordless.acceptToken(), utils.redirect('/'));
 router.get('/logout', passwordless.logout(), utils.redirect('/'));
 router.get('/buy/:id', buy.get);
 router.post('/buy/:id', buy.post);
-router.get('/reloadcourse/:id', home.reloadCourse);
-router.get('/updatecourse/:id', home.updateCourse);
-router.get('/editcourse/:id', home.editCourse);
+router.get('/store', store.get);
+router.get('/reloadcourse/:id', store.reloadCourse);
+router.get('/updatecourse/:id', store.updateCourse);
+router.get('/editcourse/:id', store.editCourse);
 
 router.route('/signup')
   .get(utils.render('signup'))
