@@ -2,6 +2,10 @@
 
 <main class="dash">
     {{#if hasAccess}}
+        <div class="dash--course">
+            <h3>{{training.name}}</h3>
+            <span class="purchased">Purchased</span>
+        </div>
         <ul class="dash-stats">
             <li class="exam-passcount">
                 <span class="dash-text">{{stats.passCount}}</span>

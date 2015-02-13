@@ -1361,13 +1361,31 @@ main.checkout {
 }
 
 main.dash {
+  padding-right: 0;
+  padding-left: 0;
   min-height: 95%;
+
+  .dash--course {
+    padding: 25px 20px;
+    padding-top: 5px;
+    background-color: #c8d4d6;
+    min-height: 100px;
+
+    h3 {
+      margin-right: 15px;
+      display: inline-block;
+      color: $primary-violet;
+      border-bottom: 1px solid $primary-violet;
+    }
+  }
+
 }
 
 .courses > li {
   position: relative;
 }
 
+.purchased,
 .courses .purchased {
   background: $primary-green;
   font-size: 0.6em;

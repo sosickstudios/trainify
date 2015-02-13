@@ -40,6 +40,7 @@ var dash = {
                     }
                 });
 
+                console.log(decoratedTraining);
                 res.render('dash', {
                     training: decoratedTraining,
                     stats: generatedStats.general,
