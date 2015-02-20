@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/matrix.js
+ */
+'use strict';
+
 var base = require('./base');
 var mixin = require('utils-merge');
 
@@ -9,8 +14,7 @@ var matrix = {
  * Data tree that is represented as a matrix.
  *
  * @param {Object} data Meta data pertaining to the data tree.
- * 
- * @return {Matrix} Object representing matrix data tree.
+ * @returns {Matrix} Object representing matrix data tree.
  */
 function createMatrixTree(data){
     // Configure the data tree.

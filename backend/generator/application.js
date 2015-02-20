@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/application.js
+ */
+'use strict';
+
 var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var mixin = require('utils-merge');
@@ -19,10 +24,9 @@ app.TREE_TYPES = {
  * Initialize the Generation System
  *
  * @param {Object} data Data that will be used in trees and locally.
- * 
- * @return {App} Return application context for chaining purposes.
+ * @returns {App} Return application context for chaining purposes.
  */
-app.init = function(data) {
+app.init = function(data){
     // Give app events prototype for emitting.
     mixin(app, EventEmitter.prototype);
 
@@ -50,29 +54,28 @@ app.init = function(data) {
  * @param {Number} total Amount of questions to generate.
  * @param {tree.EXERCISE_TYPES} type Exercise type [Exam Prep, Practice]
  * @param {tree.PULLER} puller Specify way questions should be pulled. [Absolute, Relative]
- * 
- * @return {Array.<Question>} Questions that have been generated for exercise.
+ * @returns {Array.<Question>} Questions that have been generated for exercise.
  */
-app.exercise = function (tree, category, total, type, puller) {
+app.exercise = function (tree, category, total, type, puller){
     tree = this.trees[tree];
 
     if (!tree){
-        this.emit('error', new Error('Gen System - Tree Requested doesn\'t exist.'));
+        this.emit('error', new Error('Gen System - Tree Requested doesn\'t exist: ' + tree));
     }
 
     if (!total){
         var practiceTotal = this.data.training.practiceExamTotal;
         var structuredTotal = this.data.training.structuredExamTotal;
-        total = type === tree.EXERCISE_TYPES.EXAMPREP ? structuredTotal : practiceTotal; 
+        total = type === tree.EXERCISE_TYPES.EXAMPREP ? structuredTotal : practiceTotal;
     }
-    
+
     return tree.exercise(category, total, type, puller);
 };
 
 /**
  * Array of TREE_TYPES that are loaded on the app.
  *
- * @return {Array.<TREE_TYPES>}
+ * @returns {Array.<TREE_TYPES>} Tree types that the application supports.
  */
 app.getLoadedTrees = function (){
     return Object.keys(this.trees);
@@ -82,8 +85,7 @@ app.getLoadedTrees = function (){
  * Determine what trees are represented in our data.categories and load them.
  *
  * @param {Object} data Arbitrary data sent in for use in each trees' functions.
- * 
- * @return {Object} Object containing the newly loaded trees, described by their types.
+ * @returns {Object} Object containing the newly loaded trees, described by their types.
  */
 app.loader = function (data){
     // Determine what trees there is data for.
@@ -105,8 +107,7 @@ app.loader = function (data){
  *
  * @param {Array.<String>} trees Strings that represent the data trees that the function should run
  *                               the appliers on.
- * 
- * @return {Object} Object containing data trees that have stats on each node.
+ * @returns {Object} Object containing data trees that have stats on each node.
  */
 app.stats = function (trees){
     // If there are no trees sent in, run over all loaded trees. (DEFAULT)
@@ -121,9 +122,9 @@ app.stats = function (trees){
 
         if(!loadedTree){
             this.emit('error', new Error('Gen System - Tree Not Loaded.'));
-        } else {
+        } else{
             // Call stats function for tree if it does indeed exist.
-            stats[tree] = loadedTree.stats(); 
+            stats[tree] = loadedTree.stats();
         }
     }, this);
 
@@ -134,13 +135,12 @@ app.stats = function (trees){
  * Initialize our generation system.
  *
  * @param {Object} data Data to be passed to application for use.
- * 
- * @return {Application}
+ * @returns {Application} Context of application instance.
  */
 function initialize(data){
     // Initialize our Generation System application.
     app.init(data);
-    
+
     // Return for use.
     return app;
 }

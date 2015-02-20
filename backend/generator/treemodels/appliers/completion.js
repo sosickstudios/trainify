@@ -1,13 +1,15 @@
-var _ = require('lodash');
+/**
+ * trainify/backend/generator/treemodels/appliers/completion.js
+ */
+'use strict';
 
 /**
  * Determine the percentage of questions that the user has answered for a given node.
  *
  * @param {Category} node Current node to run calculations on.
- *
- * @return {Object.<Integer, Integer, Integer} Object containing ran statistics.
+ * @returns {Object.<Integer, Integer, Integer>} Object containing ran statistics.
  */
-function Completion (node){
+function Completion(node){
     var runningTotal = node.questions.length;
 
     // Find count of questions that havent been answered.
@@ -24,9 +26,9 @@ function Completion (node){
             remaining += child.data.remaining;
             runningTotal += child.data.total;
         });
-    } 
+    }
 
-    var percentage = Math.round((remaining/runningTotal).toFixed(2) * 100);
+    var percentage = Math.round((remaining / runningTotal).toFixed(2) * 100);
     return {
         remaining: remaining,
         percentage: percentage,

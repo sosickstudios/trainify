@@ -1,61 +1,54 @@
-var fs        = require('fs');
-var path      = require('path');
+/**
+ * trainify/backend/plugins/db.js
+ */
+'use strict';
+
 var Sequelize = require('sequelize');
-var _         = require('lodash');
-var path      = require('path');
-var config    = require('config').db;
+var config = require('config').db;
 
 var sequelize = new Sequelize(config.name, config.user, config.password, {
-  dialect:  'postgres',
-  protocol: 'postgres',
-  port:     config.port,
-  host:     config.host,
-  logging:  false,
-  pool:     { maxConnections: 5, maxIdleTime: 30 }
+    dialect: 'postgres',
+    protocol: 'postgres',
+    port: config.port,
+    host: config.host,
+    logging: false,
+    pool: { max: 5, idle: 30 }
 });
-
 module.exports = sequelize;
 
 var models = require('require-dir')('../models');
 
 // Give the parent-child structure to the category through association.
-models.category
-    .hasMany(models.category, { as: 'children', foreignKey: 'parentId'})
-    .hasMany(models.question, {through: models.categoryquestions})
-    .belongsTo(models.category, { as: 'parent', foreignKey: 'parentId'});
+models.category.hasMany(models.category, { as: 'children', foreignKey: 'parentId'});
+models.category.belongsToMany(models.question, {through: models.categoryquestions});
+models.category.belongsTo(models.category, { as: 'parent', foreignKey: 'parentId'});
 
-models.company
-    .hasMany(models.training)
-    .hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
+models.company.hasMany(models.training);
+models.company.hasMany(models.user, { as: 'administrator', foreignKey: 'adminId'});
 
-models.exercise
-    .belongsTo(models.user)
-    .hasMany(models.result);
-    
-models.question
-    .hasMany(models.result)
-    .hasMany(models.category, {through: models.categoryquestions})
-    .belongsTo(models.category);
+models.exercise.belongsTo(models.user);
+models.exercise.hasMany(models.result);
 
-models.result
-    .belongsTo(models.exercise)
-    .belongsTo(models.question);
+models.question.hasMany(models.result);
+models.question.belongsToMany(models.category, {through: models.categoryquestions});
+models.question.belongsTo(models.category);
 
-models.training
-    .belongsTo(models.company)
-    .hasMany(models.access)
-    .hasMany(models.exercise)
-    .hasMany(models.category);
+models.result.belongsTo(models.exercise);
+models.result.belongsTo(models.question);
 
-models.user
-    .hasMany(models.access, {as: 'access'})
-    .hasMany(models.exercise, { as: 'exercises' })
-    .hasMany(models.result);
+models.training.belongsTo(models.company);
+models.training.hasMany(models.access);
+models.training.hasMany(models.exercise);
+models.training.hasMany(models.category);
+
+models.user.hasMany(models.access, {as: 'access'});
+models.user.hasMany(models.exercise, { as: 'exercises' });
+models.user.hasMany(models.result);
 
 // sequelize.sync();
 
-Object.keys(models).forEach(function(modelName) {
-  if ('associate' in models[modelName]) {
-    db[modelName].associate(db);
-  }
-});
+// Object.keys(models).forEach(function(modelName){
+//     if ('associate' in models[modelName]){
+//         db[modelName].associate(db);
+//     }
+// });

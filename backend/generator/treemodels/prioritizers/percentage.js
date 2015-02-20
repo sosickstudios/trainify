@@ -1,13 +1,17 @@
+/**
+ * trainify/backend/generator/treemodels/prioritizers/percentage.js
+ */
+'use strict';
+
 var _ = require('lodash');
 
 /**
  * Determine a weight for a question based on the percentage correctness.
  *
  * @param {Question} question Question to determine percentage for.
- *
- * @return {Number} Weight based on calculations made.
+ * @returns {Number} Weight based on calculations made.
  */
-function Percentage (question){
+function Percentage(question){
     var priorityWeight = 5;
     var questionAnswers = question.results;
 
@@ -15,7 +19,7 @@ function Percentage (question){
     var exposureCount = questionAnswers.length;
     /**
     *  Tiering system
-    *  
+    *
     *  Our scale will increase by means of 5 points for each area we wish to add in.
     *  Exposure will be responsible for 5 points, percentage another 5 points, etc
     *
@@ -24,9 +28,9 @@ function Percentage (question){
     *  Percentage Properties: {
     *     100 >= percentage >= 90: Lowest Priority ~ 0.00 - 0.5
     *     89 >= percentage >= 80: Higher Priority ~ 0.55 - 1.05
-    *     79 >= percentage >= 70: 
-    *     69 >= percentage >= 60: 
-    *     59 >= percentage >= 50: 
+    *     79 >= percentage >= 70:
+    *     69 >= percentage >= 60:
+    *     59 >= percentage >= 50:
     *     49 >= percentage >= 40:
     *     39 >= percentage >= 30:
     *     29 >= percentage >= 20:
@@ -34,12 +38,12 @@ function Percentage (question){
     *     9 >= percentage >= 0: Highest Priority ~ 4.55 - 5
     *
     *     // Absolute Value
-    *     |expression| = Math.abs(expression) 
-    *     Equation: percentagePriorityWeight = 
+    *     |expression| = Math.abs(expression)
+    *     Equation: percentagePriorityWeight =
     *         | (decimalPercentage * 100) - 100 | * percentageGranularity
     *  }
     */
-    
+
     if (exposureCount){
         var percentageGranularity = 0.05;
         var decimalPercentage = (correct / exposureCount).toFixed(2);
@@ -51,5 +55,3 @@ function Percentage (question){
 }
 
 module.exports = exports = Percentage;
-
-
