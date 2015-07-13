@@ -13,8 +13,6 @@ function rollback (cb){
     transaction.rollback().success(function (){cb();})
 };
 
-
-
 module.exports = function (data){
     /**
      * beforeEach hook to mock a full training course, including a user with access.
@@ -32,11 +30,11 @@ module.exports = function (data){
             // of categories that will be associated to the training course.
             var promises = [
                 Company.create({
-                    name: 'Trainify Testing Company', 
+                    name: 'Trainify Testing Company',
                     description: 'Company Description'
                 }, {transaction: transaction}),
                 Training.create({
-                    name: 'Trainify Testing Course', 
+                    name: 'Trainify Testing Course',
                     description: 'This is the description'
                 }, {transaction: transaction}),
                 User.create({
@@ -59,13 +57,13 @@ module.exports = function (data){
                 training = data.training = result[1];
                 user = data.user = result[2];
 
-                // Associate all our newly created data appropriately, create the category to be 
+                // Associate all our newly created data appropriately, create the category to be
                 // referenced by the training course (ROOT), and give access to our new course to the
                 // user.
                 var associations = [
                     Access.create({
-                        trainingId: training.id, 
-                        userId: user.id, 
+                        trainingId: training.id,
+                        userId: user.id,
                         practiceExamTotal: 4,
                         structuredExamTotal: 4,
                         end: (new Date())},
@@ -81,7 +79,7 @@ module.exports = function (data){
 
                 return Promise.all(associations);
             }).then(function (result){
-                /** 
+                /**
                 * The result is an array of finished promises.
                 *
                 * 1) {Access} For user and training course..
@@ -99,13 +97,13 @@ module.exports = function (data){
                 // Body data for the children categories.
                 var categories = [
                     {
-                        name: 'Child Category 1', 
-                        parentId: root.id, 
-                        path: childPath, 
+                        name: 'Child Category 1',
+                        parentId: root.id,
+                        path: childPath,
                         weight: 50
                     }, {
                         name: 'Child Category 2',
-                        parentId: root.id, 
+                        parentId: root.id,
                         path: childPath,
                         weight: 50
                     }
@@ -124,7 +122,7 @@ module.exports = function (data){
                     res.locals.user = usr;
                     next();
                 });
-                
+
                 done();
             });
         });

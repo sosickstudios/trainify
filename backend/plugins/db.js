@@ -30,18 +30,20 @@ models.exercise.belongsTo(models.user);
 models.exercise.hasMany(models.result);
 
 models.question.hasMany(models.result);
-models.question.belongsToMany(models.category, {through: models.categoryquestions});
+models.question.belongsToMany(models.category, { through: models.categoryquestions });
 models.question.belongsTo(models.category);
 
 models.result.belongsTo(models.exercise);
 models.result.belongsTo(models.question);
+
+console.log(models.access);
 
 models.training.belongsTo(models.company);
 models.training.hasMany(models.access);
 models.training.hasMany(models.exercise);
 models.training.hasMany(models.category);
 
-models.user.hasMany(models.access, {as: 'access'});
+models.user.hasMany(models.access, { as: 'access' });
 models.user.hasMany(models.exercise, { as: 'exercises' });
 models.user.hasMany(models.result);
 

@@ -6,7 +6,7 @@
 var Sequelize = require('sequelize');
 var sequelize = require('../plugins/db');
 
-module.exports = sequelize.define('company', {
+var Company = sequelize.define('company', {
   id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
   bio: { type: Sequelize.TEXT },
 
@@ -20,3 +20,5 @@ module.exports = sequelize.define('company', {
   logo: { type: Sequelize.STRING },
   name: { type: Sequelize.STRING }
 });
+
+module.exports = Company;

@@ -13,7 +13,7 @@ var TYPES = {
     MATRIX: 'matrix'
 };
 
-var category = sequelize.define('category', {
+var Category = sequelize.define('category', {
     id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true },
     identifier: { type: Sequelize.ENUM, values: _.values(TYPES) },
     logo: { type: Sequelize.STRING },
@@ -21,6 +21,6 @@ var category = sequelize.define('category', {
     path: { type: Sequelize.STRING },
     weight: { type: Sequelize.INTEGER }
 });
-category.TYPES = TYPES;
+Category.TYPES = TYPES;
 
-module.exports = category;
+module.exports = Category;

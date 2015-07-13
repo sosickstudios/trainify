@@ -11,5 +11,7 @@ var sequelize = require('../plugins/db');
  *
  * @type {Sequelize}
  */
-module.exports = sequelize.define('categoryquestions', {
+var CategoryQuestions = sequelize.define('categoryquestions', {
 });
+
+module.exports = CategoryQuestions;

@@ -26,16 +26,16 @@ describe('access model', function(){
         });
     });
 
-    it('should have a model', function(){
-        var access = Access.build();
-        access.should.exist;
-    });
+    // it('should have a model', function(){
+    //     var access = Access.build();
+    //     access.should.exist;
+    // });
 
     it('should create a unique id', function(done){
         Access.create({}, { transaction: transaction }).success(function(access){
-        access.id.should.be.greaterThan(0);
-        done();
-    });
+            access.id.should.be.greaterThan(0);
+            done();
+        });
     });
 
     it('should default start date to today', function(done){
