@@ -11,3 +11,4 @@ coverage/
 /.idea/
 deployment/roles/
 newrelic_agent.log
+scripts/entry.js

@@ -1,13 +1,19 @@
+/**
+ * trainify/test/testutils.js
+ */
+'use strict';
+
 var Promise = require('bluebird');
 var Access = require('./../backend/models/access');
 var User = require('./../backend/models/user');
 
 /**
  * Ensures we set a user on the response, simulating login.
- * @returns {Promise}
+ * @param {String} email user email.
+ * @returns {Promise} bluebird promise
  */
 module.exports.setUser = function setUser(email){
-    var email = email || 'testuser@trainify.io';
+    email = email || 'testuser@trainify.io';
 
     return new Promise(function(resolve, reject){
         User.find({where: {email: email}, include: [{model: Access, as: 'access'}]})

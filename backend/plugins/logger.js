@@ -1,7 +1,11 @@
-var morgan = require('morgan');
+/**
+ * trainify/backend/plugins/logger.js
+ */
+'use strict';
 
-module.exports = function attachLogger(app){
+var morgan = require('morgan');
+module.exports = function AttachLogger(app){
     if (process.env.NODE_ENV === 'development'){
         app.use(morgan('short'));
     }
-}
+};

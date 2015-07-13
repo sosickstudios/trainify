@@ -100,7 +100,7 @@ module.exports.categories = function(){
                     item.path = ',';
                 }
 
-                return Category.update({path: item.path, parentId: item.parentId}, {id: item.id});
+                return Category.update({path: item.path, parentId: item.parentId}, { where: {id: item.id}});
             }));
         }).then(function (saves){
             return Question.bulkCreate(_.map(questions, function (item){
@@ -185,10 +185,10 @@ module.exports.company = function(){
     require('./../backend/plugins/db');
     return new Promise(function(resolve){
         var Company = require('./../backend/models/company');
-        Company.findOrCreate({
+        Company.findOrCreate({ where: {
             name: 'Trainify',
             bio: 'Trainify Description'
-        }).then(function(company){
+        }}).then(function(company){
             companyId = company.id;
             resolve();
         });
@@ -199,14 +199,14 @@ module.exports.training = function(){
     require('./../backend/plugins/db');
     var Training = require('./../backend/models/training');
     return new Promise(function(resolve){
-        Training.findOrCreate({
+        Training.findOrCreate({ where: {
             name: 'Test Course',
             description: 'Test Description',
             companyId: companyId, 
             practiceExamTotal: 5,
             structuredExamTotal: 50,
             cost: 20
-        }).then(function(course){
+        }}).then(function(course){
             trainingId = course.id;
             resolve(course);
         });

@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/prioritizers/index.js
+ */
+'use strict';
+
 var _ = require('lodash');
 
 /**
@@ -5,10 +10,9 @@ var _ = require('lodash');
  *
  * @param {Array.<Question>} questions Array of questions to sort.
  * @param {Object} options Options to configure which prioritizers to use.
- *
- * @return {Array.<Question>} Array of questions that have been sorted by prioritizers.
+ * @returns {Array.<Question>} Array of questions that have been sorted by prioritizers.
  */
-function Prioritizer (questions, options){
+function Prioritizer(questions, options){
     var data = {};
 
     // Load our given prioritizers that were specified in options.
@@ -26,7 +30,7 @@ function Prioritizer (questions, options){
     // Map, then sort our questions.
     questions = _(questions)
         .map(function (question){
-            question = question.values;
+            question = question.get();
 
             // Calculate total from our loaded prioritizers.
             var receivedTotal = fns.reduce(function (sum, fn){

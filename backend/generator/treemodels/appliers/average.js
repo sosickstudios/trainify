@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/appliers/average.js
+ */
+'use strict';
+
 var _ = require('lodash');
 
 /**
@@ -5,9 +10,9 @@ var _ = require('lodash');
  *
  * @param {Category} node Category in tree to run calculations on.
  *
- * @return {Number} Average of current node.
+ * @returns {Number} Average of current node.
  */
-function Average (node){
+function Average(node){
     var NO_RESULTS = -1;
     var results = _(node.questions)
         .pluck('results')
@@ -43,17 +48,17 @@ function Average (node){
 
         // Childrens scores will weight for 50%, have the current leafs total average as
         // .5 * selfAverage + .5 * childrensAverage
-        selfPercentage - 0.5;
+        selfPercentage -= 0.5;
     }
 
     if (avg > NO_RESULTS){
         avg = Math.round(avg * selfPercentage) + Math.round(childrensAverage * 0.5);
     } else if (avg < 0 && childrensAverage > 0){
         // Current category has no average, take 50% of childrens average as its own.
-        avg = Math.round(childrensAverage * .5);
+        avg = Math.round(childrensAverage * 0.5);
     }
 
-    return avg;    
+    return avg;
 }
 
 module.exports = exports = Average;

@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/base.js
+ */
+'use strict';
+
 var _ = require('lodash');
 var applier = require('./appliers');
 var EventEmitter = require('events').EventEmitter;
@@ -32,10 +37,10 @@ base.APPLIERS = {
  *
  * @type {Object}
  */
-base.EXERCISE_TYPES ={
+base.EXERCISE_TYPES = {
     EXAMPREP: 'Exam Prep',
     PRACTICE: 'Practice'
-}
+};
 
 /**
  * Types of functions that can be used to rank a set of questions for a given exercise-question pool
@@ -54,6 +59,7 @@ base.PRIORITIZERS = {
  *                      pullers to use.
  * @param {Object} data Arbritrary data that can be passed to applier and prioritizer functions for
  *                      use in calculations.
+ * @returns {undefined} No payload data provided.
  */
 base.init = function (config, data){
     mixin(base, EventEmitter.prototype);
@@ -66,13 +72,13 @@ base.init = function (config, data){
 /**
  * Puller that will take questions from the root node of the data tree ONLY.
  *
- * @param {Category} category Node to take questions from.
+ * @param {Category} categoryId Node to take questions from.
  * @param {Integer} total Number of questions to be retrieved.
  * @param {EXERCISE_TYPES} type Type of exercise is being generated?
- * @return {Array.<Question>} Questions retrieved from node.
+ * @returns {Array.<Question>} Questions retrieved from node.
  */
-base.absolutePuller = function (category, total, type){
-    var category = _.find(this.data.categories, {id: category});
+base.absolutePuller = function (categoryId, total){
+    var category = _.find(this.data.categories, {id: categoryId});
 
     if (!category){
         throw new Error('Tree Puller - Failed to find category');
@@ -88,8 +94,7 @@ base.absolutePuller = function (category, total, type){
  * Crawl a data tree from bottom to top, applying our config.appliers to each node.
  *
  * @param {Category} node Current node to evaluate.
- * 
- * @return {Category} Data tree that has new value to each leaf => node.data.stats
+ * @returns {Category} Data tree that has new value to each leaf => node.data.stats
  */
 base.crawler = function (node){
     // Crawl from bottom to top.
@@ -103,7 +108,7 @@ base.crawler = function (node){
 
     // Take our config.appliers and interpret this node.
     node.data.stats = applier(node, this.data, {appliers: this.config.appliers});
-    
+
     return node;
 };
 
@@ -114,21 +119,18 @@ base.crawler = function (node){
  * @param {Number} total How many questions should be drawn total.
  * @param {EXERCISE_TYPES} type Is the exercise practice or exam?
  * @param {PULLER} pullerType How should the questions be drawn from the tree.
- * @return {Array.<Question>} Questions to insert into the exercise.
+ * @returns {Array.<Question>} Questions to insert into the exercise.
  */
 base.exercise = function (category, total, type, pullerType){
-    var pullerType = pullerType || this.config.puller;
+    pullerType = pullerType || this.config.puller;
 
     switch(pullerType){
         case this.PULLER.RELATIVE:
             return this.relativePuller(category, total, type);
-            break;
         case this.PULLER.ABSOLUTE:
             return this.absolutePuller(category, total, type);
-            break;
         default:
             throw new Error('Exercise - Hit invalid case.');
-            break;
     }
 };
 
@@ -136,18 +138,17 @@ base.exercise = function (category, total, type, pullerType){
  * Take a category and parse into parent-child data tree.
  *
  * @param {Category} category Current category to determine children.
- * 
- * @return {Category} Parent-child data tree.
+ * @returns {Category} Parent-child data tree.
  */
 base.parser = function (category){
     var children = _.where(this.data.categories, {parentId: category.id});
 
     // Recursively call from bottom to top of tree.
     if (children.length){
-        children = children.map(function (item){
-            return this.parser(item.values);
+        children = children.map(function (child){
+            return this.parser(child.get());
         }, this);
-    } 
+    }
     category.children = children;
 
     return category;
@@ -158,13 +159,12 @@ base.parser = function (category){
  *
  * @param {Integer} categoryId Category Id that should be considered the root.
  * @param {Object} options Options for the parser.
- * @param {Options.replaceRoot} replaceRoot Required to tell the function whether to replace the 
+ * @param {Options.replaceRoot} replaceRoot Required to tell the function whether to replace the
  *                                          content tree.
- * 
- * @return {Category} Data tree in the parent-child format.
+ * @returns {Category} Data tree in the parent-child format.
  */
 base.parseTree = function (categoryId, options){
-    var root = _.find(this.data.categories, {id: categoryId}).values;
+    var root = _.find(this.data.categories, {id: categoryId}).get();
     if (!root){
         throw new Error('ParseTree - Category ID given not valid.');
     }
@@ -179,23 +179,23 @@ base.parseTree = function (categoryId, options){
 
 /**
  * In the case that an exercise needs to generate an exam that relies on an category as well as its
- * children. 
+ * children.
  *
- * @param {=Integer} category Database id for category to generate exercise.
- * @param {=Integer} total How many questions to generate for exercise. (Not Mandatory)
- * @param {EXERCISE_TYPES=EXAM_PREP} type What type of exercise is being generated.
- * 
- * @return {Array.<Question>} Questions to be presented for exercise.
+ * @param {Integer} category Database id for category to generate exercise.
+ * @param {Integer} total How many questions to generate for exercise. (Not Mandatory)
+ * @param {EXERCISE_TYPES.<EXAM_PREP>} type What type of exercise is being generated.
+ * @returns {Array.<Question>} Questions to be presented for exercise.
  */
 base.relativePuller = function (category, total, type){
     var difference = 0;
     var leftOvers = [];
     var questions = [];
+    var tree;
 
-    switch(type) {
+    switch(type){
         /**
          * The requested exercise has structure, there must be weighted totals of the first level.
-         * The system parses down to level 1, gets the weights of each, then takes a weighted total 
+         * The system parses down to level 1, gets the weights of each, then takes a weighted total
          * based on the level 1 weight for how many questions to take.
          *
          */
@@ -205,7 +205,7 @@ base.relativePuller = function (category, total, type){
             category = category ? category : _.find(this.data.categories, searchTerm).id;
 
             // Find the root category of the tree.
-            var tree = this.parseTree(category, {replaceRoot: false});
+            tree = this.parseTree(category, {replaceRoot: false});
 
             // TODO(BRYCE) Decide if the root should have any questions.
             // Take all Level 1 categories and find take an amount of questions based off
@@ -222,13 +222,13 @@ base.relativePuller = function (category, total, type){
 
                 // Determine how many questions the child category passed in is responsible for.
                 var childTake = Math.round((child.weight / 100).toFixed(2) * total);
-                
-                // Make sure that we have enough questions, if not change our total and add to the 
+
+                // Make sure that we have enough questions, if not change our total and add to the
                 // sum difference of all Level 1.
                 if (childTake > childQuestions.length){
                     difference += (childTake - childQuestions.length);
                     childTake = childQuestions.length;
-                } else {
+                } else{
                     // Add all leftOver questions in case another Level 1 cannot meet it's
                     // obligation for questions.
                     var leftOver = childQuestions.length - childTake;
@@ -237,7 +237,7 @@ base.relativePuller = function (category, total, type){
 
                 return _.first(childQuestions, childTake);
             }, this);
-    
+
             // Combine all Level 1 child questions together.
             questions = _.flatten(questions);
             break;
@@ -249,10 +249,10 @@ base.relativePuller = function (category, total, type){
          */
         case this.EXERCISE_TYPES.PRACTICE:
             // Parse the tree based on the category passed in.
-            var tree = this.parseTree(category, {replaceRoot: false});
+            tree = this.parseTree(category, {replaceRoot: false});
 
             // Reduce all child categories of category passed in to list.
-            var questions = _(this.treeReducer(tree))
+            questions = _(this.treeReducer(tree))
                 .pluck('questions')
                 .flatten()
                 .value();
@@ -268,11 +268,10 @@ base.relativePuller = function (category, total, type){
             break;
         default:
             throw new Error('Relative Puller - Hit Invalid Case');
-            break;
     }
 
     // Case for if we have some Left Over questions from a Level, and a difference due to a category
-    // not being able to fulfill its obligation. 
+    // not being able to fulfill its obligation.
     if (difference && leftOvers.length){
         var addAmount = difference > leftOvers.length ? leftOvers.length : difference;
         questions = questions.concat(_.first(leftOvers, addAmount));
@@ -283,17 +282,17 @@ base.relativePuller = function (category, total, type){
     });
 
     return _.shuffle(questions);
-}
+};
 
 /**
  * Generate statistics for every node on the data tree, starting from root.
  *
- * @return {Category} Data tree with data.stats attached to each leaf.
+ * @returns {Category} Data tree with data.stats attached to each leaf.
  */
 base.stats = function (){
     // Find the root category
-    var root = _.find(this.data.categories, {parentId: null, identifier: this.identifier}).values;
-    
+    var root = _.find(this.data.categories, {parentId: null, identifier: this.identifier}).get();
+
     // Parse the tree
     var tree = this.parser(root);
 
@@ -306,11 +305,11 @@ base.stats = function (){
  *
  * @param {Category} node Root node for the reducer to start from.
  * @param {Array} aggregate Array to push each node to.
- * @return {Array.<Category>} Array of all nodes from given bottom to given root.
+ * @returns {Array.<Category>} Array of all nodes from given bottom to given root.
  */
 base.treeReducer = function (node, aggregate){
     // Inititialize if this is the Level 0
-    if (aggregate === undefined){
+    if (!aggregate){
         aggregate = [];
     }
 
@@ -319,7 +318,7 @@ base.treeReducer = function (node, aggregate){
         node.children.forEach(function (child){
             this.treeReducer(child, aggregate);
         }, this);
-    }   
+    }
 
     // Add the category to our array.
     aggregate.push(node);

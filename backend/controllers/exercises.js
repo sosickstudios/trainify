@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/controllers/exercises.js
+ */
+'use strict';
+
 var _ = require('lodash');
 var Category = require('./../models/category');
 var Exercise = require('./../models/exercise');
@@ -10,20 +15,19 @@ var router = express.Router();
 var Training = require('./../models/training');
 var utils = require('../utils');
 
-
 var exercise = {
     /**
      * Route for generating an exercise.
      *
      * URL should be in the following format:
-     * 
+     *
      * /exercise?category={category.id}&path={category.path}&trainingId={training.id}&type={[
      * Practice, Exam Prep]}
      *
      * @param {Express.request} req Express application request object.
      * @param {Express.response} res Express application response object.
+     * @returns {undefined} No Payload data provided.
      */
-    
     get: function (req, res){
         // Query parameters
         var categoryId = parseInt(req.query.category, 10);
@@ -34,7 +38,7 @@ var exercise = {
         var user = res.locals.user;
 
         var promises = [
-            Category.findAll({where: {trainingId: trainingId}, 
+            Category.findAll({where: {trainingId: trainingId},
                 include: [{model: Question, include: [Result]}]}),
             Exercise.create({userId: user.id, trainingId: trainingId, type: type}),
             Exercise.findAll({where: {userId: user.id, trainingId: trainingId}}),
@@ -43,31 +47,28 @@ var exercise = {
 
         // Create our exercise, and find the training course that it belongs to.
         Promise.all(promises).then(function (result){
-    
+
             // Our newly created exercise
-            var exercise = result[1].values;
-            var training = result[3].values;
+            var newExercise = result[1].get();
+            var training = result[3].get();
 
             // Data for the trees.
-            var data = { 
-                categories: result[0], 
-                exercises: result[2], 
-                training: training 
+            var data = {
+                categories: result[0],
+                exercises: result[2],
+                training: training
             };
 
             // Use our system to generate new exercise questions.
             var questions = generator(data).exercise(tree, categoryId, total, type, null);
 
-            // Render handlebars template.
-            res.render('exercise', {
-                dashlink: '/course/' + training.name.replace(/\s/g, '-'),
-                exercise: exercise, 
+            res.send({
+                exercise: newExercise,
                 questions: questions,
                 training: training,
                 category: _.find(data.categories, {id: categoryId})
             });
-        })
-        .catch(utils.apiError);
+        }).catch(utils.apiError);
     },
     put: {
         /**
@@ -76,29 +77,32 @@ var exercise = {
          *
          * @param {Express.request} req Express application request object.
          * @param {Express.response} res Express application response object.
+         * @returns {undefined} No payload data provided.
          */
         exercise: function (req, res){
             var exerciseId = req.body.id;
 
-            Exercise.find({where: {id: exerciseId}, include: [Result]}).then(function(exercise){
-                var correct = _.where(exercise.results, {result: true}).length;
-                var score = Math.round((correct / exercise.results.length).toFixed(2) * 100);
+            var query = {where: {id: exerciseId}, include: [Result]};
+            Exercise.find(query).then(function(queriedExercise){
+                var correct = _.where(queriedExercise.results, {result: true}).length;
+                var score = Math.round((correct / queriedExercise.results.length).toFixed(2) * 100);
 
                 // Score the exercise, based on amount correct vs. incorrect.
-                exercise.score = score;
-                exercise.completed = new Date();
+                queriedExercise.score = score;
+                queriedExercise.completed = new Date();
 
-                return exercise.save();
-            }).then(function (exercise){
-                res.send(exercise);
+                return queriedExercise.save();
+            }).then(function (createdExercise){
+                res.status(200).send(createdExercise);
             }).catch(utils.apiError);
         },
         /**
-         * Update request for an exercise. This will take an object that is expected to be 
-         * the Result model. 
+         * Update request for an exercise. This will take an object that is expected to be
+         * the Result model.
          *
          * @param {Express.request} req Express application request object.
          * @param {Express.response} res Express application response object.
+         * @returns {undefined} No payload data provided.
          */
         result: function (req, res){
             var questionId = req.params.id;
@@ -107,25 +111,26 @@ var exercise = {
             // Find the question, make sure to load the answer associated with it.
             Question.find(questionId).then(function (question){
                 var update = req.body;
-                    
+
                 // The answer the user selected.
                 var chosen = _.find(question.answer.values, {id: parseInt(update.chosen, 10)});
 
                 // Each correct answer if flagged by a isCorrect Boolean
                 var result = chosen.isCorrect;
-               
+
                 // Should this be the second time of updating the result, it will hold an id.
-                if(update.id) {
+                if (update.id){
                     return Result.update({result: result, chosen: chosen.id}, {id: update.id}, {returning: true});
-                } else {
+                } else{
                     update.result = result;
                     update.userId = user.id;
                     return question.createResult(update);
                 }
             }).then(function (){
                 res.send(200);
-            })
-            .catch(utils.apiError);
+            }).catch(function (){
+                res.send(500);
+            });
         }
     }
 };

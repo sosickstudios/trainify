@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/controllers/stats.js
+ */
+'use strict';
+
 var _ = require('lodash');
 var Category = require('./../models/category');
 var Exercise = require('./../models/exercise');
@@ -14,10 +19,10 @@ var utils = require('./../utils');
  * Calculate the data that will be displayed on the top of the dash.
  *
  * @param {Array.<Exercise>} exercises The exercises for the given training course.
- * 
- * @return {Object}
+ *
+ * @returns {Object} Exam statistics based on exercises
  */
-function examStats (exercises){
+function examStats(exercises){
     var result = {};
 
     // Find all exercises that have been completed.
@@ -34,7 +39,7 @@ function examStats (exercises){
     result.passCount = _.where(all, function (exercise){
         return exercise.score > 65;
     }).length;
-    
+
     // Calculate the average of all exams that have been completed.
     var totalEarnedPoints = _.reduce(all, function (sum, exercise){
         return sum + exercise.score;
@@ -51,7 +56,7 @@ function examStats (exercises){
  * @type {Object}
  */
 var stats = {
-    get:{
+    get: {
         data: function(training, user){
             return new Promise(function(resolve){
                 if (!user){
@@ -86,10 +91,10 @@ var stats = {
                         general: examStats(exercises)
                     };
 
-                    //Send the data as a script, to be executed on the DOM.
+                    // Send the data as a script, to be executed on the DOM.
                     resolve(training);
                 });
-            })
+            });
         },
 
         /**
@@ -101,10 +106,11 @@ var stats = {
          *
          * @param {Express.request} req Express application request object.
          * @param {Express.response} res Express application response object.
+         * @returns {undefined} No payload data provided.
          */
         tree: function (req, res){
             var user = res.locals.user;
-            
+
             if (!user){
                 return res.send(200, '');
             }
@@ -114,20 +120,20 @@ var stats = {
                 Category.findAll({where: {trainingId: trainingId},
                     include: [{model: Question, include: [{model: Result, where: {userId: user.id}, required: false}]}]}),
                 Exercise.findAll({where: {userId: user.id, trainingId: trainingId}}),
-            	Training.find({where: {id: trainingId}})
+                Training.find({where: {id: trainingId}})
             ];
 
             Promise.all(promises).then(function (result){
-            	/**
-            	 * Results is the resolves promises above, broken apart from eager loading to
-            	 * optimize the time of the query.
-            	 *
-            	 * results[0]: Categories for all trainings the user has access to.
-            	 * results[1]: Exercises for all trainings the user has access to.
-            	 * results[2]: Training courses the user has access to.
-            	 */
+            /**
+             * Results is the resolves promises above, broken apart from eager loading to
+             * optimize the time of the query.
+             *
+             * results[0]: Categories for all trainings the user has access to.
+             * results[1]: Exercises for all trainings the user has access to.
+             * results[2]: Training courses the user has access to.
+             */
                 var exercises = result[1];
-                var training = result[2].values;
+                var training = result[2].get();
 
                 // Data for the trees.
                 var data = {
@@ -141,7 +147,7 @@ var stats = {
                     general: examStats(exercises)
                 };
 
-                //Send the data as a script, to be executed on the DOM.
+                // Send the data as a script, to be executed on the DOM.
                 res.send('window.Trainify.initCourseData(' + JSON.stringify([training]) + ')');
             }).catch(utils.apiError);
         }

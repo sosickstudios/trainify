@@ -25,7 +25,7 @@ function mapRowToCategory(keys, row){
     });
     result.name = decodeString(result.name);
     result.name = result.name.replace('&', ' & ');
-    
+
     result.parentId = decodeString(result.parentId);
     if (result.parentId){
         result.parentId = result.parentId.replace('&', ' & ');
@@ -110,7 +110,7 @@ function synchronizeGDocs (mapped, allCategories, keys, spreadsheet) {
         if(category.parentId) {
             parent = _.find(allCategories, {id: category.parentId});
 
-            local['3'] = '(' + parent.id + ') ' + parent.name; 
+            local['3'] = '(' + parent.id + ') ' + parent.name;
         }
 
         _.forEach(keys, function (item, index){
@@ -126,7 +126,7 @@ function synchronizeGDocs (mapped, allCategories, keys, spreadsheet) {
 
         spreadsheet.send(function (err){
             if(err) return reject(err);
-            
+
             resolve();
         });
     });
@@ -208,9 +208,9 @@ module.exports = function(trainingId, spreadsheet){
 
             if (masterList.length > mappedList.length){
                 var needsPurging = _.difference(masterList, mappedList);
-                return Category.destroy({id: needsPurging});  
+                return Category.destroy({id: needsPurging});
             }
-            
+
             return;
         })
         .catch(function (e){

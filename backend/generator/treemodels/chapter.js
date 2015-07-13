@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/chapter.js
+ */
+'use strict';
+
 var base = require('./base');
 var mixin = require('utils-merge');
 
@@ -9,8 +14,7 @@ var chapter = {
  * Data tree that is represented chapter-by-chapter.
  *
  * @param {Object} data Meta data pertaining to the data tree.
- * 
- * @return {Chapter} Object representing chapter data tree.
+ * @returns {Chapter} Object representing chapter data tree.
  */
 function createChapterTree(data){
     // Configure the data tree.

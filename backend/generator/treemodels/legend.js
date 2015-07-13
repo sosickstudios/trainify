@@ -1,3 +1,8 @@
+/**
+ * trainify/backend/generator/treemodels/legend.js
+ */
+'use strict';
+
 var base = require('./base');
 var mixin = require('utils-merge');
 
@@ -9,8 +14,7 @@ var legend = {
  * Data tree that is represented by legend.
  *
  * @param {Object} data Meta data pertaining to the data tree.
- * 
- * @return {Legend} Object representing legend data tree.
+ * @returns {Legend} Object representing legend data tree.
  */
 function createLegendTree(data){
     // Configure the data tree.
