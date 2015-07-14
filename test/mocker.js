@@ -1,3 +1,8 @@
+/**
+ * trainify/test/mocker.js
+ */
+'use strict';
+
 var Access = require('./../backend/models/access');
 var Category = require('./../backend/models/category');
 var Company = require('./../backend/models/company');
@@ -10,8 +15,10 @@ var User = require('./../backend/models/user');
 var transaction;
 
 function rollback (cb){
-    transaction.rollback().success(function (){cb();})
-};
+    transaction.rollback().success(function (){
+        cb();
+    });
+}
 
 module.exports = function (data){
     /**

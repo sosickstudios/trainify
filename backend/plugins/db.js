@@ -36,8 +36,6 @@ models.question.belongsTo(models.category);
 models.result.belongsTo(models.exercise);
 models.result.belongsTo(models.question);
 
-console.log(models.access);
-
 models.training.belongsTo(models.company);
 models.training.hasMany(models.access);
 models.training.hasMany(models.exercise);
